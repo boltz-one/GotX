@@ -27,7 +27,7 @@ static partial class ShadcnHomeTests
             t.App.Subscribe<AlertDialog.Cancelled>(card.Dialog, _ => cancelled++);
             t.Click("ui-alert-open"); t.Settle();
             t.Assert.True(card.Dialog.IsOpen, "hộp thoại mở"); t.Assert.TextVisible("Allow accessory to connect?");
-            t.Assert.NoLint();
+            t.Assert.NoLint(HomeLint());
             t.Press(Key.Escape); t.Settle();
             t.Assert.True(!card.Dialog.IsOpen && cancelled == 1, "Escape đóng hộp thoại và tính là huỷ");
             PressOn(t, "ui-alert-open"); t.Settle();
@@ -46,10 +46,13 @@ static partial class ShadcnHomeTests
         suite.Add("shadcn/home/sidebar-nav", t =>
         {
             var nav = Open(t).Sidebar;
-            t.Assert.Equal(nav.ActiveItem(0), 0, "Analytics đang chọn"); t.Assert.Equal(nav.ActiveItem(3), 1, "Billing đang chọn");
-            t.Click("nav-transactions"); t.Assert.Equal(nav.ActiveItem(0), 1, "bấm Transactions");
-            PressOn(t, "nav-goals"); t.Assert.Equal(nav.ActiveItem(1), 3, "Enter trên Goals");
-            // Chỉ thẻ sidebar và hai view bọc nó vẽ lại (Notify làm bẩn cả view cha), mỗi lượt click hai frame – không thẻ nào khác.
+            var picked = new List<string>();
+            t.App.Subscribe<SidebarNavCard.ItemSelected>(nav, e => picked.Add(e.Label));
+            t.Assert.Equal(nav.ActiveItem(0), 0, "Analytics đang sáng"); t.Assert.Equal(nav.ActiveItem(3), 1, "Billing đang sáng");
+            // Như bản gốc (isActive cố định): bấm / Enter chỉ điều hướng, mục sáng không đổi.
+            t.Click("nav-transactions"); PressOn(t, "nav-goals");
+            t.Assert.Equal(string.Join(",", picked), "Transactions,Goals", "bấm và Enter phát ItemSelected");
+            t.Assert.True(nav.ActiveItem(0) == 0 && nav.ActiveItem(1) == -1, "mục sáng giữ nguyên");
             t.Perf.ExpectRenders(() => t.Click("nav-security"), max: 6);
         });
 
@@ -88,7 +91,7 @@ static partial class ShadcnHomeTests
             t.Assert.Equal(updated, new AccountAccessCard.SecurityUpdated("a@b.co", "secret"), "Update Security");
             t.Assert.Equal(string.Join(",", links), "forgot,danger", "liên kết Forgot? và Danger Zone");
 
-            var notify = page.Notifications;
+            var notify = Open(t, Full).Notifications; // thẻ ở cột thứ năm, chỉ hiện từ 1900px
             t.Click("notify-goals"); t.Assert.True(notify.Option(2).Checked, "bấm ô Goal milestones");
             t.Click("notify-label-transactions"); t.Assert.True(!notify.Option(0).Checked, "bấm nhãn tắt Transaction alerts");
             bool[]? prefs = null;

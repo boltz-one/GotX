@@ -1,4 +1,5 @@
 using GotX;
+using GotX.Components;
 using GotX.Test;
 
 /// <summary>
@@ -15,7 +16,12 @@ static partial class ShadcnLoginTests
     sealed class PageSlot(AuthBlock block) : View
     {
         public readonly AuthBlock Block = block;
-        protected override void OnCreated() => App.New(Block);
+        // Như SiteShell với SitePage.Style: block của shadcn chạy với style new-york-v4.
+        protected override void OnCreated()
+        {
+            ComponentTheme.Use(App, ComponentStyle.NewYorkV4);
+            App.New(Block);
+        }
         public override Div Render(Window w) => w.Div().Class("size-full flex flex-col bg-background text-foreground")
             .Child(w.Div().Key("site-page").Class("flex-1 min-h-0 overflow-hidden").Child(w.View(Block).Class("size-full")));
     }

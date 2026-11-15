@@ -14,6 +14,9 @@ static partial class ShadcnSidebarTests
     /// </summary>
     sealed class Slot(View block) : View
     {
+        // Như SiteShell với SitePage.Style: block của shadcn chạy với style new-york-v4.
+        protected override void OnCreated() => ComponentTheme.Use(App, ComponentStyle.NewYorkV4);
+
         public override Div Render(Window w) =>
             w.Div().Class("size-full flex flex-col bg-background text-foreground")
                 .Child(w.Div().Key("slot").Class("flex-1 min-h-0 overflow-hidden").Child(w.View(block).Class("h-full")));
@@ -95,11 +98,16 @@ static partial class ShadcnSidebarTests
             t.Press(Key.Enter);
             t.Press(Key.Tab);
             t.Assert.Focused(genesis);
+            // Mục con / dự án là liên kết href="#" của bản gốc: Enter / bấm phát ItemSelected nhưng không tô mục nào.
+            string? picked = null;
+            t.App.Subscribe<SidebarNav.ItemSelected>(nav, e => picked = e.Title);
             t.Press(Key.Enter);
-            t.Assert.Equal(nav.Active, (0, 1, 0), "mục đang chọn sau Enter trên Genesis");
-            Highlighted(t, genesis, true);
+            t.Assert.Equal(picked, "Genesis", "Enter trên Genesis kích hoạt liên kết");
+            t.Assert.Equal(nav.Active, (-1, -1, -1), "không mục nào được tô sau Enter");
+            Highlighted(t, genesis, false);
             t.Click(nav.ItemKey(1, 2));
-            t.Assert.Equal(nav.Active, (1, 2, -1), "mục đang chọn sau khi bấm Travel");
+            t.Assert.Equal(picked, "Travel", "bấm Travel kích hoạt liên kết");
+            t.Assert.Equal(nav.Active, (-1, -1, -1), "bấm không tô");
             t.Advance(0.3);                                                // mũi tên xoay xong
             t.Assert.NoLint();
         });

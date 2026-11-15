@@ -7,65 +7,1862 @@
       "hideHeader": true,
       "width": 1440,
       "height": 1829,
-      "themes": ["light", "dark"],
+      "themes": [
+        "light",
+        "dark"
+      ],
       "targets": {
-        "hero-badge": { "ref": { "selector": "[data-slot=badge]", "text": "Trace, Code Block and AI Elements" }, "gotx": { "key": "announcement" } },
-        "get-started": { "ref": { "selector": "[data-slot=button]", "text": "Get Started" }, "gotx": { "key": "get-started" } },
-        "view-components": { "ref": { "selector": "[data-slot=button]", "text": "View Components" }, "gotx": { "key": "view-components" } },
-        "button-default": { "ref": { "selector": "button[data-slot=button]", "text": "Button" }, "gotx": { "key": "ui-button" } },
-        "button-secondary": { "ref": { "selector": "button[data-slot=button]", "text": "Secondary" }, "gotx": { "key": "ui-secondary" } },
-        "button-outline": { "ref": { "selector": "button[data-slot=button]", "text": "Outline" }, "gotx": { "key": "ui-outline" } },
-        "input-name": { "ref": { "selector": "input[placeholder=\"Name\"]" }, "gotx": { "key": "ui-name" } },
-        "textarea-message": { "ref": { "selector": "textarea[placeholder=\"Message\"]" }, "gotx": { "key": "ui-message" } },
-        "radio-first": { "ref": { "selector": "[data-slot=radio-group-item]", "index": 0 }, "gotx": { "key": "ui-radio", "pick": 0 } },
-        "radio-second": { "ref": { "selector": "[data-slot=radio-group-item]", "index": 1 }, "gotx": { "key": "ui-radio", "pick": 1 } },
-        "checkbox": { "ref": { "selector": "[data-slot=checkbox]", "index": 0 }, "gotx": { "key": "ui-checkbox", "pick": 0 } },
-        "switch": { "ref": { "selector": "[data-slot=switch]", "index": 0 }, "gotx": { "key": "ui-switch", "pick": 0 } },
-        "alert-dialog": { "ref": { "selector": "[data-slot=alert-dialog-trigger]" }, "gotx": { "key": "ui-alert-open" } },
-        "group-button": { "ref": { "selector": "button[data-slot=button]", "text": "Button Group" }, "gotx": { "key": "ui-group-button" } },
-        "group-menu": { "ref": { "selector": "[data-slot=dropdown-menu-trigger][aria-label=\"Open quick actions\"]" }, "gotx": { "key": "ui-group-button", "next": 0 } },
-        "sidebar-active": { "ref": { "selector": "[data-slot=sidebar-menu-button]", "text": "Analytics" }, "gotx": { "key": "nav-analytics" } },
-        "sidebar-item": { "ref": { "selector": "[data-slot=sidebar-menu-button]", "text": "Transactions" }, "gotx": { "key": "nav-transactions" } },
-        "select": { "ref": { "selector": "[data-slot=select-trigger]" }, "gotx": { "text": "USD — United States Dollar" } },
-        "select-eur": { "ref": { "selector": "[data-slot=select-item]", "text": "EUR — Euro" }, "gotx": { "text": "EUR — Euro" } },
-        "breadcrumb-home": { "ref": { "selector": "[data-slot=breadcrumb-link]", "text": "Home" }, "gotx": { "key": "payments-home" } },
-        "payments-item": { "ref": { "selector": "a[data-slot=item]", "prefix": "Change transfer limit" }, "gotx": { "key": "payments-limit" } },
-        "forgot-link": { "ref": { "selector": "a", "text": "Forgot?" }, "gotx": { "key": "forgot-password" } },
-        "update-security-disabled": { "ref": { "selector": "button[data-slot=button]", "text": "Update Security" }, "gotx": { "key": "update-security" } },
-        "dismiss-payout": { "ref": { "selector": "[aria-label=\"Dismiss payout threshold\"]" }, "gotx": { "key": "dismiss-payout" } },
-        "chat-reset": { "ref": { "selector": "[data-slot=tooltip-trigger]" }, "gotx": { "key": "chat-reset" } },
-        "chat-attach": { "ref": { "selector": "[data-slot=dropdown-menu-trigger][aria-label=\"Add files\"]" }, "gotx": { "key": "chat-composer", "pick": 0 } },
-        "footer-link": { "ref": { "selector": "a", "text": "shadcn" }, "gotx": { "key": "footer-shadcn" } }
+        "hero-badge": {
+          "ref": {
+            "selector": "[data-slot=badge]",
+            "text": "Trace, Code Block and AI Elements"
+          },
+          "gotx": {
+            "key": "announcement"
+          }
+        },
+        "get-started": {
+          "ref": {
+            "selector": "[data-slot=button]",
+            "text": "Get Started"
+          },
+          "gotx": {
+            "key": "get-started"
+          }
+        },
+        "view-components": {
+          "ref": {
+            "selector": "[data-slot=button]",
+            "text": "View Components"
+          },
+          "gotx": {
+            "key": "view-components"
+          }
+        },
+        "button-default": {
+          "ref": {
+            "selector": "button[data-slot=button]",
+            "text": "Button"
+          },
+          "gotx": {
+            "key": "ui-button"
+          }
+        },
+        "button-secondary": {
+          "ref": {
+            "selector": "button[data-slot=button]",
+            "text": "Secondary"
+          },
+          "gotx": {
+            "key": "ui-secondary"
+          }
+        },
+        "button-outline": {
+          "ref": {
+            "selector": "button[data-slot=button]",
+            "text": "Outline"
+          },
+          "gotx": {
+            "key": "ui-outline"
+          }
+        },
+        "input-name": {
+          "ref": {
+            "selector": "input[placeholder=\"Name\"]"
+          },
+          "gotx": {
+            "key": "ui-name"
+          }
+        },
+        "textarea-message": {
+          "ref": {
+            "selector": "textarea[placeholder=\"Message\"]"
+          },
+          "gotx": {
+            "key": "ui-message"
+          }
+        },
+        "radio-first": {
+          "ref": {
+            "selector": "[data-slot=radio-group-item]",
+            "index": 0
+          },
+          "gotx": {
+            "key": "ui-radio",
+            "pick": 0
+          }
+        },
+        "radio-second": {
+          "ref": {
+            "selector": "[data-slot=radio-group-item]",
+            "index": 1
+          },
+          "gotx": {
+            "key": "ui-radio",
+            "pick": 1
+          }
+        },
+        "checkbox": {
+          "ref": {
+            "selector": "[data-slot=checkbox]",
+            "index": 0
+          },
+          "gotx": {
+            "key": "ui-checkbox",
+            "pick": 0
+          }
+        },
+        "switch": {
+          "ref": {
+            "selector": "[data-slot=switch]",
+            "index": 0
+          },
+          "gotx": {
+            "key": "ui-switch",
+            "pick": 0
+          }
+        },
+        "alert-dialog": {
+          "ref": {
+            "selector": "[data-slot=alert-dialog-trigger]"
+          },
+          "gotx": {
+            "key": "ui-alert-open"
+          }
+        },
+        "group-button": {
+          "ref": {
+            "selector": "button[data-slot=button]",
+            "text": "Button Group"
+          },
+          "gotx": {
+            "key": "ui-group-button"
+          }
+        },
+        "group-menu": {
+          "ref": {
+            "selector": "[data-slot=dropdown-menu-trigger][aria-label=\"Open quick actions\"]"
+          },
+          "gotx": {
+            "key": "ui-group-button",
+            "next": 0
+          }
+        },
+        "sidebar-active": {
+          "ref": {
+            "selector": "[data-slot=sidebar-menu-button]",
+            "text": "Analytics"
+          },
+          "gotx": {
+            "key": "nav-analytics"
+          }
+        },
+        "sidebar-item": {
+          "ref": {
+            "selector": "[data-slot=sidebar-menu-button]",
+            "text": "Transactions"
+          },
+          "gotx": {
+            "key": "nav-transactions"
+          }
+        },
+        "select": {
+          "ref": {
+            "selector": "[data-slot=select-trigger]"
+          },
+          "gotx": {
+            "text": "USD — United States Dollar"
+          }
+        },
+        "select-eur": {
+          "ref": {
+            "selector": "[data-slot=select-item]",
+            "text": "EUR — Euro"
+          },
+          "gotx": {
+            "text": "EUR — Euro"
+          }
+        },
+        "breadcrumb-home": {
+          "ref": {
+            "selector": "[data-slot=breadcrumb-link]",
+            "text": "Home"
+          },
+          "gotx": {
+            "key": "payments-home"
+          }
+        },
+        "payments-item": {
+          "ref": {
+            "selector": "a[data-slot=item]",
+            "prefix": "Change transfer limit"
+          },
+          "gotx": {
+            "key": "payments-limit"
+          }
+        },
+        "forgot-link": {
+          "ref": {
+            "selector": "a",
+            "text": "Forgot?"
+          },
+          "gotx": {
+            "key": "forgot-password"
+          }
+        },
+        "update-security-disabled": {
+          "ref": {
+            "selector": "button[data-slot=button]",
+            "text": "Update Security"
+          },
+          "gotx": {
+            "key": "update-security"
+          }
+        },
+        "dismiss-payout": {
+          "ref": {
+            "selector": "[aria-label=\"Dismiss payout threshold\"]"
+          },
+          "gotx": {
+            "key": "dismiss-payout"
+          }
+        },
+        "chat-reset": {
+          "ref": {
+            "selector": "[data-slot=tooltip-trigger]"
+          },
+          "gotx": {
+            "key": "chat-reset"
+          }
+        },
+        "chat-attach": {
+          "ref": {
+            "selector": "[data-slot=dropdown-menu-trigger][aria-label=\"Add files\"]"
+          },
+          "gotx": {
+            "key": "chat-composer",
+            "pick": 0
+          }
+        },
+        "footer-link": {
+          "ref": {
+            "selector": "a",
+            "text": "shadcn"
+          },
+          "gotx": {
+            "key": "footer-shadcn"
+          }
+        },
+        "payments-menu": {
+          "ref": {
+            "selector": "[aria-label=\"Account options\"]"
+          },
+          "gotx": {
+            "key": "payments-menu",
+            "pick": 0
+          }
+        },
+        "payments-menu-profile": {
+          "ref": {
+            "selector": "[data-slot=dropdown-menu-item]",
+            "text": "Profile"
+          },
+          "gotx": {
+            "key": "payments-menu-profile"
+          }
+        },
+        "menu-mark-read": {
+          "ref": {
+            "selector": "[data-slot=dropdown-menu-item]",
+            "text": "Mark as Read"
+          },
+          "gotx": {
+            "text": "Mark as Read"
+          }
+        },
+        "alert-cancel": {
+          "ref": {
+            "selector": "[data-slot=alert-dialog-cancel]"
+          },
+          "gotx": {
+            "text": "Don't allow"
+          }
+        },
+        "dismiss-dividend": {
+          "ref": {
+            "selector": "[aria-label=\"Dismiss dividend income\"]"
+          },
+          "gotx": {
+            "key": "dismiss-dividend"
+          }
+        },
+        "view-full-report": {
+          "ref": {
+            "selector": "button[data-slot=button]",
+            "text": "View Full Report"
+          },
+          "gotx": {
+            "key": "view-full-report"
+          }
+        },
+        "create-goal": {
+          "ref": {
+            "selector": "button[data-slot=button]",
+            "text": "Create Goal"
+          },
+          "gotx": {
+            "key": "create-goal"
+          }
+        },
+        "cancel-goal": {
+          "ref": {
+            "selector": "button[data-slot=button]",
+            "text": "Cancel"
+          },
+          "gotx": {
+            "key": "cancel-goal"
+          }
+        },
+        "save-threshold": {
+          "ref": {
+            "selector": "button[data-slot=button]",
+            "text": "Save Threshold"
+          },
+          "gotx": {
+            "key": "save-threshold"
+          }
+        },
+        "danger-item": {
+          "ref": {
+            "selector": "a[data-slot=item]",
+            "prefix": "Danger Zone"
+          },
+          "gotx": {
+            "key": "danger-zone"
+          }
+        },
+        "chat-send": {
+          "ref": {
+            "selector": "button[type=submit]"
+          },
+          "gotx": {
+            "key": "chat-send"
+          }
+        }
       },
       "states": [
-        { "target": "hero-badge", "do": ["hover", "focus-key"] },
-        { "target": "get-started", "do": ["hover", "focus-key", "press"] },
-        { "target": "view-components", "do": ["hover", "focus-key", "press"] },
-        { "target": "button-default", "do": ["hover", "focus-key", "press"] },
-        { "target": "button-secondary", "do": ["hover", "focus-key", "press"] },
-        { "target": "button-outline", "do": ["hover", "focus-key", "press"] },
-        { "target": "input-name", "do": ["hover", "focus-key"] },
-        { "name": "input-name-type", "steps": [{ "target": "input-name", "do": "type", "text": "Ada Lovelace" }] },
-        { "target": "textarea-message", "do": ["hover", "focus-key"] },
-        { "target": "radio-first", "do": ["hover", "focus-key"] },
-        { "target": "radio-second", "do": ["click"] },
-        { "target": "checkbox", "do": ["hover", "focus-key", "click"] },
-        { "target": "switch", "do": ["hover", "focus-key", "click"] },
-        { "target": "alert-dialog", "do": ["hover", "focus-key", "click"] },
-        { "target": "group-button", "do": ["hover"] },
-        { "target": "group-menu", "do": ["hover", "focus-key", "click"] },
-        { "target": "sidebar-active", "do": ["hover"] },
-        { "target": "sidebar-item", "do": ["hover", "focus-key", "press", "click"] },
-        { "target": "select", "do": ["hover", "focus-key", "click"] },
-        { "name": "select-open-item-hover", "steps": [{ "target": "select", "do": "click" }, { "target": "select-eur", "do": "hover" }] },
-        { "target": "breadcrumb-home", "do": ["hover", "focus-key"] },
-        { "target": "payments-item", "do": ["hover", "focus-key"] },
-        { "target": "forgot-link", "do": ["hover"] },
-        { "target": "update-security-disabled", "do": ["hover"] },
-        { "target": "dismiss-payout", "do": ["hover", "focus-key"] },
-        { "target": "chat-reset", "do": ["hover", "focus-key"] },
-        { "target": "chat-attach", "do": ["focus-key", "click"] },
-        { "target": "footer-link", "do": ["hover"] }
+        {
+          "target": "hero-badge",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "get-started",
+          "do": [
+            "hover",
+            "focus-key",
+            "press"
+          ]
+        },
+        {
+          "target": "view-components",
+          "do": [
+            "hover",
+            "focus-key",
+            "press"
+          ]
+        },
+        {
+          "target": "button-default",
+          "do": [
+            "hover",
+            "focus-key",
+            "press"
+          ]
+        },
+        {
+          "target": "button-secondary",
+          "do": [
+            "hover",
+            "focus-key",
+            "press"
+          ]
+        },
+        {
+          "target": "button-outline",
+          "do": [
+            "hover",
+            "focus-key",
+            "press"
+          ]
+        },
+        {
+          "target": "input-name",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "name": "input-name-type",
+          "steps": [
+            {
+              "target": "input-name",
+              "do": "type",
+              "text": "Ada Lovelace"
+            }
+          ]
+        },
+        {
+          "target": "textarea-message",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "radio-first",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "radio-second",
+          "do": [
+            "click"
+          ]
+        },
+        {
+          "target": "checkbox",
+          "do": [
+            "hover",
+            "focus-key",
+            "click"
+          ]
+        },
+        {
+          "target": "switch",
+          "do": [
+            "hover",
+            "focus-key",
+            "click"
+          ]
+        },
+        {
+          "target": "alert-dialog",
+          "do": [
+            "hover",
+            "focus-key",
+            "click"
+          ]
+        },
+        {
+          "target": "group-button",
+          "do": [
+            "hover"
+          ]
+        },
+        {
+          "target": "group-menu",
+          "do": [
+            "hover",
+            "focus-key",
+            "click"
+          ]
+        },
+        {
+          "target": "sidebar-active",
+          "do": [
+            "hover"
+          ]
+        },
+        {
+          "target": "sidebar-item",
+          "do": [
+            "hover",
+            "focus-key",
+            "press",
+            "click"
+          ]
+        },
+        {
+          "target": "select",
+          "do": [
+            "hover",
+            "focus-key",
+            "click"
+          ]
+        },
+        {
+          "name": "select-open-item-hover",
+          "steps": [
+            {
+              "target": "select",
+              "do": "click"
+            },
+            {
+              "target": "select-eur",
+              "do": "hover"
+            }
+          ]
+        },
+        {
+          "target": "breadcrumb-home",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "payments-item",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "forgot-link",
+          "do": [
+            "hover"
+          ]
+        },
+        {
+          "target": "update-security-disabled",
+          "do": [
+            "hover"
+          ]
+        },
+        {
+          "target": "dismiss-payout",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "chat-reset",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "chat-attach",
+          "do": [
+            "focus-key",
+            "click"
+          ]
+        },
+        {
+          "target": "footer-link",
+          "do": [
+            "hover"
+          ]
+        },
+        {
+          "target": "payments-menu",
+          "do": [
+            "hover",
+            "focus-key",
+            "click"
+          ]
+        },
+        {
+          "name": "payments-menu-item-hover",
+          "steps": [
+            {
+              "target": "payments-menu",
+              "do": "click"
+            },
+            {
+              "target": "payments-menu-profile",
+              "do": "hover"
+            }
+          ]
+        },
+        {
+          "name": "group-menu-item-hover",
+          "steps": [
+            {
+              "target": "group-menu",
+              "do": "click"
+            },
+            {
+              "target": "menu-mark-read",
+              "do": "hover"
+            }
+          ]
+        },
+        {
+          "name": "alert-dialog-cancel-hover",
+          "steps": [
+            {
+              "target": "alert-dialog",
+              "do": "click"
+            },
+            {
+              "target": "alert-cancel",
+              "do": "hover"
+            }
+          ]
+        },
+        {
+          "name": "textarea-message-type",
+          "steps": [
+            {
+              "target": "textarea-message",
+              "do": "type",
+              "text": "Hello there"
+            }
+          ]
+        },
+        {
+          "target": "dismiss-dividend",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "view-full-report",
+          "do": [
+            "hover",
+            "focus-key",
+            "press"
+          ]
+        },
+        {
+          "target": "create-goal",
+          "do": [
+            "hover"
+          ]
+        },
+        {
+          "target": "cancel-goal",
+          "do": [
+            "hover"
+          ]
+        },
+        {
+          "target": "save-threshold",
+          "do": [
+            "hover"
+          ]
+        },
+        {
+          "target": "danger-item",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "chat-send",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        }
+      ]
+    },
+    {
+      "page": "dashboard-01",
+      "url": "https://ui.shadcn.com/view/new-york-v4/dashboard-01",
+      "hideHeader": false,
+      "width": 1440,
+      "height": 1440,
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "targets": {
+        "brand": {
+          "ref": {
+            "selector": "[data-slot=sidebar-menu-button]",
+            "text": "Acme Inc."
+          },
+          "gotx": {
+            "key": "acme-inc"
+          }
+        },
+        "quick-create": {
+          "ref": {
+            "selector": "[data-slot=sidebar-menu-button]",
+            "text": "Quick Create"
+          },
+          "gotx": {
+            "key": "quick-create"
+          }
+        },
+        "inbox": {
+          "ref": {
+            "selector": "[data-slot=button]",
+            "text": "Inbox"
+          },
+          "gotx": {
+            "key": "inbox"
+          }
+        },
+        "nav-lifecycle": {
+          "ref": {
+            "selector": "[data-slot=sidebar-menu-button]",
+            "text": "Lifecycle"
+          },
+          "gotx": {
+            "key": "nav-0-1"
+          }
+        },
+        "doc-item": {
+          "ref": {
+            "selector": "[data-slot=sidebar-menu-button]",
+            "text": "Data Library"
+          },
+          "gotx": {
+            "key": "nav-1-0"
+          }
+        },
+        "doc-action": {
+          "ref": {
+            "selector": "[data-slot=dropdown-menu-trigger]",
+            "index": 0
+          },
+          "gotx": {
+            "key": "nav-1-0-action"
+          }
+        },
+        "nav-user": {
+          "ref": {
+            "selector": "[data-slot=dropdown-menu-trigger]",
+            "prefix": "shadcn"
+          },
+          "gotx": {
+            "key": "nav-user",
+            "pick": 0
+          }
+        },
+        "trigger": {
+          "ref": {
+            "selector": "[data-slot=sidebar-trigger]"
+          },
+          "gotx": {
+            "key": "sidebar-trigger"
+          }
+        },
+        "github": {
+          "ref": {
+            "selector": "[data-slot=button]",
+            "text": "GitHub"
+          },
+          "gotx": {
+            "key": "github"
+          }
+        },
+        "toggle-90d": {
+          "ref": {
+            "selector": "[data-slot=toggle-group-item]",
+            "text": "Last 3 months"
+          },
+          "gotx": {
+            "key": "toggle-90d"
+          }
+        },
+        "toggle-30d": {
+          "ref": {
+            "selector": "[data-slot=toggle-group-item]",
+            "text": "Last 30 days"
+          },
+          "gotx": {
+            "key": "toggle-30d"
+          }
+        },
+        "tab-outline": {
+          "ref": {
+            "selector": "[data-slot=tabs-trigger]",
+            "text": "Outline"
+          },
+          "gotx": {
+            "key": "tab-outline"
+          }
+        },
+        "tab-past": {
+          "ref": {
+            "selector": "[data-slot=tabs-trigger]",
+            "prefix": "Past Performance"
+          },
+          "gotx": {
+            "key": "tab-past-performance"
+          }
+        },
+        "columns": {
+          "ref": {
+            "selector": "[data-slot=dropdown-menu-trigger]",
+            "text": "Customize Columns"
+          },
+          "gotx": {
+            "text": "Customize Columns"
+          }
+        },
+        "add-section": {
+          "ref": {
+            "selector": "[data-slot=button]",
+            "text": "Add Section"
+          },
+          "gotx": {
+            "key": "add-section"
+          }
+        },
+        "select-all": {
+          "ref": {
+            "selector": "[data-slot=checkbox]",
+            "index": 0
+          },
+          "gotx": {
+            "key": "select-all"
+          }
+        },
+        "row-check": {
+          "ref": {
+            "selector": "[data-slot=checkbox]",
+            "index": 1
+          },
+          "gotx": {
+            "key": "row-1-select"
+          }
+        },
+        "row-link": {
+          "ref": {
+            "selector": "[data-slot=drawer-trigger]",
+            "text": "Cover page"
+          },
+          "gotx": {
+            "key": "row-1-header"
+          }
+        },
+        "row-drag": {
+          "ref": {
+            "selector": "[data-slot=button]",
+            "text": "Drag to reorder"
+          },
+          "gotx": {
+            "key": "row-1-drag"
+          }
+        },
+        "row-target": {
+          "ref": {
+            "selector": "[data-slot=input]",
+            "index": 0
+          },
+          "gotx": {
+            "key": "row-1-target"
+          }
+        },
+        "row-menu": {
+          "ref": {
+            "selector": "[data-slot=dropdown-menu-trigger]",
+            "text": "Open menu"
+          },
+          "gotx": {
+            "key": "row-1-menu",
+            "pick": 0
+          }
+        },
+        "reviewer": {
+          "ref": {
+            "selector": "[data-slot=select-trigger]",
+            "text": "Assign reviewer"
+          },
+          "gotx": {
+            "key": "row-8-reviewer",
+            "pick": 0
+          }
+        },
+        "next-page": {
+          "ref": {
+            "selector": "[data-slot=button]",
+            "text": "Go to next page"
+          },
+          "gotx": {
+            "key": "next-page"
+          }
+        }
+      },
+      "states": [
+        {
+          "target": "brand",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "quick-create",
+          "do": [
+            "hover",
+            "focus-key",
+            "press"
+          ]
+        },
+        {
+          "target": "inbox",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "nav-lifecycle",
+          "do": [
+            "hover",
+            "focus-key",
+            "press",
+            "click"
+          ]
+        },
+        {
+          "target": "doc-item",
+          "do": [
+            "hover"
+          ]
+        },
+        {
+          "target": "doc-action",
+          "do": [
+            "focus-key",
+            "click"
+          ]
+        },
+        {
+          "target": "nav-user",
+          "do": [
+            "hover",
+            "click"
+          ]
+        },
+        {
+          "target": "trigger",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "github",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "toggle-90d",
+          "do": [
+            "focus-key"
+          ]
+        },
+        {
+          "target": "toggle-30d",
+          "do": [
+            "hover",
+            "click"
+          ]
+        },
+        {
+          "target": "tab-outline",
+          "do": [
+            "focus-key"
+          ]
+        },
+        {
+          "target": "tab-past",
+          "do": [
+            "hover",
+            "click"
+          ]
+        },
+        {
+          "target": "columns",
+          "do": [
+            "hover",
+            "focus-key",
+            "click"
+          ]
+        },
+        {
+          "target": "add-section",
+          "do": [
+            "hover",
+            "focus-key",
+            "press"
+          ]
+        },
+        {
+          "target": "select-all",
+          "do": [
+            "hover",
+            "focus-key",
+            "click"
+          ]
+        },
+        {
+          "target": "row-check",
+          "do": [
+            "click"
+          ]
+        },
+        {
+          "target": "row-link",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "row-drag",
+          "do": [
+            "hover"
+          ]
+        },
+        {
+          "target": "row-target",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "row-menu",
+          "do": [
+            "hover",
+            "click"
+          ]
+        },
+        {
+          "target": "reviewer",
+          "do": [
+            "hover",
+            "click"
+          ]
+        },
+        {
+          "target": "next-page",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        }
+      ]
+    },
+    {
+      "page": "sidebar-07",
+      "url": "https://ui.shadcn.com/view/new-york-v4/sidebar-07",
+      "hideHeader": false,
+      "width": 1440,
+      "height": 900,
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "targets": {
+        "team": {
+          "ref": {
+            "selector": "[data-slot=dropdown-menu-trigger]",
+            "prefix": "Acme Inc"
+          },
+          "gotx": {
+            "text": "Acme Inc"
+          }
+        },
+        "models": {
+          "ref": {
+            "selector": "[data-slot=collapsible-trigger]",
+            "text": "Models"
+          },
+          "gotx": {
+            "key": "nav-0-1"
+          }
+        },
+        "history": {
+          "ref": {
+            "selector": "[data-slot=sidebar-menu-sub-button]",
+            "text": "History"
+          },
+          "gotx": {
+            "key": "nav-0-0-0"
+          }
+        },
+        "project": {
+          "ref": {
+            "selector": "[data-slot=sidebar-menu-button]",
+            "text": "Design Engineering"
+          },
+          "gotx": {
+            "key": "nav-1-0"
+          }
+        },
+        "project-action": {
+          "ref": {
+            "selector": "[data-slot=dropdown-menu-trigger]",
+            "index": 1
+          },
+          "gotx": {
+            "key": "nav-1-0-action"
+          }
+        },
+        "user": {
+          "ref": {
+            "selector": "[data-slot=dropdown-menu-trigger]",
+            "prefix": "shadcn"
+          },
+          "gotx": {
+            "text": "shadcn"
+          }
+        },
+        "trigger": {
+          "ref": {
+            "selector": "[data-slot=sidebar-trigger]"
+          },
+          "gotx": {
+            "key": "sidebar-07-trigger"
+          }
+        },
+        "crumb": {
+          "ref": {
+            "selector": "[data-slot=breadcrumb-link]",
+            "text": "Build Your Application"
+          },
+          "gotx": {
+            "key": "crumb-parent"
+          }
+        }
+      },
+      "states": [
+        {
+          "target": "team",
+          "do": [
+            "hover",
+            "focus-key",
+            "click"
+          ]
+        },
+        {
+          "target": "models",
+          "do": [
+            "hover",
+            "focus-key",
+            "click"
+          ]
+        },
+        {
+          "target": "history",
+          "do": [
+            "hover",
+            "focus-key",
+            "press"
+          ]
+        },
+        {
+          "target": "project",
+          "do": [
+            "hover"
+          ]
+        },
+        {
+          "target": "project-action",
+          "do": [
+            "click"
+          ]
+        },
+        {
+          "target": "user",
+          "do": [
+            "hover",
+            "click"
+          ]
+        },
+        {
+          "target": "trigger",
+          "do": [
+            "hover",
+            "focus-key",
+            "click"
+          ]
+        },
+        {
+          "target": "crumb",
+          "do": [
+            "hover"
+          ]
+        }
+      ]
+    },
+    {
+      "page": "sidebar-03",
+      "url": "https://ui.shadcn.com/view/new-york-v4/sidebar-03",
+      "hideHeader": false,
+      "width": 1440,
+      "height": 900,
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "targets": {
+        "brand": {
+          "ref": {
+            "selector": "[data-slot=sidebar-menu-button]",
+            "prefix": "Documentation"
+          },
+          "gotx": {
+            "key": "sidebar-03-brand"
+          }
+        },
+        "getting-started": {
+          "ref": {
+            "selector": "[data-slot=sidebar-menu-button]",
+            "text": "Getting Started"
+          },
+          "gotx": {
+            "key": "nav-0-0"
+          }
+        },
+        "installation": {
+          "ref": {
+            "selector": "[data-slot=sidebar-menu-sub-button]",
+            "text": "Installation"
+          },
+          "gotx": {
+            "key": "nav-0-0-0"
+          }
+        },
+        "data-fetching": {
+          "ref": {
+            "selector": "[data-slot=sidebar-menu-sub-button]",
+            "text": "Data Fetching"
+          },
+          "gotx": {
+            "key": "nav-0-1-1"
+          }
+        },
+        "trigger": {
+          "ref": {
+            "selector": "[data-slot=sidebar-trigger]"
+          },
+          "gotx": {
+            "key": "sidebar-03-trigger"
+          }
+        }
+      },
+      "states": [
+        {
+          "target": "brand",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "getting-started",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "installation",
+          "do": [
+            "hover",
+            "focus-key",
+            "press",
+            "click"
+          ]
+        },
+        {
+          "target": "data-fetching",
+          "do": [
+            "hover"
+          ]
+        },
+        {
+          "target": "trigger",
+          "do": [
+            "hover",
+            "focus-key",
+            "click"
+          ]
+        }
+      ]
+    },
+    {
+      "page": "login-03",
+      "url": "https://ui.shadcn.com/view/new-york-v4/login-03",
+      "hideHeader": false,
+      "width": 1440,
+      "height": 900,
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "targets": {
+        "logo": {
+          "ref": {
+            "selector": "a",
+            "text": "Acme Inc."
+          },
+          "gotx": {
+            "key": "auth-home"
+          }
+        },
+        "apple": {
+          "ref": {
+            "selector": "[data-slot=button]",
+            "text": "Login with Apple"
+          },
+          "gotx": {
+            "key": "auth-apple"
+          }
+        },
+        "forgot": {
+          "ref": {
+            "selector": "a",
+            "text": "Forgot your password?"
+          },
+          "gotx": {
+            "key": "auth-forgot-password"
+          }
+        },
+        "submit": {
+          "ref": {
+            "selector": "[data-slot=button]",
+            "text": "Login"
+          },
+          "gotx": {
+            "key": "auth-submit"
+          }
+        },
+        "sign-up": {
+          "ref": {
+            "selector": "a",
+            "text": "Sign up"
+          },
+          "gotx": {
+            "key": "auth-sign-up"
+          }
+        },
+        "email": {
+          "ref": {
+            "selector": "input[id=email]"
+          },
+          "gotx": {
+            "key": "auth-email"
+          }
+        },
+        "password": {
+          "ref": {
+            "selector": "input[id=password]"
+          },
+          "gotx": {
+            "key": "auth-password"
+          }
+        },
+        "privacy": {
+          "ref": {
+            "selector": "a",
+            "text": "Privacy Policy"
+          },
+          "gotx": {
+            "key": "auth-privacy"
+          }
+        }
+      },
+      "states": [
+        {
+          "target": "logo",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "apple",
+          "do": [
+            "hover",
+            "focus-key",
+            "press"
+          ]
+        },
+        {
+          "target": "forgot",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "submit",
+          "do": [
+            "hover",
+            "focus-key",
+            "press"
+          ]
+        },
+        {
+          "target": "sign-up",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "email",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "name": "email-type",
+          "steps": [
+            {
+              "target": "email",
+              "do": "type",
+              "text": "m@example.com"
+            }
+          ]
+        },
+        {
+          "name": "password-type",
+          "steps": [
+            {
+              "target": "password",
+              "do": "type",
+              "text": "hunter22"
+            }
+          ]
+        },
+        {
+          "target": "privacy",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        }
+      ]
+    },
+    {
+      "page": "login-04",
+      "url": "https://ui.shadcn.com/view/new-york-v4/login-04",
+      "hideHeader": false,
+      "width": 1440,
+      "height": 900,
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "targets": {
+        "apple": {
+          "ref": {
+            "selector": "[data-slot=button]",
+            "text": "Login with Apple"
+          },
+          "gotx": {
+            "key": "auth-apple"
+          }
+        },
+        "meta": {
+          "ref": {
+            "selector": "[data-slot=button]",
+            "text": "Login with Meta"
+          },
+          "gotx": {
+            "key": "auth-meta"
+          }
+        },
+        "forgot": {
+          "ref": {
+            "selector": "a",
+            "text": "Forgot your password?"
+          },
+          "gotx": {
+            "key": "auth-forgot-password"
+          }
+        },
+        "submit": {
+          "ref": {
+            "selector": "[data-slot=button]",
+            "text": "Login"
+          },
+          "gotx": {
+            "key": "auth-submit"
+          }
+        },
+        "sign-up": {
+          "ref": {
+            "selector": "a",
+            "text": "Sign up"
+          },
+          "gotx": {
+            "key": "auth-sign-up"
+          }
+        },
+        "email": {
+          "ref": {
+            "selector": "input[id=email]"
+          },
+          "gotx": {
+            "key": "auth-email"
+          }
+        },
+        "password": {
+          "ref": {
+            "selector": "input[id=password]"
+          },
+          "gotx": {
+            "key": "auth-password"
+          }
+        },
+        "privacy": {
+          "ref": {
+            "selector": "a",
+            "text": "Privacy Policy"
+          },
+          "gotx": {
+            "key": "auth-privacy"
+          }
+        }
+      },
+      "states": [
+        {
+          "target": "apple",
+          "do": [
+            "hover",
+            "focus-key",
+            "press"
+          ]
+        },
+        {
+          "target": "meta",
+          "do": [
+            "hover"
+          ]
+        },
+        {
+          "target": "forgot",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "submit",
+          "do": [
+            "hover",
+            "focus-key",
+            "press"
+          ]
+        },
+        {
+          "target": "sign-up",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "email",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "name": "email-type",
+          "steps": [
+            {
+              "target": "email",
+              "do": "type",
+              "text": "m@example.com"
+            }
+          ]
+        },
+        {
+          "name": "password-type",
+          "steps": [
+            {
+              "target": "password",
+              "do": "type",
+              "text": "hunter22"
+            }
+          ]
+        },
+        {
+          "target": "privacy",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        }
+      ]
+    },
+    {
+      "page": "signup-03",
+      "url": "https://ui.shadcn.com/view/new-york-v4/signup-03",
+      "hideHeader": false,
+      "width": 1440,
+      "height": 900,
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "targets": {
+        "logo": {
+          "ref": {
+            "selector": "a",
+            "text": "Acme Inc."
+          },
+          "gotx": {
+            "key": "auth-home"
+          }
+        },
+        "name": {
+          "ref": {
+            "selector": "input[id=name]"
+          },
+          "gotx": {
+            "key": "auth-name"
+          }
+        },
+        "submit": {
+          "ref": {
+            "selector": "[data-slot=button]",
+            "text": "Create Account"
+          },
+          "gotx": {
+            "key": "auth-submit"
+          }
+        },
+        "sign-in": {
+          "ref": {
+            "selector": "a",
+            "text": "Sign in"
+          },
+          "gotx": {
+            "key": "auth-sign-in"
+          }
+        },
+        "email": {
+          "ref": {
+            "selector": "input[id=email]"
+          },
+          "gotx": {
+            "key": "auth-email"
+          }
+        },
+        "password": {
+          "ref": {
+            "selector": "input[id=password]"
+          },
+          "gotx": {
+            "key": "auth-password"
+          }
+        },
+        "privacy": {
+          "ref": {
+            "selector": "a",
+            "text": "Privacy Policy"
+          },
+          "gotx": {
+            "key": "auth-privacy"
+          }
+        }
+      },
+      "states": [
+        {
+          "target": "logo",
+          "do": [
+            "hover"
+          ]
+        },
+        {
+          "target": "name",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "submit",
+          "do": [
+            "hover",
+            "focus-key",
+            "press"
+          ]
+        },
+        {
+          "target": "sign-in",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "email",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "name": "email-type",
+          "steps": [
+            {
+              "target": "email",
+              "do": "type",
+              "text": "m@example.com"
+            }
+          ]
+        },
+        {
+          "name": "password-type",
+          "steps": [
+            {
+              "target": "password",
+              "do": "type",
+              "text": "hunter22"
+            }
+          ]
+        },
+        {
+          "target": "privacy",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        }
+      ]
+    },
+    {
+      "page": "signup-04",
+      "url": "https://ui.shadcn.com/view/new-york-v4/signup-04",
+      "hideHeader": false,
+      "width": 1440,
+      "height": 900,
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "targets": {
+        "apple": {
+          "ref": {
+            "selector": "[data-slot=button]",
+            "text": "Sign up with Apple"
+          },
+          "gotx": {
+            "key": "auth-apple"
+          }
+        },
+        "submit": {
+          "ref": {
+            "selector": "[data-slot=button]",
+            "text": "Create Account"
+          },
+          "gotx": {
+            "key": "auth-submit"
+          }
+        },
+        "sign-in": {
+          "ref": {
+            "selector": "a",
+            "text": "Sign in"
+          },
+          "gotx": {
+            "key": "auth-sign-in"
+          }
+        },
+        "email": {
+          "ref": {
+            "selector": "input[id=email]"
+          },
+          "gotx": {
+            "key": "auth-email"
+          }
+        },
+        "password": {
+          "ref": {
+            "selector": "input[id=password]"
+          },
+          "gotx": {
+            "key": "auth-password"
+          }
+        },
+        "privacy": {
+          "ref": {
+            "selector": "a",
+            "text": "Privacy Policy"
+          },
+          "gotx": {
+            "key": "auth-privacy"
+          }
+        }
+      },
+      "states": [
+        {
+          "target": "apple",
+          "do": [
+            "hover",
+            "focus-key",
+            "press"
+          ]
+        },
+        {
+          "target": "submit",
+          "do": [
+            "hover",
+            "focus-key",
+            "press"
+          ]
+        },
+        {
+          "target": "sign-in",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "target": "email",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        },
+        {
+          "name": "email-type",
+          "steps": [
+            {
+              "target": "email",
+              "do": "type",
+              "text": "m@example.com"
+            }
+          ]
+        },
+        {
+          "name": "password-type",
+          "steps": [
+            {
+              "target": "password",
+              "do": "type",
+              "text": "hunter22"
+            }
+          ]
+        },
+        {
+          "target": "privacy",
+          "do": [
+            "hover",
+            "focus-key"
+          ]
+        }
       ]
     }
   ]

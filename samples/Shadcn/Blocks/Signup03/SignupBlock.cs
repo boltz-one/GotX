@@ -16,7 +16,7 @@ public abstract class SignupBlock : AuthBlock
 
     /// <summary>Hai ô mật khẩu cạnh nhau, chung một dòng mô tả.</summary>
     protected Div PasswordPair(Window w) => Ui.Field(w)
-        .Child(Ui.Field(w).Class("grid grid-cols-2 gap-4").Child(FieldView(w, "password")).Child(FieldView(w, "confirm-password")))
+        .Child(w.Div().Class("grid w-full grid-cols-2 gap-4").Child(FieldView(w, "password")).Child(FieldView(w, "confirm-password")))
         .Child(Ui.FieldDescription(w, "Must be at least 8 characters long."));
 
     protected Div SignInLine(Window w) => SwitchLine(w, "Already have an account?", AuthAction.SignIn, "Sign in");

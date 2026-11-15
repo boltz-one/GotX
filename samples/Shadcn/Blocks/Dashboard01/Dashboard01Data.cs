@@ -1,61 +1,52 @@
-using System.Globalization;
 using GotX;
 using GotX.Components;
 
-/// <summary>Một hàng của bảng "Outline" trong dashboard-01 (data.json của bản gốc).</summary>
-public sealed class DashboardSection(int id, string header, string type, string status, int target, int limit, string reviewer)
-{
-    public int Id { get; } = id;
-    public string Header { get; } = header;
-    public string Type { get; } = type;
-    public string Status { get; } = status;
-    public int Target { get; } = target;
-    public int Limit { get; } = limit;
-    public string Reviewer { get; } = reviewer;
-
-    // Chuỗi dựng một lần cho mỗi hàng: ô không định dạng số hay nối key mỗi lần vẽ.
-    public string TargetText { get; } = target.ToString(CultureInfo.InvariantCulture);
-    public string LimitText { get; } = limit.ToString(CultureInfo.InvariantCulture);
-    public string LinkKey { get; } = "dashboard-section-" + id;
-    public bool Done => Status == "Done";
-    public bool Assigned => Reviewer != Dashboard01Data.Unassigned;
-
-    /// <summary>Bảng chứa hàng này – để link tiêu đề (lambda static) gọi lại được nơi mở tấm chi tiết.</summary>
-    public DashboardTable? Owner { get; set; }
-}
-
-/// <summary>Dữ liệu mẫu của block dashboard-01: menu sidebar, các thẻ số liệu, dữ liệu biểu đồ, các hàng của bảng.</summary>
+/// <summary>Dữ liệu của block dashboard-01, chép nguyên từ bản gốc (app-sidebar.tsx, section-cards.tsx, data-table.tsx, data.json).</summary>
 public static class Dashboard01Data
 {
     public const string UserName = "shadcn", UserEmail = "m@example.com", UserInitials = "CN", Unassigned = "Assign reviewer";
 
+    /// <summary>Menu nút "More" (…) của mục Documents: Open / Share / — / Delete (nav-documents.tsx).</summary>
     public static readonly MenuItem[] DocumentMenu =
     [
-        MenuItem.Action("Open", key: "dashboard-doc-open"), MenuItem.Action("Share"), MenuItem.Separator(), MenuItem.Action("Delete", destructive: true),
+        new() { Text = "Open", Icon = static w => DashboardIcons.Draw(w, DashboardIcons.FolderPath), Key = "dashboard-doc-open" },
+        new() { Text = "Share", Icon = static w => DashboardIcons.Draw(w, DashboardIcons.Share3Path) },
+        MenuItem.Separator(),
+        new() { Text = "Delete", Icon = static w => DashboardIcons.Draw(w, DashboardIcons.TrashPath), Destructive = true },
     ];
 
+    /// <summary>Nhóm sidebar: NavMain (sau hàng Quick Create), NavDocuments, NavSecondary (mt-auto). Không mục nào active.</summary>
     public static readonly SidebarNavGroup[] Groups =
     [
         new(null,
         [
-            new("Dashboard", DashboardIcons.Dashboard), new("Lifecycle", DashboardIcons.List), new("Analytics", DashboardIcons.ChartBar),
-            new("Projects", Icon.Folder), new("Team", DashboardIcons.Users),
+            new("Dashboard", DashboardIcons.Dashboard), new("Lifecycle", DashboardIcons.ListDetails), new("Analytics", DashboardIcons.ChartBar),
+            new("Projects", DashboardIcons.Folder), new("Team", DashboardIcons.Users),
         ]),
         new("Documents",
         [
-            new("Data Library", DashboardIcons.Database) { Menu = DocumentMenu, ActionOnHover = true },
-            new("Reports", Icon.FileText) { Menu = DocumentMenu, ActionOnHover = true },
-            new("Word Assistant", Icon.File) { Menu = DocumentMenu, ActionOnHover = true },
-            new("More", Icon.MoreHorizontal) { Muted = true },
+            new("Data Library", DashboardIcons.Database) { Menu = DocumentMenu, ActionOnHover = true, Action = DashboardIcons.Dots },
+            new("Reports", DashboardIcons.Report) { Menu = DocumentMenu, ActionOnHover = true, Action = DashboardIcons.Dots },
+            new("Word Assistant", DashboardIcons.FileWord) { Menu = DocumentMenu, ActionOnHover = true, Action = DashboardIcons.Dots },
+            new("More", DashboardIcons.Dots) { Muted = true },
         ]) { HideWhenCollapsed = true },
-        new(null, [new("Settings", Icon.Settings), new("Get Help", DashboardIcons.Help), new("Search", Icon.Search)]) { PushToBottom = true },
+        new(null, [new("Settings", DashboardIcons.Settings), new("Get Help", DashboardIcons.Help), new("Search", DashboardIcons.Search)]) { PushToBottom = true },
     ];
 
+    /// <summary>Menu tài khoản (nav-user.tsx): dòng nhãn avatar + tên + email, rồi Account / Billing / Notifications, Log out.</summary>
     public static readonly MenuItem[] UserMenu =
     [
-        MenuItem.Label(UserName), MenuItem.Label(UserEmail), MenuItem.Separator(),
-        new() { Text = "Account", Icon = Icon.User, Key = "dashboard-user-account" }, new() { Text = "Billing", Icon = SidebarIcons.CreditCard },
-        new() { Text = "Notifications", Icon = Icon.Bell }, MenuItem.Separator(), new() { Text = "Log out", Icon = Icon.LogOut },
+        MenuItem.Custom(static w => w.Div().Class("flex items-center gap-2 px-1 py-1.5 text-left text-sm")
+            .Child(w.Div().Class("flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted").Child(UserInitials))
+            .Child(w.Div().Class("grid min-w-0 flex-1 text-left text-sm leading-tight")
+                .Child(w.Div().Class("truncate font-medium").Child(UserName))
+                .Child(w.Div().Class("truncate text-xs text-muted-foreground").Child(UserEmail)))),
+        MenuItem.Separator(),
+        new() { Text = "Account", Icon = static w => DashboardIcons.Draw(w, DashboardIcons.UserCirclePath), Key = "dashboard-user-account" },
+        new() { Text = "Billing", Icon = static w => DashboardIcons.Draw(w, DashboardIcons.CreditCardPath) },
+        new() { Text = "Notifications", Icon = static w => DashboardIcons.Draw(w, DashboardIcons.NotificationPath) },
+        MenuItem.Separator(),
+        new() { Text = "Log out", Icon = static w => DashboardIcons.Draw(w, DashboardIcons.LogoutPath) },
     ];
 
     public static readonly MenuItem[] RowMenu =
@@ -75,41 +66,81 @@ public static class Dashboard01Data
         new("Growth Rate", "4.5%", "+4.5%", true, "Steady performance increase", "Meets growth projections"),
     ];
 
-    public static readonly string[] Tabs = ["Outline", "Past Performance", "Key Personnel", "Focus Documents"];
+    /// <summary>Các tab của bảng; số là Badge trong TabsTrigger (0 = không có).</summary>
+    public static readonly (string Title, string Value, string? Badge)[] Tabs =
+        [("Outline", "outline", null), ("Past Performance", "past-performance", "3"), ("Key Personnel", "key-personnel", "2"), ("Focus Documents", "focus-documents", null)];
 
-    // Mười hàng đầu chép từ data.json của bản gốc; các hàng sau (tới 68 như bản gốc) sinh theo công thức cố định từ danh
-    // sách tiêu đề, để phân trang có "Page 1 of 7" mà không phải chép cả tệp.
-    public static List<DashboardSection> BuildSections()
-    {
-        var list = new List<DashboardSection>
-        {
-            new(1, "Cover page", "Cover page", "In Process", 18, 5, "Eddie Lake"),
-            new(2, "Table of contents", "Table of contents", "Done", 29, 24, "Eddie Lake"),
-            new(3, "Executive summary", "Narrative", "Done", 10, 13, "Eddie Lake"),
-            new(4, "Technical approach", "Narrative", "Done", 27, 23, "Jamik Tashpulatov"),
-            new(5, "Design", "Narrative", "In Process", 2, 16, "Jamik Tashpulatov"),
-            new(6, "Capabilities", "Narrative", "In Process", 20, 8, "Jamik Tashpulatov"),
-            new(7, "Integration with existing systems", "Narrative", "In Process", 19, 21, "Jamik Tashpulatov"),
-            new(8, "Innovation and Advantages", "Narrative", "Done", 25, 26, Unassigned),
-            new(9, "Overview of EMR's Innovative Solutions", "Technical content", "Done", 7, 23, Unassigned),
-            new(10, "Advanced Algorithms and Machine Learning", "Narrative", "Done", 30, 28, Unassigned),
-        };
-        string[] titles =
-        [
-            "Adaptive Communication Protocols", "Advantages Over Current Technologies", "Past Performance", "Customer Feedback and Satisfaction Levels",
-            "Implementation Challenges and Solutions", "Security Measures and Data Protection Policies", "Scalability and Future Proofing", "Cost-Benefit Analysis",
-            "User Training and Onboarding Experience", "Future Development Roadmap", "System Architecture Overview", "Risk Management Plan",
-            "Compliance Documentation", "API Documentation", "User Interface Mockups", "Database Schema", "Testing Methodology", "Deployment Strategy",
-            "Budget Breakdown", "Market Analysis", "Competitor Comparison", "Maintenance Plan", "User Personas", "Accessibility Compliance",
-            "Performance Metrics", "Disaster Recovery Plan", "Third-party Integrations", "User Feedback Summary", "Localization Strategy",
-        ];
-        string[] types = ["Narrative", "Technical content", "Plain language", "Legal", "Research", "Planning", "Financial", "Visual"];
-        string[] reviewers = ["Eddie Lake", "Jamik Tashpulatov", Unassigned, "Maya Johnson", "Carlos Rodriguez", "Sarah Chen", Unassigned, "Raj Patel"];
-        for (int i = 0; list.Count < 68; i++)
-        {
-            string title = i < titles.Length ? titles[i] : titles[i % titles.Length] + " " + (i / titles.Length + 1);
-            list.Add(new(list.Count + 1, title, types[i % types.Length], i % 3 == 0 ? "In Process" : "Done", 5 + i * 7 % 26, 3 + i * 11 % 27, reviewers[i % reviewers.Length]));
-        }
-        return list;
-    }
+    /// <summary>68 hàng của data.json (target / limit là chuỗi như bản gốc: ô nhập giữ nguyên chuỗi người dùng gõ).</summary>
+    public static List<DashboardSection> BuildSections() =>
+    [
+        new(1, "Cover page", "Cover page", "In Process", "18", "5", "Eddie Lake"),
+        new(2, "Table of contents", "Table of contents", "Done", "29", "24", "Eddie Lake"),
+        new(3, "Executive summary", "Narrative", "Done", "10", "13", "Eddie Lake"),
+        new(4, "Technical approach", "Narrative", "Done", "27", "23", "Jamik Tashpulatov"),
+        new(5, "Design", "Narrative", "In Process", "2", "16", "Jamik Tashpulatov"),
+        new(6, "Capabilities", "Narrative", "In Process", "20", "8", "Jamik Tashpulatov"),
+        new(7, "Integration with existing systems", "Narrative", "In Process", "19", "21", "Jamik Tashpulatov"),
+        new(8, "Innovation and Advantages", "Narrative", "Done", "25", "26", "Assign reviewer"),
+        new(9, "Overview of EMR's Innovative Solutions", "Technical content", "Done", "7", "23", "Assign reviewer"),
+        new(10, "Advanced Algorithms and Machine Learning", "Narrative", "Done", "30", "28", "Assign reviewer"),
+        new(11, "Adaptive Communication Protocols", "Narrative", "Done", "9", "31", "Assign reviewer"),
+        new(12, "Advantages Over Current Technologies", "Narrative", "Done", "12", "0", "Assign reviewer"),
+        new(13, "Past Performance", "Narrative", "Done", "22", "33", "Assign reviewer"),
+        new(14, "Customer Feedback and Satisfaction Levels", "Narrative", "Done", "15", "34", "Assign reviewer"),
+        new(15, "Implementation Challenges and Solutions", "Narrative", "Done", "3", "35", "Assign reviewer"),
+        new(16, "Security Measures and Data Protection Policies", "Narrative", "In Process", "6", "36", "Assign reviewer"),
+        new(17, "Scalability and Future Proofing", "Narrative", "Done", "4", "37", "Assign reviewer"),
+        new(18, "Cost-Benefit Analysis", "Plain language", "Done", "14", "38", "Assign reviewer"),
+        new(19, "User Training and Onboarding Experience", "Narrative", "Done", "17", "39", "Assign reviewer"),
+        new(20, "Future Development Roadmap", "Narrative", "Done", "11", "40", "Assign reviewer"),
+        new(21, "System Architecture Overview", "Technical content", "In Process", "24", "18", "Maya Johnson"),
+        new(22, "Risk Management Plan", "Narrative", "Done", "15", "22", "Carlos Rodriguez"),
+        new(23, "Compliance Documentation", "Legal", "In Process", "31", "27", "Sarah Chen"),
+        new(24, "API Documentation", "Technical content", "Done", "8", "12", "Raj Patel"),
+        new(25, "User Interface Mockups", "Visual", "In Process", "19", "25", "Leila Ahmadi"),
+        new(26, "Database Schema", "Technical content", "Done", "22", "20", "Thomas Wilson"),
+        new(27, "Testing Methodology", "Technical content", "In Process", "17", "14", "Assign reviewer"),
+        new(28, "Deployment Strategy", "Narrative", "Done", "26", "30", "Eddie Lake"),
+        new(29, "Budget Breakdown", "Financial", "In Process", "13", "16", "Jamik Tashpulatov"),
+        new(30, "Market Analysis", "Research", "Done", "29", "32", "Sophia Martinez"),
+        new(31, "Competitor Comparison", "Research", "In Process", "21", "19", "Assign reviewer"),
+        new(32, "Maintenance Plan", "Technical content", "Done", "16", "23", "Alex Thompson"),
+        new(33, "User Personas", "Research", "In Process", "27", "24", "Nina Patel"),
+        new(34, "Accessibility Compliance", "Legal", "Done", "18", "21", "Assign reviewer"),
+        new(35, "Performance Metrics", "Technical content", "In Process", "23", "26", "David Kim"),
+        new(36, "Disaster Recovery Plan", "Technical content", "Done", "14", "17", "Jamik Tashpulatov"),
+        new(37, "Third-party Integrations", "Technical content", "In Process", "25", "28", "Eddie Lake"),
+        new(38, "User Feedback Summary", "Research", "Done", "20", "15", "Assign reviewer"),
+        new(39, "Localization Strategy", "Narrative", "In Process", "12", "19", "Maria Garcia"),
+        new(40, "Mobile Compatibility", "Technical content", "Done", "28", "31", "James Wilson"),
+        new(41, "Data Migration Plan", "Technical content", "In Process", "19", "22", "Assign reviewer"),
+        new(42, "Quality Assurance Protocols", "Technical content", "Done", "30", "33", "Priya Singh"),
+        new(43, "Stakeholder Analysis", "Research", "In Process", "11", "14", "Eddie Lake"),
+        new(44, "Environmental Impact Assessment", "Research", "Done", "24", "27", "Assign reviewer"),
+        new(45, "Intellectual Property Rights", "Legal", "In Process", "17", "20", "Sarah Johnson"),
+        new(46, "Customer Support Framework", "Narrative", "Done", "22", "25", "Jamik Tashpulatov"),
+        new(47, "Version Control Strategy", "Technical content", "In Process", "15", "18", "Assign reviewer"),
+        new(48, "Continuous Integration Pipeline", "Technical content", "Done", "26", "29", "Michael Chen"),
+        new(49, "Regulatory Compliance", "Legal", "In Process", "13", "16", "Assign reviewer"),
+        new(50, "User Authentication System", "Technical content", "Done", "28", "31", "Eddie Lake"),
+        new(51, "Data Analytics Framework", "Technical content", "In Process", "21", "24", "Jamik Tashpulatov"),
+        new(52, "Cloud Infrastructure", "Technical content", "Done", "16", "19", "Assign reviewer"),
+        new(53, "Network Security Measures", "Technical content", "In Process", "29", "32", "Lisa Wong"),
+        new(54, "Project Timeline", "Planning", "Done", "14", "17", "Eddie Lake"),
+        new(55, "Resource Allocation", "Planning", "In Process", "27", "30", "Assign reviewer"),
+        new(56, "Team Structure and Roles", "Planning", "Done", "20", "23", "Jamik Tashpulatov"),
+        new(57, "Communication Protocols", "Planning", "In Process", "15", "18", "Assign reviewer"),
+        new(58, "Success Metrics", "Planning", "Done", "30", "33", "Eddie Lake"),
+        new(59, "Internationalization Support", "Technical content", "In Process", "23", "26", "Jamik Tashpulatov"),
+        new(60, "Backup and Recovery Procedures", "Technical content", "Done", "18", "21", "Assign reviewer"),
+        new(61, "Monitoring and Alerting System", "Technical content", "In Process", "25", "28", "Daniel Park"),
+        new(62, "Code Review Guidelines", "Technical content", "Done", "12", "15", "Eddie Lake"),
+        new(63, "Documentation Standards", "Technical content", "In Process", "27", "30", "Jamik Tashpulatov"),
+        new(64, "Release Management Process", "Planning", "Done", "22", "25", "Assign reviewer"),
+        new(65, "Feature Prioritization Matrix", "Planning", "In Process", "19", "22", "Emma Davis"),
+        new(66, "Technical Debt Assessment", "Technical content", "Done", "24", "27", "Eddie Lake"),
+        new(67, "Capacity Planning", "Planning", "In Process", "21", "24", "Jamik Tashpulatov"),
+        new(68, "Service Level Agreements", "Legal", "Done", "26", "29", "Assign reviewer"),
+
+    ];
 }

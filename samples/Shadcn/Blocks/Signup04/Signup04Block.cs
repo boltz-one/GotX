@@ -7,7 +7,7 @@ using GotX.Components;
 /// </summary>
 public sealed class Signup04Block : SignupBlock
 {
-    public static readonly SitePage Page = new("signup-04", "Signup 04", static app => app.New(new Signup04Block()), FullBleed: true);
+    public static readonly SitePage Page = new("signup-04", "Signup 04", static app => app.New(new Signup04Block()), FullBleed: true, Style: ComponentStyle.NewYorkV4);
 
     static readonly FieldSpec[] FieldSpecs = [Email, Password, ConfirmPassword];
 
@@ -18,21 +18,21 @@ public sealed class Signup04Block : SignupBlock
         var form = Ui.FieldGroup(w)
             .Child(w.Div().Class("flex flex-col items-center gap-2 text-center")
                 .Child(w.Div().Class("text-2xl font-bold").Child("Create your account"))
-                .Child(w.Div().Class("text-sm text-muted-foreground").Child("Enter your email below to create your account")))
+                .Child(w.Div().Class("text-sm text-balance text-muted-foreground").Child("Enter your email below to create your account")))
             .Child(FieldView(w, "email", description: "We'll use this to contact you. We will not share your email with anyone else."))
             .Child(PasswordPair(w))
             .Child(SubmitField(w))
-            .Child(Ui.FieldSeparator(w, "Or continue with"))
+            .Child(Ui.FieldSeparator(w, "Or continue with").Class("-my-2") /* TODO(style): FieldSeparator chưa có trong bảng style (-my-2 của v4) */)
             .Child(SocialRow(w))
             .Child(SignInLine(w));
 
-        var card = Ui.Card(w).Key("auth-card").Class("p-0")
+        var card = Ui.Card(w).Key("auth-card").Class("overflow-hidden p-0")
             .Child(Ui.CardContent(w).Class("grid p-0 md:grid-cols-2")
                 .Child(w.Div().Key("auth-form").Class("p-6 md:p-8").Child(form))
                 .Child(PlaceholderImage.Panel(w)));
 
         // max-w-sm md:max-w-4xl: 24rem, từ md trở lên 56rem.
         return PageFrame(w, "signup-04", w.Div().Class(ColumnSm + " md:w-[896px]")
-            .Child(w.Div().Class("flex flex-col gap-6").Child(card).Child(TermsLine(w))));
+            .Child(w.Div().Class("flex flex-col gap-6").Child(card).Child(TermsLine(w, narrow: false))));
     }
 }

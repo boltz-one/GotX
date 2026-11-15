@@ -31,7 +31,7 @@ public static class ShotRenderer
     /// <param name="pixels">false = layout only (tests): the canvas stays 0×0, no rasterization.</param>
     public static ShotResult Render(ShotTarget target, TextSystem text, bool pixels = true)
     {
-        var session = new HeadlessSession(target.Page, text, target.Dark, new Size(target.Width, target.Height));
+        using var session = new HeadlessSession(target.Page, text, target.Dark, new Size(target.Width, target.Height));
         if (target.FullPage)
         {
             // Full page: like document.scrollHeight — the window grows to the content height (never below the viewport).
@@ -66,6 +66,7 @@ public static class ShotRenderer
         {
             var q = p;
             q.Bounds = p.Bounds.Offset(dx, dy);
+            if (p.HasExclusion) q.Source = p.Source.Offset(dx, dy);
             q.Clip = p.Clip.Offset(dx, dy);
             scene.Add(q);
         }

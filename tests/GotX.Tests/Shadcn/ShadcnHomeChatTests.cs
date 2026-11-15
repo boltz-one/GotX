@@ -26,7 +26,7 @@ static partial class ShadcnHomeTests
             for (int i = 0; i < 40 && chat.IsBusy; i++) t.Advance(0.25);
             t.Assert.True(!chat.IsBusy, "câu trả lời hiện xong"); t.Assert.TextVisible("That's the classic streaming scroll problem.");
             t.Assert.TextContains("chat-draft", "Okay, but when someone sends");
-            t.Settle(); t.Assert.NoLint(); t.Perf.ExpectIdle();
+            t.Settle(); t.Assert.NoLint(HomeLint()); t.Perf.ExpectIdle();
             PressOn(t, "chat-reset");
             t.Assert.True(chat.Turn == 0 && chat.Scroller.Items.Count == 0, "Reset xoá cuộc trò chuyện"); t.Assert.Exists("chat-empty");
             t.Click(chat.AttachMenu.TriggerKey); t.Settle();
@@ -61,9 +61,9 @@ static partial class ShadcnHomeTests
             t.Open(new SiteShell(), new Size(1440, 900));
             t.Settle();
             t.Assert.TextVisible("The Foundation for your Design System"); t.Assert.Visible("ui-elements-card");
-            t.Assert.NoLint();
+            t.Assert.NoLint(HomeLint());
             t.Click("toggle-theme"); t.Settle();
-            t.Assert.True(t.Window.DarkMode, "đổi sang dark"); t.Assert.NoLint(); t.Perf.ExpectIdle();
+            t.Assert.True(t.Window.DarkMode, "đổi sang dark"); t.Assert.NoLint(HomeLint()); t.Perf.ExpectIdle();
         });
     }
 }

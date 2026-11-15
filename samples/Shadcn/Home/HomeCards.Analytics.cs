@@ -22,8 +22,8 @@ static partial class HomeCards
 
     /// <summary>analytics-card.tsx: thẻ cỡ sm, số khách + badge tăng trưởng, đồ thị vùng chạm đáy thẻ (pb-0).</summary>
     public static Div Analytics(Window w) =>
-        Ui.Card(w, CardSize.Sm).Class("w-full gap-4 rounded-[24px] py-4 pb-0 shadow-sm ring-foreground/5 dark:ring-foreground/10").Key("analytics-card")
-            .Child(Ui.CardHeader(w, CardSize.Sm, hasAction: true).Class("px-4")
+        Ui.Card(w, CardSize.Sm).Class("w-full pb-0").Key("analytics-card")
+            .Child(Ui.CardHeader(w, CardSize.Sm, hasAction: true)
                 .Child(Ui.CardTitle(w, "Analytics", CardSize.Sm))
                 .Child(Ui.CardAction(w).Child(Ui.Button(w, "View Analytics", ButtonVariant.Outline, ButtonSize.Sm).Key("view-analytics")))
                 .Child(w.Div().Class("flex items-center gap-1.5 text-sm text-muted-foreground")

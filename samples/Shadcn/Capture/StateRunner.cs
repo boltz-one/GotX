@@ -47,12 +47,12 @@ public static class StateRunner
     {
         string name = sc.FileName(theme);
         StateShot shot;
-        try { shot = StatePlayer.Play(sc, page, text, theme == "dark"); }
+        try { shot = StatePlayer.Play(sc, page, text, theme == "dark", ReferenceFrame(root, name)); }
         catch (StateException e) { return new StateRow(sc, theme, null, null, RefOverlays(root, name), 0, "GotX: " + e.Message); }
         PngWriter.Write(Path.Combine(root, "gotx", name + ".png"), shot.Image);
         LayoutMapFile.Write(Path.Combine(root, "gotx", name + ".json"), sc.Page, shot.Image.Width, shot.Image.Height, theme, shot.Items);
         var (stats, layout) = Compare(root, name, shot, writeImages: true);
-        string? note = stats is null ? "no reference capture" : null;
+        string? note = stats is null ? "no reference capture" : shot.Overflow ? "GotX content extends beyond the reference frame" : null;
         return new StateRow(sc, theme, stats, layout, RefOverlays(root, name), shot.Overlays, note);
     }
 
@@ -71,6 +71,31 @@ public static class StateRunner
         var layout = File.Exists(refJson) ? LayoutMatcher.Match(LayoutMapFile.Read(refJson, out _, out _), shot.Items) : null;
         return (stats, layout);
     }
+
+    /// <summary>The reference crop (region + anchor: first modal overlay, else the first target) from states.mjs JSON.</summary>
+    public static RefFrame? ReferenceFrame(string root, string name)
+    {
+        string json = Path.Combine(root, "reference", name + ".json");
+        if (!File.Exists(json)) return null;
+        using var doc = System.Text.Json.JsonDocument.Parse(File.ReadAllBytes(json));
+        var e = doc.RootElement;
+        if (!e.TryGetProperty("region", out var region) || !e.TryGetProperty("target", out var target)) return null;
+        var anchor = Rect(target);
+        if (e.TryGetProperty("overlays", out var overlays))
+            foreach (var o in overlays.EnumerateArray())
+                if (o.TryGetProperty("modal", out var m) && m.GetBoolean()) { anchor = Rect(o); break; }
+        var area = Rect(region);
+        var items = LayoutMapFile.Read(json, out _, out _);
+        foreach (var i in items)
+        {
+            i.Rect = new Bounds(i.Rect.X + area.X, i.Rect.Y + area.Y, i.Rect.Width, i.Rect.Height);
+            i.TextRect = new Bounds(i.TextRect.X + area.X, i.TextRect.Y + area.Y, i.TextRect.Width, i.TextRect.Height);
+        }
+        return new RefFrame(area, anchor, items);
+    }
+
+    static Bounds Rect(System.Text.Json.JsonElement r) =>
+        new(r.GetProperty("x").GetSingle(), r.GetProperty("y").GetSingle(), r.GetProperty("w").GetSingle(), r.GetProperty("h").GetSingle());
 
     static int RefOverlays(string root, string name)
     {

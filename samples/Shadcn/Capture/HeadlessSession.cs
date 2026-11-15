@@ -1,4 +1,5 @@
 using GotX;
+using GotX.Components;
 using GotX.Text;
 
 namespace ShadcnShots;
@@ -8,7 +9,7 @@ namespace ShadcnShots;
 /// captures, transitions/timers run to their end on demand. Input goes through <see cref="Window.DispatchInput"/> like a
 /// real platform (same as GotX.Test's UiTest, which is tied to its own system fonts — this one uses Geist).
 /// </summary>
-public sealed class HeadlessSession
+public sealed class HeadlessSession : IDisposable
 {
     public const double FrameSeconds = 0.016;
     double _now = 1000;
@@ -17,9 +18,17 @@ public sealed class HeadlessSession
     public Window Window { get; }
     public Size Size { get; set; }
 
+    readonly ComponentStyle _previousStyle;
+
+    /// <summary>
+    /// Activates <see cref="SitePage.Style"/> app-wide before the page view is created (like SiteShell does when it opens the page);
+    /// <see cref="Dispose"/> restores the previous style so other captures / tests are not affected.
+    /// </summary>
     public HeadlessSession(SitePage page, TextSystem text, bool dark, Size size)
     {
         App = new App { Clock = () => _now };
+        _previousStyle = ComponentTheme.Style;
+        ComponentTheme.Use(App, page.Style);
         Window = new Window(App, text) { Clock = () => _now, DarkMode = dark };
         Window.Root = App.New(new ShotHost(page));
         Size = size;
@@ -81,4 +90,6 @@ public sealed class HeadlessSession
     }
 
     public UiSnapshot Inspect() => Window.Inspect(Size, 1);
+
+    public void Dispose() => ComponentTheme.Use(App, _previousStyle);
 }

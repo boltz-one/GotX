@@ -12,13 +12,13 @@ public sealed class AuthField
     public const string RequiredMessage = "Please fill out this field.";
     public const string EmailMessage = "Please enter a valid email address.";
 
-    readonly PasswordMask? _mask;
     bool _flagged;
 
     internal AuthField(string id, string label, AuthFieldKind kind, Input input)
     {
         Id = id; Label = label; Kind = kind; Input = input;
-        if (kind == AuthFieldKind.Password) _mask = new PasswordMask();
+        // type="password": ô tự che bằng dấu chấm (Ctrl+C cũng chỉ chép ra dấu chấm, như trình duyệt).
+        if (kind == AuthFieldKind.Password) input.Box.Password = true;
         // Khoá dựng một lần ở đây để Render không ghép chuỗi.
         Key = "auth-" + id; LabelKey = Key + "-label"; ErrorKey = Key + "-error";
     }
@@ -37,10 +37,8 @@ public sealed class AuthField
     /// <summary>Thông báo lỗi đang hiện dưới ô; null = hợp lệ hoặc chưa gửi.</summary>
     public string? Error { get; private set; }
 
-    /// <summary>Giá trị thật: mật khẩu lấy từ lớp che (ô chỉ giữ dấu chấm), ô khác bỏ khoảng trắng hai đầu.</summary>
-    public string Value => _mask?.Value ?? Input.Text.Trim();
-
-    internal void SyncMask() => _mask?.Sync(Input);
+    /// <summary>Giá trị gửi đi: mật khẩu giữ nguyên, ô khác bỏ khoảng trắng hai đầu.</summary>
+    public string Value => Kind == AuthFieldKind.Password ? Input.Text : Input.Text.Trim();
 
     internal string? Check()
     {

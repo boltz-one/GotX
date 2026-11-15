@@ -29,6 +29,7 @@ public sealed class NotificationsCard : View
 
     protected override void OnCreated()
     {
+        using var _ = HomeStyle.Use();
         for (int i = 0; i < _boxes.Length; i++) _boxes[i] = App.New(new Checkbox { Checked = Options[i].On });
     }
 
@@ -36,11 +37,12 @@ public sealed class NotificationsCard : View
 
     public override Div Render(Window w)
     {
-        var group = HomeUi.FieldGroup(w);
+        using var _ = HomeStyle.Use();
+        var group = Ui.FieldGroup(w);
         for (int i = 0; i < Options.Length; i++)
             group.Child(Ui.Field(w, FieldOrientation.Horizontal).Class("items-start gap-3")
-                // pt-0.5: ô 16px thẳng hàng với dòng nhãn cao 20px.
-                .Child(w.Div().Class("flex pt-0.5").Key(BoxKeys[i]).Child(w.View(_boxes[i])))
+                // [&>[role=checkbox]]:mt-px của Field ngang có FieldContent.
+                .Child(w.Div().Class("flex pt-px").Key(BoxKeys[i]).Child(w.View(_boxes[i])))
                 .Child(Ui.FieldContent(w)
                     .Child(Ui.FieldLabel(w, Options[i].Label).Class("cursor-pointer").Key(LabelKeys[i])
                         .OnClick(_boxes[i], static (b, _) => b.Toggle()))

@@ -62,7 +62,6 @@ public abstract partial class AuthBlock : View
 
     void OnTextChanged(AuthField field)
     {
-        field.SyncMask();
         // TextChanged tới sau mỗi phím: chỉ khi ô đang mang lỗi mới phải render lại cả block (để gỡ dòng lỗi).
         if (field.Error is null) return;
         field.SetError(null);

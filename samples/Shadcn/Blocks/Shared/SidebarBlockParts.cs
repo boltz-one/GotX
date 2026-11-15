@@ -4,12 +4,18 @@ using GotX.Components;
 /// <summary>Phần mà sidebar-07 và sidebar-03 dùng chung: breadcrumb của header, ô logo, vùng nội dung giữ chỗ.</summary>
 static class SidebarBlockParts
 {
-    /// <summary>Breadcrumb "Build Your Application › Data Fetching"; mục đầu và dấu phân cách ẩn dưới md như bản gốc.</summary>
+    /// <summary>
+    /// Breadcrumb "Build Your Application › Data Fetching" theo ui/breadcrumb.tsx của new-york-v4 (gap-1.5 sm:gap-2.5,
+    /// ChevronRight size-3.5); mục đầu và dấu phân cách ẩn dưới md như bản gốc.
+    /// </summary>
     public static Div Breadcrumb(Window w) =>
-        Ui.Breadcrumb(w)
-            .Child(Ui.BreadcrumbLink(w, "Build Your Application").Class("hidden md:block").Key("crumb-parent"))
-            .Child(Ui.BreadcrumbSeparator(w).Class("hidden md:flex"))
-            .Child(Ui.BreadcrumbPage(w, "Data Fetching"));
+        w.Div().Class("flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground sm:gap-2.5")
+            .Child(w.Div().Key("crumb-parent").Focusable().Class("hidden cursor-pointer rounded-sm transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring/50 md:block")
+                .Child("Build Your Application"))
+            .Child(w.Div().Class("hidden md:flex").Child(Icon.ChevronRight(w).Class("size-3.5")))
+            .Child(w.Div().Class("font-normal text-foreground").Child("Data Fetching"));
+    /// <summary>SidebarTrigger của new-york-v4: Button ghost size-7 với PanelLeftIcon (không có active:translate của kiểu mới).</summary>
+    public static Div Trigger(Window w) => Ui.Button(w, ButtonVariant.Ghost, ButtonSize.Icon).Class("size-7").Child(Icon.PanelLeft(w));
 
     /// <summary>Đường kẻ dọc cao 16px giữa nút trigger và breadcrumb (Separator orientation="vertical" className="mr-2 h-4").</summary>
     public static Div HeaderSeparator(Window w) =>

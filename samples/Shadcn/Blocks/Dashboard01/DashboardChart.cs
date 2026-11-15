@@ -2,94 +2,97 @@ using GotX;
 using GotX.Components;
 
 /// <summary>
-/// Thẻ "Total Visitors" của dashboard-01 (chart-area-interactive.tsx): biểu đồ vùng + nhóm nút chọn khoảng thời gian.
-/// Là view riêng để đổi khoảng thời gian chỉ vẽ lại thẻ này, không phải cả dashboard.
-/// Khác bản gốc: có trục Y và chú giải (khung của <see cref="Chart"/>), không có tooltip khi rê chuột, vùng tô một màu
-/// thay cho gradient; nhóm nút luôn hiện (bản gốc đổi sang Select khi thẻ hẹp hơn 767px – cần container query).
+/// Thẻ "Total Visitors" của dashboard-01 (chart-area-interactive.tsx): biểu đồ vùng + chọn khoảng thời gian bằng
+/// ToggleGroup (thẻ rộng ≥ 767px) hoặc Select (hẹp hơn). Là view riêng để đổi khoảng thời gian chỉ vẽ lại thẻ này.
+/// Như Radix ToggleGroup type="single": bấm lại nút đang bật thì bỏ chọn (timeRange = "" → lọc như 90 ngày, Select hiện
+/// placeholder). Tab vào nhóm dừng ở nút đang bật (hoặc nút đầu), ←/→ chuyển focus vòng quanh, Enter/Space bật.
+/// Container query <c>@[767px]/card</c> / <c>@[540px]/card</c>: thẻ rộng = cửa sổ − 296px (sidebar + lề) − 48px (lg:px-6),
+/// nên ToggleGroup từ cửa sổ 1111px, mô tả dài từ 868px.
 /// </summary>
 public sealed class DashboardChart : View
 {
-    public const string CardKey = "dashboard-chart", AxisKey = "dashboard-chart-axis";
+    public const string CardKey = "chart-card";
+    static readonly string[] ToggleKeys = ["toggle-90d", "toggle-30d", "toggle-7d"];
 
-    ToggleGroup _toggle = null!;
-    Chart _chart = null!;
-    int _range;
+    DashboardAreaChart _plot = null!;
+    Select _select = null!;
+    Indexed<DashboardChart>[]? _refs;
+    string _range = "90d";
+    int _focus = -1;
 
-    public Chart Chart => _chart;
-    public ToggleGroup Toggle => _toggle;
+    public DashboardAreaChart Plot => _plot;
+    public Select Select => _select;
 
-    /// <summary>Số điểm dữ liệu đang vẽ (91 / 30 / 7).</summary>
-    public int Points => DashboardChartData.Ranges[_range].Points;
-
-    /// <summary>Khoảng thời gian đang chọn: 0 = 3 tháng, 1 = 30 ngày, 2 = 7 ngày.</summary>
-    public int Range
+    /// <summary>timeRange của bản gốc: "90d", "30d", "7d" hoặc "" (không nút nào bật).</summary>
+    public string Range
     {
         get => _range;
         set
         {
             if (_range == value) return;
             _range = value;
-            var data = DashboardChartData.Ranges[value];
-            _chart.Categories = data.Categories;
-            _chart.Series = data.Series;
-            if (!_toggle.IsPressed(value)) _toggle.SetPressed(value, true);
+            _plot.Range = value;
+            int index = Array.IndexOf(DashboardChartData.RangeValues, value);
+            if (_select.SelectedIndex != index) _select.SelectedIndex = index;
             Notify();
         }
     }
 
     protected override void OnCreated()
     {
-        var data = DashboardChartData.Ranges[0];
-        _chart = App.New(new Chart
-        {
-            Kind = ChartKind.Area, Categories = data.Categories, Series = data.Series, PlotClass = "h-[250px]", StrokeWidth = 1.5f,
-        });
-        _toggle = App.New(new ToggleGroup { Items = DashboardChartData.RangeLabels, Variant = ToggleVariant.Outline });
-        _toggle.SetPressed(0, true);
-        App.Subscribe<ToggleGroup.ValueChanged>(_toggle, e =>
-        {
-            // ToggleGroup một-lựa-chọn cho phép bấm lại để tắt; biểu đồ luôn cần một khoảng nên bật lại nút đang chọn.
-            if (e.Selected.Count == 0) _toggle.SetPressed(_range, true);
-            else Range = e.Selected[0];
-        });
+        _plot = App.New(new DashboardAreaChart());
+        _select = App.New(new Select { Items = DashboardChartData.RangeLabels, Placeholder = "Last 3 months", SelectedIndex = 0, TriggerClass = "h-8 w-full", ContentClass = "rounded-xl" });
+        App.Subscribe<Select.ValueChanged>(_select, e => Range = e.Index >= 0 ? DashboardChartData.RangeValues[e.Index] : "");
+    }
+
+    void Toggle(int index)
+    {
+        Range = _range == DashboardChartData.RangeValues[index] ? "" : DashboardChartData.RangeValues[index];
+        _focus = index;
+        // Bấm chuột focus chính nút (button của Radix), kể cả khi nó chưa là điểm dừng Tab; không hiện vòng focus.
+        _window?.FocusKey(ToggleKeys[index], visible: false);
+    }
+
+    bool ToggleKey(int index, KeyEvent e)
+    {
+        int n = ToggleKeys.Length;
+        int next = e.Key switch { Key.Right or Key.Down => (index + 1) % n, Key.Left or Key.Up => (index + n - 1) % n, Key.Home => 0, Key.End => n - 1, _ => -1 };
+        if (next < 0) return false;
+        _focus = next;
+        Notify();
+        _window?.FocusKey(ToggleKeys[next]); // nút đích thành điểm dừng Tab ở frame sau; FocusKey chờ tới khi nó có mặt
+        return true;
+    }
+
+    Window? _window;
+
+    Div ToggleGroup(Window w)
+    {
+        var refs = Indexed<DashboardChart>.Ensure(ref _refs, this, ToggleKeys.Length);
+        int on = Array.IndexOf(DashboardChartData.RangeValues, _range);
+        // Roving tabindex: chỉ một nút là điểm dừng Tab – nút vừa được focus (chuột / mũi tên), ban đầu là nút đang bật.
+        int stop = _focus >= 0 ? _focus : Math.Max(on, 0);
+        var group = w.Div().Key("toggle-group").Class(V4.ToggleGroupClass + " hidden min-[1111px]:flex");
+        for (int i = 0; i < ToggleKeys.Length; i++)
+            group.Child(w.Div().Key(ToggleKeys[i]).Focusable(i == stop).Class(V4.ToggleItem(i, ToggleKeys.Length, i == on)).Class("px-4")
+                .OnClick(refs[i], static (r, _) => r.Owner.Toggle(r.Index))
+                .OnKey(refs[i], static (r, e) => r.Owner.ToggleKey(r.Index, e))
+                .Child(DashboardChartData.RangeLabels[i]));
+        return group;
     }
 
     public override Div Render(Window w)
     {
-        var axis = w.Div().Key(AxisKey).Class("flex justify-between pl-14 pr-2 text-xs text-muted-foreground");
-        foreach (string label in DashboardChartData.Ranges[_range].Axis) axis.Child(w.Div().Child(label));
-        return Ui.Card(w).Key(CardKey).Class("shadow-xs")
+        _window = w;
+        return Ui.Card(w).Key(CardKey)
             .Child(Ui.CardHeader(w, hasAction: true)
                 .Child(Ui.CardTitle(w, "Total Visitors"))
-                .Child(Ui.CardAction(w).Child(w.View(_toggle)))
-                .Child(Ui.CardDescription(w, "Total for the last 3 months")))
-            .Child(Ui.CardContent(w).Class("flex flex-col gap-1 pt-2").Child(w.View(_chart)).Child(axis));
-    }
-}
-
-/// <summary>Bốn thẻ số liệu đầu trang (section-cards.tsx). Không có state nên chỉ là hàm dựng.</summary>
-public static class DashboardCards
-{
-    /// <summary>
-    /// Lưới thẻ: 1 cột → 2 cột (md) → 4 cột (xl). Bản gốc chia theo bề rộng vùng nội dung (<c>@xl/main</c>, <c>@5xl/main</c>);
-    /// Core chưa có container query nên dùng breakpoint cửa sổ cho ra cùng số cột ở 1440 và 1024. Nền gradient của thẻ
-    /// (<c>from-primary/5 to-card</c>) thay bằng nền card đặc.
-    /// </summary>
-    public static Div Render(Window w)
-    {
-        var grid = w.Div().Key("dashboard-cards").Class("grid shrink-0 grid-cols-1 gap-4 px-4 md:grid-cols-2 lg:px-6 xl:grid-cols-4");
-        foreach (var stat in Dashboard01Data.Stats)
-        {
-            Func<Window, Div> trend = stat.Up ? DashboardIcons.TrendingUp : DashboardIcons.TrendingDown;
-            grid.Child(Ui.Card(w).Class("shadow-xs")
-                .Child(Ui.CardHeader(w, hasAction: true)
-                    .Child(Ui.CardDescription(w, stat.Label))
-                    .Child(Ui.CardAction(w).Child(Ui.Badge(w, BadgeVariant.Outline).Child(trend(w).Class("size-3")).Child(stat.Trend)))
-                    .Child(w.Div().Class("text-2xl font-semibold").Child(stat.Value)))
-                .Child(w.Div().Class("flex flex-col items-start gap-1.5 px-4 text-sm")
-                    .Child(w.Div().Class("flex items-center gap-2 font-medium").Child(w.Div().Class("truncate").Child(stat.Headline)).Child(trend(w)))
-                    .Child(w.Div().Class("text-muted-foreground").Child(stat.Note))));
-        }
-        return grid;
+                .Child(Ui.CardAction(w)
+                    .Child(ToggleGroup(w))
+                    .Child(w.View(_select).Class("grid w-40 min-[1111px]:hidden")))
+                .Child(w.Div().Class("col-start-1 text-sm text-muted-foreground")
+                    .Child(w.Div().Class("hidden min-[868px]:block").Child("Total for the last 3 months"))
+                    .Child(w.Div().Class("min-[868px]:hidden").Child("Last 3 months"))))
+            .Child(w.Div().Class("px-2 pt-4 sm:px-6 sm:pt-6").Child(w.View(_plot)));
     }
 }

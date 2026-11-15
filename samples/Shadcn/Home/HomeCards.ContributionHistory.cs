@@ -8,15 +8,15 @@ static partial class HomeCards
     // Mỗi cột một màu chart-N như data-[index=N]:bg-chart-N của bản gốc; chuỗi dựng sẵn, không nối class mỗi frame.
     static readonly string[] ContributionBars =
     [
-        "min-h-2 rounded-lg bg-chart-1", "min-h-2 rounded-lg bg-chart-2", "min-h-2 rounded-lg bg-chart-3",
-        "min-h-2 rounded-lg bg-chart-4", "min-h-2 rounded-lg bg-chart-5",
+        "min-h-2 shrink-0 rounded-lg bg-chart-1", "min-h-2 shrink-0 rounded-lg bg-chart-2", "min-h-2 shrink-0 rounded-lg bg-chart-3",
+        "min-h-2 shrink-0 rounded-lg bg-chart-4", "min-h-2 shrink-0 rounded-lg bg-chart-5",
     ];
 
     static readonly string[] BarKeys = ["contribution-bar-0", "contribution-bar-1", "contribution-bar-2", "contribution-bar-3", "contribution-bar-4"];
 
-    // Bản gốc đặt height theo % của cột cao 200px rồi để flex co lại chừa chỗ cho nhãn; ở đây tính thẳng ra px:
-    // 200 − nhãn 16 − gap 8 = 176px cho cột cao nhất.
-    const float ContributionPlot = 176, ContributionMax = 1300;
+    // Bản gốc: cột cao amount/max × 200px trong ô flex-col cao 200px, cùng nhãn 16px + gap 8px; chỉ cột vượt chỗ (cột cao
+    // nhất) bị flex co lại còn 200 − 24 = 176px, các cột khác giữ đúng tỉ lệ.
+    const float ContributionColumn = 200, ContributionLabel = 24, ContributionMax = 1300;
 
     /// <summary>contribution-history.tsx: biểu đồ cột 5 tháng (dựng bằng div như bản gốc), hai ô tóm tắt, nút xem báo cáo.</summary>
     public static Div ContributionHistory(Window w)
@@ -25,7 +25,7 @@ static partial class HomeCards
         for (int i = 0; i < Contributions.Length; i++)
         {
             var bar = w.Div().Class(ContributionBars[i]).Key(BarKeys[i]);
-            bar.Style.Height = Length.Px(MathF.Round(Contributions[i].Amount / ContributionMax * ContributionPlot));
+            bar.Style.Height = Length.Px(MathF.Min(Contributions[i].Amount / ContributionMax * ContributionColumn, ContributionColumn - ContributionLabel));
             chart.Child(w.Div().Class("flex h-full flex-1 flex-col justify-end gap-2")
                 .Child(bar)
                 .Child(w.Div().Class("text-center text-xs text-muted-foreground").Child(Contributions[i].Month)));
@@ -44,8 +44,8 @@ static partial class HomeCards
     }
 
     static Div Summary(Window w, string label, string value, string note) =>
-        HomeUi.MutedStack(w).Child(w.Div().Class("flex flex-col gap-1")
-            .Child(w.Div().Class(HomeUi.Caps).Child(label))
+        MutedColumn(w).Child(w.Div().Class("flex flex-col gap-1")
+            .Child(Caption(w, label))
             .Child(w.Div().Class("text-base font-semibold").Child(value))
             .Child(w.Div().Class("text-sm text-muted-foreground").Child(note)));
 }

@@ -18,6 +18,8 @@ public sealed class SiteShell : View
     {
         if (_current == id) return;
         _current = id;
+        // Đổi style trước khi trang mới dựng: component tạo ở trang đó theo style đang bật (đổi lúc đang vẽ sẽ xoá cache giữa frame).
+        ComponentTheme.Use(App, CurrentPage.Style);
         Notify();
     }
 

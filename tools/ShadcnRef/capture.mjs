@@ -1,5 +1,5 @@
 // Captures the shadcn/ui reference screenshots + layout maps that samples/Shadcn is compared against.
-// Usage: node tools/ShadcnRef/capture.mjs [--only home,login-03] [--out <dir>]
+// Usage: node tools/ShadcnRef/capture.mjs [--only home,login-03] [--out <dir>] [--json-only]
 // Output (default samples/Shadcn/screenshots/reference): <page>-<width>-<theme>.png/.json + ../manifest.json.
 // One page at a time, sequential, no cookies or personal data: a fresh temporary Edge profile per run.
 // Interaction states: see states.mjs.
@@ -15,6 +15,7 @@ const args = process.argv.slice(2);
 const opt = (name) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : undefined; };
 const outDir = resolve(opt('--out') ?? join(repo, 'samples', 'Shadcn', 'screenshots', 'reference'));
 const only = opt('--only')?.split(',');
+const jsonOnly = args.includes('--json-only'); // refresh layout maps, keep the committed PNGs
 
 // Home: full-page captures without the site header (GotX's home view has no site header either; see README).
 // Blocks: the standalone preview routes the iframes on /blocks load, captured at the viewport only.
@@ -70,10 +71,12 @@ async function capture(page, p, width, height, theme, name) {
   if (isDark !== (theme === 'dark')) throw new Error(`${name}: theme did not apply`);
   const shotW = width;
   const shotH = p.fullPage ? await page.evaluate('Math.ceil(document.documentElement.scrollHeight)') : height;
-  const shot = await page.send('Page.captureScreenshot', {
-    format: 'png', captureBeyondViewport: p.fullPage, clip: { x: 0, y: 0, width: shotW, height: shotH, scale: 1 },
-  });
-  writeFileSync(join(outDir, `${name}.png`), Buffer.from(shot.data, 'base64'));
+  if (!jsonOnly) {
+    const shot = await page.send('Page.captureScreenshot', {
+      format: 'png', captureBeyondViewport: p.fullPage, clip: { x: 0, y: 0, width: shotW, height: shotH, scale: 1 },
+    });
+    writeFileSync(join(outDir, `${name}.png`), Buffer.from(shot.data, 'base64'));
+  }
   const elements = await page.evaluate(layoutMapJs);
   const map = { page: p.id, url: p.url, width, height: shotH, theme, viewport: [width, height], elements };
   writeFileSync(join(outDir, `${name}.json`), JSON.stringify(map) + '\n');

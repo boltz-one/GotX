@@ -37,23 +37,35 @@ public static class LayoutExport
         return v.Width > 0 && v.Height > 0 && n.Opacity > 0;
     }
 
+    [ThreadStatic] static List<TextLine>? t_lines;
+
     /// <summary>
-    /// Horizontal extent of the text run like a DOM Range box: advance width of the (single) line placed by text-align;
-    /// a wrapped run keeps the node box. Vertical: the node's line boxes (callers compare vertical centres).
+    /// Union of the painted line boxes, like a DOM Range rect: the text is cased and wrapped exactly as Window.PaintText does
+    /// (WrapStyled at box width + 0.01, so text-balance / tracking / tabular-nums / kerning apply; line-clamp limits the lines);
+    /// each line sits at box.x + (box.width − lineWidth) × align. x = leftmost line start, w = widest line (an ellipsized line
+    /// counts as the box width), y / h = first line top to last line bottom (line-height boxes; callers compare vertical centres).
     /// </summary>
     static Bounds TextBox(UiNode n, TextSystem text)
     {
         var b = n.Screen;
-        var style = n.TextStyle;
-        float w = text.Measure(text.ApplyCase(n.Text!, style.Case), style);
-        if (w > b.Width + 0.5f) return b;
-        float x = style.Align switch
+        var ts = n.TextStyle;
+        string s = text.ApplyCase(n.Text!, ts.Case);
+        var lines = t_lines ??= new List<TextLine>();
+        text.WrapStyled(s, ts, ts.NoWrap ? float.NaN : b.Width + 0.01f, lines);
+        int shown = ts.LineClamp > 0 ? Math.Min(lines.Count, ts.LineClamp) : lines.Count;
+        if (shown == 0) return b;
+        float align = ts.Align switch { TextAlign.Center => 0.5f, TextAlign.Right => 1f, _ => 0f };
+        float x0 = float.MaxValue, x1 = float.MinValue;
+        for (int i = 0; i < shown; i++)
         {
-            TextAlign.Center => b.X + (b.Width - w) / 2,
-            TextAlign.Right => b.Right - w,
-            _ => b.X,
-        };
-        return new Bounds(x, b.Y, w, b.Height);
+            float w = lines[i].Width;
+            bool cut = (ts.Ellipsis && w > b.Width + 0.5f) || (i == shown - 1 && shown < lines.Count);
+            float x = cut ? b.X : b.X + (b.Width - w) * align;
+            if (cut) w = MathF.Min(w, b.Width);
+            x0 = MathF.Min(x0, x);
+            x1 = MathF.Max(x1, x + w);
+        }
+        return new Bounds(x0, b.Y, x1 - x0, shown * ts.LineHeight);
     }
 
     static string? SubtreeText(UiSnapshot snap, int index, string?[] cache)

@@ -64,7 +64,7 @@ static class ShadcnFidelityTests
         string root = Path.Combine(ScreenshotsDir(), "states"), name = sc.FileName("light");
         if (!File.Exists(Path.Combine(root, "reference", name + ".png"))) { t.Notes.Add($"no reference capture for {name}: skipped"); return; }
         StateShot shot;
-        try { shot = StatePlayer.Play(sc, page, Fonts, dark: false); }
+        try { shot = StatePlayer.Play(sc, page, Fonts, dark: false, StateRunner.ReferenceFrame(root, name)); }
         catch (StateException e) { t.Fail($"{id}: {e.Message}"); return; }
         var (stats, _) = StateRunner.Compare(root, name, shot, writeImages: false);
         var now = new Dictionary<string, string> { ["diff24"] = stats!.Diff24.ToString("0.0000", CultureInfo.InvariantCulture), ["overlays"] = I(shot.Overlays) };

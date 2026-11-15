@@ -26,6 +26,14 @@ public sealed class LayoutMatch
     public int Within2 { get; init; }
 
     public IEnumerable<LayoutPair> Worst(int count) => Pairs.OrderByDescending(p => p.Delta).Take(count);
+
+    /// <summary>Median / P90 Δ of text pairs only and of box pairs only.</summary>
+    public (float Median, float P90, int Count) Texts => LayoutAnalysis.Stats(Pairs.Where(p => p.IsText).Select(p => p.Delta));
+    public (float Median, float P90, int Count) Boxes => LayoutAnalysis.Stats(Pairs.Where(p => !p.IsText).Select(p => p.Delta));
+
+    LayoutAnalysis? _analysis;
+    /// <summary>Container-relative residuals and offset jumps (computed once).</summary>
+    public LayoutAnalysis Analysis => _analysis ??= new LayoutAnalysis(Pairs);
 }
 
 /// <summary>
@@ -72,8 +80,14 @@ public static class LayoutMatcher
             foreach (int m in hits)
             {
                 var a = Box(refs[r], isText); var b = Box(mine[m], isText);
+                // A box twice as large (or half) in a dimension is a different element with the same text prefix
+                // (e.g. the page root vs the sidebar): not a pair.
+                if (!isText && (MathF.Abs(a.Width - b.Width) > MathF.Max(a.Width, b.Width) / 2
+                    || MathF.Abs(a.Height - b.Height) > MathF.Max(a.Height, b.Height) / 2)) continue;
                 float dx = a.X - b.X, dy = (a.Y + a.Height / 2) - (b.Y + b.Height / 2);
-                candidates.Add((MathF.Sqrt(dx * dx + dy * dy), r, m));
+                // Size difference counts too: same-prefix boxes at the same origin (page root vs sidebar) pair by size.
+                float size = MathF.Abs(a.Width - b.Width) + (isText ? 0 : MathF.Abs(a.Height - b.Height));
+                candidates.Add((MathF.Sqrt(dx * dx + dy * dy) + size, r, m));
             }
         }
         candidates.Sort(static (p, q) => p.Dist.CompareTo(q.Dist));

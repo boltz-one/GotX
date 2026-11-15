@@ -58,7 +58,7 @@ static partial class ShadcnLoginTests
 
             t.Type(Sample(last));
             t.Assert.Equal(block.Field("password").Value, "hunter22", "giá trị mật khẩu thật");
-            t.Assert.Equal(block.Field("password").Input.Text, "••••••••", "ô mật khẩu chỉ hiện dấu chấm");
+            t.Assert.True(block.Field("password").Input.Box.Password, "ô mật khẩu là type=password (TextInput tự che bằng dấu chấm)");
             t.Press(Key.Enter);
             t.Assert.Equal(block.SubmittedEmail, "m@example.com", "SubmittedEmail");
             t.Assert.Equal(submitted, "m@example.com", "event Submitted");
@@ -91,7 +91,7 @@ static partial class ShadcnLoginTests
             t.Press(Key.A, Modifiers.Control);
             t.Type("z");
             t.Assert.Equal(password.Value, "z", "gõ đè lên vùng chọn");
-            t.Assert.Equal(password.Input.Text, "•", "ô chỉ hiện dấu chấm");
+            t.Assert.True(password.Input.Box.Password && password.Input.Text == "z", "ô che bằng dấu chấm, giữ giá trị thật");
         });
 
         suite.Add($"shadcn/{spec.Id}/labels-and-tab-order", t =>

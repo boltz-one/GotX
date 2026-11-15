@@ -8,7 +8,7 @@ using GotX.Components;
 /// </summary>
 public sealed class Sidebar07Block : View
 {
-    public static readonly SitePage Page = new("sidebar-07", "Sidebar 07", static app => app.New(new Sidebar07Block()), FullBleed: true);
+    public static readonly SitePage Page = new("sidebar-07", "Sidebar 07", static app => app.New(new Sidebar07Block()), FullBleed: true, Style: ComponentStyle.NewYorkV4);
 
     public const string TriggerKey = "sidebar-07-trigger", SidebarKey = "sidebar-07-sidebar", ContentKey = "sidebar-07-content";
     public const string TeamNameKey = "sidebar-07-team-name", UserNameKey = "sidebar-07-user-name";
@@ -46,7 +46,8 @@ public sealed class Sidebar07Block : View
 
     protected override void OnCreated()
     {
-        _nav = App.New(new SidebarNav { Groups = Sidebar07Data.Groups });
+        // Mục con là liên kết href="#": bấm không tô (Selectable = false), như bản gốc.
+        _nav = App.New(new SidebarNav { Groups = Sidebar07Data.Groups, Selectable = false, KeyPrefix = "nav" });
         // side="right": menu luôn mở sang phải nút, nên vẫn dùng được khi sidebar chỉ còn cột icon.
         _teamMenu = App.New(new DropdownMenu { Items = Sidebar07Data.TeamMenu, Trigger = TeamTrigger, Placement = Placement.RightStart });
         _userMenu = App.New(new DropdownMenu { Items = Sidebar07Data.UserMenu, Trigger = UserTrigger, Placement = Placement.RightEnd });
@@ -97,7 +98,7 @@ public sealed class Sidebar07Block : View
         // Header thấp lại khi sidebar thu gọn (group-has-data-[collapsible=icon]/sidebar-wrapper:h-12).
         var header = w.Div().Class(_collapsed ? "flex h-12 shrink-0 items-center gap-2" : "flex h-16 shrink-0 items-center gap-2")
             .Child(w.Div().Class("flex items-center gap-2 px-4")
-                .Child(SidebarNav.Trigger(w).Class("-ml-1").Key(TriggerKey).OnClick(this, static (b, _) => b.Collapsed = !b.Collapsed))
+                .Child(SidebarBlockParts.Trigger(w).Class("-ml-1").Key(TriggerKey).OnClick(this, static (b, _) => b.Collapsed = !b.Collapsed))
                 .Child(SidebarBlockParts.HeaderSeparator(w))
                 .Child(SidebarBlockParts.Breadcrumb(w)));
         return SidebarNav.Wrapper(w)

@@ -27,7 +27,19 @@
         ? { left: Math.min(box.left, r.left), top: Math.min(box.top, r.top), right: Math.max(box.right, r.right), bottom: Math.max(box.bottom, r.bottom) }
         : { left: r.left, top: r.top, right: r.right, bottom: r.bottom };
     }
-    return box && rect({ left: box.left, top: box.top, width: box.right - box.left, height: box.bottom - box.top });
+    if (!box) return null;
+    // Only the visible part: lines hidden by -webkit-line-clamp (on the element) or by an ancestor's overflow clipping
+    // still have Range boxes, so intersect with those boxes.
+    for (let p = e; p && p !== document.body; p = p.parentElement) {
+      const s = getComputedStyle(p);
+      const clamps = p === e && s.webkitLineClamp && s.webkitLineClamp !== 'none';
+      const clips = s.overflowX !== 'visible' || s.overflowY !== 'visible';
+      if (!clamps && !clips) continue;
+      const c = p.getBoundingClientRect();
+      box = { left: Math.max(box.left, c.left), top: Math.max(box.top, c.top), right: Math.min(box.right, c.right), bottom: Math.min(box.bottom, c.bottom) };
+    }
+    if (box.right <= box.left || box.bottom <= box.top) return null;
+    return rect({ left: box.left, top: box.top, width: box.right - box.left, height: box.bottom - box.top });
   };
   // Computed colors come as lab()/oklab()/oklch(): resolve to sRGB through a 1×1 canvas so they compare with GotX's rgb().
   const ctx = Object.assign(document.createElement('canvas'), { width: 1, height: 1 }).getContext('2d', { willReadFrequently: true });

@@ -8,7 +8,7 @@ using GotX.Components;
 /// </summary>
 public sealed class Sidebar03Block : View
 {
-    public static readonly SitePage Page = new("sidebar-03", "Sidebar 03", static app => app.New(new Sidebar03Block()), FullBleed: true);
+    public static readonly SitePage Page = new("sidebar-03", "Sidebar 03", static app => app.New(new Sidebar03Block()), FullBleed: true, Style: ComponentStyle.NewYorkV4);
 
     public const string TriggerKey = "sidebar-03-trigger", SidebarKey = "sidebar-03-sidebar", ContentKey = "sidebar-03-content";
     public const string BrandKey = "sidebar-03-brand";
@@ -27,7 +27,8 @@ public sealed class Sidebar03Block : View
 
     protected override void OnCreated()
     {
-        _nav = App.New(new SidebarNav { Groups = Sidebar03Data.Groups });
+        // Chỉ "Data Fetching" mang isActive; các mục khác là liên kết href="#": bấm không đổi mục tô (Selectable = false).
+        _nav = App.New(new SidebarNav { Groups = Sidebar03Data.Groups, Selectable = false, KeyPrefix = "nav" });
         _nav.SetActive(Sidebar03Data.ActiveGroup, Sidebar03Data.ActiveItem, Sidebar03Data.ActiveSub);
     }
 
@@ -46,7 +47,7 @@ public sealed class Sidebar03Block : View
     {
         var header = w.Div().Class("flex h-16 shrink-0 items-center gap-2 border-b border-border")
             .Child(w.Div().Class("flex items-center gap-2 px-3")
-                .Child(SidebarNav.Trigger(w).Key(TriggerKey).OnClick(this, static (b, _) => b.Open = !b.Open))
+                .Child(SidebarBlockParts.Trigger(w).Key(TriggerKey).OnClick(this, static (b, _) => b.Open = !b.Open))
                 .Child(SidebarBlockParts.HeaderSeparator(w))
                 .Child(SidebarBlockParts.Breadcrumb(w)));
         var root = SidebarNav.Wrapper(w);

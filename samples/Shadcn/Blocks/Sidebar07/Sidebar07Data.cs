@@ -42,7 +42,7 @@ static class Sidebar07Data
         ]) { HideWhenCollapsed = true },
     ];
 
-    /// <summary>Menu chọn team: nhãn, ba team (Ctrl+1..3), "Add team". Chỉ số dòng của team thứ i là i + 1.</summary>
+    /// <summary>Menu chọn team: nhãn, ba team (⌘1..⌘3 – bản gốc ghi cứng ký hiệu Mac), "Add team". Chỉ số dòng của team thứ i là i + 1.</summary>
     public static readonly MenuItem[] TeamMenu = BuildTeamMenu();
 
     static MenuItem[] BuildTeamMenu()
@@ -54,7 +54,7 @@ static class Sidebar07Data
             items.Add(new MenuItem
             {
                 // Bản gốc ghi ⌘1..3; Segoe UI không có glyph ⌘ (U+2318) nên dùng cách viết của Windows.
-                Text = Teams[i].Name, Shortcut = "Ctrl+" + (i + 1), Key = "sidebar-07-team-" + i,
+                Text = Teams[i].Name, Shortcut = "⌘" + (i + 1), Key = "sidebar-07-team-" + i,
                 Icon = w => Tile(w).Child(logo(w).Class("size-3.5")),
             });
         }

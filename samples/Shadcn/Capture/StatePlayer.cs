@@ -4,8 +4,16 @@ using GotX.Text;
 
 namespace ShadcnShots;
 
-/// <summary>A captured state: the clipped region (window px), its pixels and layout items (region-relative), overlay count.</summary>
-public sealed record StateShot(Canvas Image, Bounds Region, List<LayoutItem> Items, int Overlays);
+/// <summary>
+/// A captured state: the clipped region (window px), its pixels and layout items (region-relative), overlay count.
+/// <see cref="OwnRegion"/> = the region GotX's own targets/overlays need; <see cref="Overflow"/> = it reaches > 2 px beyond
+/// <see cref="Region"/> (when the crop is aligned to the reference, GotX content outside the reference frame is not compared).
+/// </summary>
+public sealed record StateShot(Canvas Image, Bounds Region, List<LayoutItem> Items, int Overlays, Bounds OwnRegion, bool Overflow);
+
+/// <summary>Reference crop of a state (states.mjs JSON): its region, the anchor box (the target, or the modal content) and its
+/// layout items in window coordinates.</summary>
+public readonly record struct RefFrame(Bounds Region, Bounds Anchor, List<LayoutItem> Items);
 
 public sealed class StateException(string message) : Exception(message);
 
@@ -16,9 +24,12 @@ public sealed class StateException(string message) : Exception(message);
 /// </summary>
 public static class StatePlayer
 {
-    public static StateShot Play(StateScenario sc, SitePage page, TextSystem text, bool dark)
+    /// <param name="reference">When given, GotX is cropped with the SAME rect as the reference, translated by the local offset
+    /// (median GotX − reference Δ of the text runs matched around the target, else of the boxes, else of the anchor box;
+    /// rounded, ≤ 1 px per axis counts as 0) so inherited page offsets and sub-pixel snapping do not shift the crops.</param>
+    public static StateShot Play(StateScenario sc, SitePage page, TextSystem text, bool dark, RefFrame? reference = null)
     {
-        var s = new HeadlessSession(page, text, dark, new Size(sc.Width, sc.Height));
+        using var s = new HeadlessSession(page, text, dark, new Size(sc.Width, sc.Height));
         if (!page.FullBleed)
         {
             // Flowing page: like the reference (viewport = full page height, nothing scrolls) the window holds the whole content,
@@ -53,10 +64,21 @@ public static class StatePlayer
             s.Quiesce(step.Do == "hover" ? 1.2 : 0.4); // tooltip delay / menu mount, as states.mjs waits
         }
         var final = s.Inspect();
-        var region = RegionOf(rects, s.Window.Overlays, (int)s.Size.Width, (int)s.Size.Height);
+        int vw = (int)s.Size.Width, vh = (int)s.Size.Height;
+        var own = RegionOf(rects, s.Window.Overlays, vw, vh);
+        var region = own;
+        var items = LayoutExport.FromSnapshot(final, text);
+        if (reference is { } r)
+        {
+            var modal = s.Window.Overlays.FirstOrDefault(o => o.Options.Modal);
+            var anchor = modal?.ContentBounds ?? rects[0];
+            var (dx, dy) = LocalOffset(r, items, own, anchor);
+            region = Clamp(new Bounds(r.Region.X + Snap(dx), r.Region.Y + Snap(dy), r.Region.Width, r.Region.Height), vw, vh);
+        }
         if (region.Width <= 0 || region.Height <= 0) throw new StateException("target region lies outside the window");
+        bool overflow = own.X < region.X - 2 || own.Y < region.Y - 2 || own.Right > region.Right + 2 || own.Bottom > region.Bottom + 2;
         var image = ShotRenderer.RasterizeRegion(final, region);
-        return new StateShot(image, region, ItemsIn(LayoutExport.FromSnapshot(final, text), region), s.Window.Overlays.Count);
+        return new StateShot(image, region, ItemsIn(items, region), s.Window.Overlays.Count, own, overflow);
     }
 
     /// <summary>Tab presses (KeyDown Tab, as a keyboard would) until the focused element is the target (or inside / around it).</summary>
@@ -135,6 +157,40 @@ public static class StatePlayer
             list.Add(i);
         }
         return list;
+    }
+
+    /// <summary>
+    /// Offset GotX − reference of the target, in order of trust: (1) median Δ of the matched pairs lying inside the reference
+    /// target box (its label, or the box itself); (2) the target box itself when both boxes are about the same size (±4 px);
+    /// (3) median Δ of the text runs matched around the target (then boxes); (4) the target box anyway.
+    /// </summary>
+    static (float, float) LocalOffset(RefFrame r, List<LayoutItem> gotx, Bounds own, Bounds anchor)
+    {
+        var near = new Bounds(own.X - 48, own.Y - 48, own.Width + 96, own.Height + 96);
+        var local = gotx.Where(i => i.Rect.X < near.Right && i.Rect.Right > near.X && i.Rect.Y < near.Bottom && i.Rect.Bottom > near.Y).ToList();
+        var pairs = LayoutMatcher.Match(r.Items, local).Pairs;
+        var t = r.Anchor;
+        var inside = pairs.Where(p => LayoutAnalysis.RefBox(p) is var b && b.X >= t.X - 1 && b.Y >= t.Y - 1 && b.Right <= t.Right + 1 && b.Bottom <= t.Bottom + 1).ToList();
+        if (inside.Count > 0) return Median(inside);
+        if (MathF.Abs(anchor.Width - t.Width) <= 4 && MathF.Abs(anchor.Height - t.Height) <= 4) return (anchor.X - t.X, anchor.Y - t.Y);
+        var texts = pairs.Where(p => p.IsText).ToList();
+        if (texts.Count > 0) return Median(texts);
+        if (pairs.Count > 0) return Median(pairs);
+        return (anchor.X - t.X, anchor.Y - t.Y);
+    }
+
+    static (float, float) Median(List<LayoutPair> pairs)
+    {
+        static float M(IEnumerable<float> v) { var s = v.OrderBy(x => x).ToList(); return s[s.Count / 2]; }
+        return (M(pairs.Select(p => p.Dx)), M(pairs.Select(p => p.Dy)));
+    }
+
+    static float Snap(float d) => MathF.Abs(d) <= 1 ? 0 : MathF.Round(d);
+
+    static Bounds Clamp(Bounds b, int vw, int vh)
+    {
+        float x0 = MathF.Max(0, b.X), y0 = MathF.Max(0, b.Y), x1 = MathF.Min(vw, b.Right), y1 = MathF.Min(vh, b.Bottom);
+        return new Bounds(x0, y0, x1 - x0, y1 - y0);
     }
 
     static Point Center(Bounds b) => new(b.X + b.Width / 2, b.Y + b.Height / 2);

@@ -17,7 +17,8 @@ static partial class ShadcnHomeTests
     }
 
     // Cửa sổ cao để cả lưới thẻ nằm trong khung nhìn: click theo toạ độ và luật tương phản chỉ làm được với phần đang hiện.
-    static readonly Size Wide = new(1440, 2400), Medium = new(1024, 2400), Narrow = new(640, 3200);
+    // Cột thẻ thứ năm (Distribute Track, Analytics, Notifications, Power Usage) chỉ hiện từ 1900px như bản gốc: Full.
+    static readonly Size Full = new(1920, 2400), Wide = new(1440, 2400), Medium = new(1024, 2400), Narrow = new(640, 1600);
 
     static HomePage Open(UiTest t, Size? size = null, bool dark = false)
     {
@@ -37,13 +38,19 @@ static partial class ShadcnHomeTests
 
     static void TypeInto(UiTest t, string key, string text) { t.Click(key); t.Type(text); }
 
+    /// <summary>
+    /// Hai chỗ cố ý như bản gốc: dải mờ đáy khối demo phủ lên nút Update Security (nên tương phản đo trên ảnh thấp), và ảnh
+    /// chụp dưới md rộng 140vw bị cắt ở mép phải.
+    /// </summary>
+    static LintOptions HomeLint() => new LintOptions().Suppress("low-contrast", "update-security").Suppress("clipped", "home-mobile");
+
     public static void Register(TestSuite suite)
     {
         suite.Add("shadcn/home/lint", t =>
         {
             var report = UiDoctor.Run(app => app.New(new HomeHost()), new DoctorOptions
             {
-                Sizes = [Wide, Medium, Narrow], Scales = [1, 1.5f], OutDir = t.Options.OutDir, Name = "shadcn-home",
+                Sizes = [Wide, Medium, Narrow], Scales = [1, 1.5f], OutDir = t.Options.OutDir, Name = "shadcn-home", Lint = HomeLint(),
             });
             if (t.Options.Verbose) t.Notes.Add(report.ToText(200).TrimEnd());
             foreach (var issue in report.Issues)
@@ -60,13 +67,8 @@ static partial class ShadcnHomeTests
                     t.Assert.TextVisible("The Foundation for your Design System");
                     t.Save($"home-{name}-{(dark ? "dark" : "light")}");
                 }
-            Open(t, new Size(640, 1200));
-            for (int page = 0; page < 7; page++)
-            {
-                t.Window.ScrollTo("site-page-home", 0, page * 1100);
-                t.Frames(4);
-                t.Save($"home-640-page{page}");
-            }
+            Open(t, Full);
+            t.Save("home-1920-light");
             // Các trạng thái mở: hộp thoại, danh sách chọn, menu, chat sau một lượt hỏi–đáp (dark).
             var home = Open(t, new Size(1440, 1800), dark: true);
             t.Click("chat-send");
@@ -81,37 +83,54 @@ static partial class ShadcnHomeTests
 
         suite.Add("shadcn/home/layout-reflows", t =>
         {
-            Open(t, Wide); // xl: 4 cột, cột thứ năm thành hàng thẻ bên dưới
+            Open(t, Full); // từ 1900px: 5 cột, đệm 48px
+            t.Assert.Aligned(Edge.Top, 1, "ui-elements-card", "contribution-card", "milestone-card", "qr-card", "distribute-card");
+
+            Open(t, Wide); // từ 1400px: 4 cột rộng 330px, cột thứ năm ẩn
             t.Assert.Aligned(Edge.Top, 1, "ui-elements-card", "contribution-card", "milestone-card", "qr-card");
-            t.Assert.Aligned(Edge.Top, 1, "distribute-card", "analytics-card", "notifications-card", "power-card");
-            t.Assert.True(t.Box("distribute-card").Y > t.Box("payments-card").Bottom, "hàng thẻ thứ năm nằm dưới bốn cột");
-            t.Assert.Visible("nav-analytics"); t.Assert.Hidden("nav-compact-analytics");
-            t.Assert.True(t.Box("nav-documents").Y < t.Box("nav-analytics").Y, "từ xl: Planning đứng trên Overview như bản gốc");
+            t.Assert.Near(t.Box("ui-elements-card").Width, 330, 0.5f, "(1440 − 2·24 − 3·24) / 4");
+            t.Assert.Hidden("distribute-card");
+            t.Assert.True(t.Box("nav-documents").Y < t.Box("nav-analytics").Y, "từ xl: Planning đứng trên Overview (col/row-start)");
 
-            Open(t, Medium); // lg: 3 cột
-            t.Assert.Aligned(Edge.Top, 1, "ui-elements-card", "contribution-card", "milestone-card");
-            t.Assert.True(t.Box("qr-card").Y > t.Box("access-card").Bottom, "cột thứ tư xuống hàng dưới ở 1024");
-            t.Assert.Visible("nav-compact-analytics"); t.Assert.Hidden("nav-analytics");
+            Open(t, Medium); // lg: 3 cột – cột New Milestone/Payout/Account ẩn tới 1400px
+            t.Assert.Aligned(Edge.Top, 1, "ui-elements-card", "contribution-card", "qr-card");
+            t.Assert.Hidden("milestone-card");
+            t.Assert.True(t.Box("nav-analytics").Y < t.Box("nav-help-center").Y, "dưới xl: Overview, Planning / Support, Account");
 
-            Open(t, Narrow); // một cột
-            t.Assert.Aligned(Edge.Left, 1, "ui-elements-card", "contribution-card", "milestone-card");
-            t.Assert.Near(t.Box("ui-elements-card").Width, 640 - 32, 1, "thẻ rộng hết cột ở 640");
+            Open(t, Narrow); // dưới md: ảnh chụp thay cho khối demo
+            t.Assert.Hidden("home-demo"); t.Assert.Visible("home-mobile");
+            t.Assert.Near(t.Box("home-mobile").Height, 896 * 2764 / 2560f, 1, "ảnh rộng 140vw theo tỉ lệ 2560×2764");
         });
 
         suite.Add("shadcn/home/static-cards", t =>
         {
-            Open(t);
+            Open(t, Full);
             foreach (string text in new[] { "$420,000", "65% achieved", "$1,211.29", "Pending Setup", "Realty Income", "Distribute Track", "418.2K Visitors", "3.4 kW", "Scan to connect your mobile device" })
                 t.Assert.TextVisible(text);
-            // Cột biểu đồ tỉ lệ với số liệu: Mar (1300) cao nhất = 176px, Dec (800) = 108px.
+            // Cột biểu đồ cao amount/1300 × 200px; riêng cột cao nhất bị flex co còn 200 − nhãn 16 − gap 8 = 176px.
             t.Assert.Near(t.Box("contribution-bar-3").Height, 176, 0.5f, "cột Mar");
-            t.Assert.Near(t.Box("contribution-bar-0").Height, 108, 0.5f, "cột Dec");
+            t.Assert.Near(t.Box("contribution-bar-0").Height, 800 / 1300f * 200, 0.5f, "cột Dec");
             // QR: ô (0,0) đen, ô (1,1) trắng – mỗi ô 160/21 px.
             var qr = t.Box("qr-code");
             t.Assert.Pixel(new Point(qr.X + 3, qr.Y + 3), Rgba.FromHex(0x000000));
             t.Assert.Pixel(new Point(qr.X + 11, qr.Y + 11), Rgba.FromHex(0xffffff));
             foreach (string key in new[] { "get-started", "view-components", "announcement", "view-full-report", "create-release", "view-analytics", "dismiss-dividend", "footer-github" })
                 PressOn(t, key);
+        });
+
+        // Mọi class của trang (cả style rhea, overlay đang mở, mọi breakpoint) đều được Core hiểu: không có token bị bỏ qua.
+        suite.Add("shadcn/home/classes", t =>
+        {
+            var unknown = new SortedSet<string>(StringComparer.Ordinal);
+            void Collect() { foreach (var n in t.Tree.Nodes) if (n.Classes is { } c) foreach (var u in Tailwind.Get(c).Unknown) unknown.Add(u); }
+            foreach (var size in new[] { Full, Wide, Medium, Narrow })
+                foreach (bool dark in new[] { false, true }) { Open(t, size, dark); Collect(); }
+            var home = Open(t);
+            t.Click(home.Payout.Currency.TriggerKey); t.Settle(); Collect();
+            t.Press(Key.Escape); t.Click(home.Elements.Actions.TriggerKey); t.Settle(); Collect();
+            t.Press(Key.Escape); t.Click("ui-alert-open"); t.Settle(); Collect();
+            t.Press(Key.Escape); t.Hover("chat-reset"); t.Settle(); Collect();
+            t.Assert.True(unknown.Count == 0, "class chưa hỗ trợ: " + string.Join(", ", unknown));
         });
 
         RegisterCards(suite);

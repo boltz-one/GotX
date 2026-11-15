@@ -7,7 +7,7 @@ using GotX.Components;
 /// </summary>
 public sealed class Signup03Block : SignupBlock
 {
-    public static readonly SitePage Page = new("signup-03", "Signup 03", static app => app.New(new Signup03Block()), FullBleed: true);
+    public static readonly SitePage Page = new("signup-03", "Signup 03", static app => app.New(new Signup03Block()), FullBleed: true, Style: ComponentStyle.NewYorkV4);
 
     static readonly FieldSpec[] FieldSpecs = [new("name", "Full Name", AuthFieldKind.Text, "John Doe"), Email, Password, ConfirmPassword];
 
@@ -29,6 +29,6 @@ public sealed class Signup03Block : SignupBlock
 
         return PageFrame(w, "signup-03", w.Div().Class(ColumnSm + " flex flex-col gap-6")
             .Child(Logo(w))
-            .Child(w.Div().Class("flex flex-col gap-6").Child(card).Child(TermsLine(w))));
+            .Child(w.Div().Class("flex flex-col gap-6").Child(card).Child(TermsLine(w, narrow: true))));
     }
 }

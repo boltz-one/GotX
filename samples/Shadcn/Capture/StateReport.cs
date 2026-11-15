@@ -17,7 +17,11 @@ public static class StateReport
             Interaction states (hover, keyboard focus, press, click/open, type) from `tools/ShadcnRef/scenarios.json`, one clipped
             region per state: the target box(es) and every floating layer that opened (menu, select list, tooltip), inflated by
             24 px — or only the modal content when a dialog opened. Images live in `states/{reference,gotx,diff,compare}/<page>-<state>-<theme>.png`
-            (+ region layout maps `.json`). Both sides use real input: Edge via CDP `Input.dispatchMouseEvent` / `dispatchKeyEvent`
+            (+ region layout maps `.json`). The region is computed on the reference; GotX is cropped with the SAME rect,
+            translated by the target's offset — median GotX − reference Δ of the matched elements inside the target (its label),
+            else the target / modal box when both are about the same size, else the text runs matched around it — rounded to whole px, 0 when ≤ 1 px per axis — so inherited page offsets and sub-pixel
+            layout snapping do not shift the crops; what remains is the control's own look. When GotX's own targets/overlays reach
+            > 2 px beyond that rect the row notes "GotX content extends beyond the reference frame". Both sides use real input: Edge via CDP `Input.dispatchMouseEvent` / `dispatchKeyEvent`
             (Tab presses, never `element.focus()`, so `:focus-visible` is real) / `insertText`; GotX via `Window.DispatchInput`
             (mouse move / down / up, `Key.Tab`, text input) on a virtual clock. Transitions: disabled by CSS on the reference
             (end state immediately), run to their end on GotX; after each step both wait 1.2 s (hover: tooltip delay) or 0.4 s.

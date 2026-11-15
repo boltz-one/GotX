@@ -16,7 +16,8 @@ public sealed class ChatCard : View
 
     const double ThinkSeconds = 1.0, TokenSeconds = 0.02; // .sleep(1000) và delayMs: 20 của bản gốc
 
-    static readonly string AttachTrigger = Ui.ButtonClasses(ButtonVariant.Outline, ButtonSize.IconSm);
+    // InputGroupButton outline icon-sm của rhea: size-8, bo 2xl; lớp bọc của DropdownMenu chính là nút.
+    static readonly string AttachTrigger = HomeStyle.ButtonClasses(ButtonVariant.Outline, ButtonSize.Icon);
 
     MessageScroller _scroller = null!;
     DropdownMenu _attach = null!;
@@ -38,11 +39,13 @@ public sealed class ChatCard : View
 
     protected override void OnCreated()
     {
+        using var _ = HomeStyle.Use();
         _scroller = App.New(new MessageScroller { Class = "h-full" });
         _attach = App.New(new DropdownMenu
         {
-            Placement = Placement.TopStart,
-            Trigger = static w => w.Div().Class(AttachTrigger).Child(Icon.Plus(w)),
+            Placement = Placement.TopStart, MenuClass = "w-44",
+            TriggerClass = AttachTrigger, TriggerOpenClass = "bg-muted text-foreground",
+            Trigger = static w => Icon.Plus(w),
             Items =
             [
                 new MenuItem { Text = "Add Photos & Files", Icon = Icon.Paperclip, Key = "chat-attach-files" }, MenuItem.Separator(),
@@ -110,33 +113,34 @@ public sealed class ChatCard : View
 
     public override Div Render(Window w)
     {
+        using var _ = HomeStyle.Use();
         var body = Ui.CardContent(w).Class("flex min-h-0 flex-1 flex-col overflow-hidden p-0");
         if (_scroller.Items.Count == 0)
-            body.Child(Ui.Empty(w).Class("p-12").Key("chat-empty")
+            body.Child(Ui.Empty(w).Class("h-full").Key("chat-empty")
                 .Child(Ui.EmptyHeader(w)
-                    .Child(Ui.EmptyMedia(w, EmptyMediaVariant.Icon).Class("size-10 rounded-xl").Child(Icon.MessageSquare(w).Class("size-5")))
-                    .Child(Ui.EmptyTitle(w, "Morning, shadcn!").Class("text-lg"))
+                    .Child(Ui.EmptyMedia(w, EmptyMediaVariant.Icon).Child(HomeIcons.MessageCircleDashed(w).Class("size-5")))
+                    .Child(Ui.EmptyTitle(w, "Morning, shadcn!"))
                     .Child(Ui.EmptyDescription(w, "What are we working on today? Press send to start a new conversation"))));
         else
             body.Child(w.View(_scroller).Class("min-h-0 flex-1"));
 
-        // Core chưa có line-clamp-2: ô soạn hiện đủ tin kế tiếp (cao tối thiểu h-14 như bản gốc) thay vì cắt ở dòng hai.
+        // Ô soạn: h-14 px-3 py-2.5, chữ line-clamp-2; mờ 60% khi đang bận (data-[status=ready]:opacity-100).
         string? next = NextMessage;
-        var draft = w.Div().Key("chat-draft").Class(next is null ? "text-muted-foreground" : _busy ? "opacity-60" : "")
+        var draft = w.Div().Key("chat-draft").Class(next is null ? "line-clamp-2 text-muted-foreground" : _busy ? "line-clamp-2 opacity-60" : "line-clamp-2")
             .Child(next ?? "No messages queued. Reset the conversation.");
 
         return HomeUi.Card(w).Class("h-140 gap-0").Key("chat-card")
-            .Child(HomeUi.Header(w, hasAction: true).Class("gap-y-1 border-b border-border pb-5")
+            .Child(HomeUi.Header(w, hasAction: true).Class("gap-1 border-b border-border pb-5")
                 .Child(Ui.CardTitle(w, "New Chat"))
                 .Child(Ui.CardAction(w).Child(w.View(_reset)))
                 .Child(Ui.CardDescription(w, "How can I help you today?")))
             .Child(body)
-            .Child(HomeUi.Footer(w).Child(Ui.InputGroup(w, stacked: true).Key("chat-composer")
-                .Child(w.Div().Class("min-h-14 w-full px-3 py-2.5 text-sm").Child(draft))
+            .Child(HomeUi.Footer(w).Class("flex-col gap-2").Child(Ui.InputGroup(w, stacked: true).Key("chat-composer")
+                .Child(w.Div().Class("h-14 w-full px-3 py-2.5 text-sm").Child(draft))
                 .Child(Ui.InputGroupAddon(w, InputGroupAlign.BlockEnd).Class("pt-1")
                     .Child(w.View(_attach))
-                    .Child(w.Div().Class("flex-1"))
-                    .Child(Ui.Button(w, ButtonVariant.Default, ButtonSize.IconSm).Key("chat-send").Disabled(next is null || _busy)
+                    .Child(w.Div().Class("flex-1")) // ml-auto của nút gửi
+                    .Child(Ui.Button(w, ButtonVariant.Default, ButtonSize.Icon).Key("chat-send").Disabled(next is null || _busy)
                         .OnClick(this, static (c, _) => c.Send()).Child(Icon.ArrowUp(w))))));
     }
 }

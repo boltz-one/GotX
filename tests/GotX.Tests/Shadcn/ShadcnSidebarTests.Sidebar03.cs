@@ -64,15 +64,20 @@ static partial class ShadcnSidebarTests
             // Danh sách con luôn mở và thụt vào sau đường kẻ trái.
             t.Assert.Exists(nav.SubItemKey(0, 0, 1));
             t.Assert.True(t.Box(routing).X > t.Box(nav.ItemKey(0, 1)).X + 20, "mục con thụt vào so với nút cha");
+            // Liên kết href="#" của bản gốc: bấm phát ItemSelected, mục tô (isActive cố định) không đổi.
+            string? picked = null;
+            t.App.Subscribe<SidebarNav.ItemSelected>(nav, e => picked = e.Title);
             t.Click(routing);
-            t.Assert.Equal(nav.Active, (0, 1, 0), "mục đang chọn sau khi bấm Routing");
-            Highlighted(t, fetching, false);
-            t.Click(nav.ItemKey(0, 0));                                    // nút cha không gập: bấm là chọn
-            t.Assert.Equal(nav.Active, (0, 0, -1), "mục đang chọn sau khi bấm Getting Started");
+            t.Assert.Equal(picked, "Routing", "bấm Routing kích hoạt liên kết");
+            t.Assert.Equal(nav.Active, (0, 1, 1), "Data Fetching vẫn là mục isActive");
+            Highlighted(t, fetching, true);
+            t.Click(nav.ItemKey(0, 0));                                    // nút cha không gập: cũng là liên kết
+            t.Assert.Equal(picked, "Getting Started", "bấm Getting Started");
             t.Assert.Exists(nav.SubItemKey(0, 0, 0));
             t.Press(Key.Tab);
             t.Press(Key.Enter);
-            t.Assert.Equal(nav.Active, (0, 0, 0), "Tab + Enter chọn Installation");
+            t.Assert.Equal(picked, "Installation", "Tab + Enter kích hoạt Installation");
+            t.Assert.Equal(nav.Active, (0, 1, 1), "mục tô không đổi");
             // Sidebar tự cuộn (danh sách dài hơn cửa sổ), vùng inset đứng yên.
             t.Scroll(nav.ContentKey, 300);
             t.Advance(0.6);
