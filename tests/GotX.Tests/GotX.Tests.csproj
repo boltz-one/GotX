@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Bộ test của GotX chạy bằng GotX.Test: tự kiểm tra khung test, test tính năng Core, soi lint + hiệu năng các trang gallery. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/GotX.Test/GotX.Test.csproj" />
+    <ProjectReference Include="../../src/GotX.Components/GotX.Components.csproj" />
+    <Compile Include="../../samples/Shadcn/**/*.cs" Exclude="../../samples/Shadcn/Program.cs" LinkBase="Shadcn" />
+    <Compile Include="../../samples/Components/GalleryView.cs;../../samples/Components/Demo.cs;../../samples/Components/Pages/**/*.cs" LinkBase="Shared" />
+  </ItemGroup>
+</Project>

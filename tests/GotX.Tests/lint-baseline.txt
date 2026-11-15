@@ -1,0 +1,39 @@
+# Baseline lint của GotX.Tests – các vấn đề ĐÃ BIẾT. Chỉ vấn đề không có ở đây mới làm hỏng test.
+# Dòng: mức | luật | ×số phần tử | đường dẫn phần tử  ## số đo lúc ghi [cấu hình phát hiện]
+# Sửa xong một lỗi thì xoá dòng đó, hoặc chạy:  dotnet run --project tests/GotX.Tests -- --update-baseline
+
+[chat]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > ChatPage >> Attachment >> div[1] > text "anh-chup-man-hinh.png"  ## tương phản 3.72:1 (cần ≥ 4.5:1) — chữ #848484 trên nền #FFFFFF, cỡ 12px  [1000×2400 light @1; 640×2400 light @1]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > ChatPage >> Attachment >> div[2] > text "Tải lên thất bại"  ## tương phản 4.12:1 (cần ≥ 4.5:1) — chữ #EC333C trên nền #FFFFFF, cỡ 12px  [1000×2400 light @1; 1000×2400 dark @1; … (4/8 cấu hình)]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > ChatPage >> Trace >> div#gotx-trace-content-8 >> div[2] > text "1 kiểm thử thất bại: Fib…"  ## tương phản 4.12:1 (cần ≥ 4.5:1) — chữ #EC333C trên nền #FFFFFF, cỡ 12px  [1000×2400 light @1; 1000×2400 dark @1; … (4/8 cấu hình)]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > ChatPage >> Trace >> div#gotx-trace-content-9 >> div[2] > text "Tổng hợp"  ## tương phản 3.23:1 (cần ≥ 4.5:1) — chữ #8F8F8F trên nền #FFFFFF, cỡ 14px  [1000×2400 light @1; 640×2400 light @1]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > ChatPage >> Trace >> div#gotx-trace-content-9 >> div[2] > text "Đọc 14 tệp"  ## tương phản 3.72:1 (cần ≥ 4.5:1) — chữ #848484 trên nền #FFFFFF, cỡ 14px  [1000×2400 light @1; 640×2400 light @1]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > ChatPage >> Trace >> div#gotx-trace-trigger-9 > div[1] > text "Đang tìm trong mã nguồn"  ## tương phản 3.72:1 (cần ≥ 4.5:1) — chữ #848484 trên nền #FFFFFF, cỡ 14px  [1000×2400 light @1; 640×2400 light @1]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > ChatPage >> div[1] > text "Bong bóng Destructive"  ## tương phản 4.01:1 (cần ≥ 4.5:1) — chữ #E7000B trên nền #FDE6E7, cỡ 14px  [1000×2400 light @1; 640×2400 light @1]
+
+[display]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > DisplayPage >> div#avatar-default > div[1] > text "TB"  ## tương phản 4.35:1 (cần ≥ 4.5:1) — chữ #737373 trên nền #F5F5F5, cỡ 14px  [1000×2400 light @1; 640×2400 light @1]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > DisplayPage >> div#avatar-fallback > div[1] > text "NA"  ## tương phản 4.35:1 (cần ≥ 4.5:1) — chữ #737373 trên nền #F5F5F5, cỡ 14px  [1000×2400 light @1; 640×2400 light @1]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > DisplayPage >> div#avatar-lg > div[1] > text "LC"  ## tương phản 4.35:1 (cần ≥ 4.5:1) — chữ #737373 trên nền #F5F5F5, cỡ 14px  [1000×2400 light @1; 640×2400 light @1]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > DisplayPage >> div#avatar-sm > div[1] > text "NA"  ## tương phản 4.35:1 (cần ≥ 4.5:1) — chữ #737373 trên nền #F5F5F5, cỡ 12px  [1000×2400 light @1; 640×2400 light @1]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > DisplayPage >> div#avatar-with-badge > div[1] > text "PD"  ## tương phản 4.35:1 (cần ≥ 4.5:1) — chữ #737373 trên nền #F5F5F5, cỡ 14px  [1000×2400 light @1; 640×2400 light @1]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > DisplayPage >> div#badge-destructive > text "Lỗi"  ## tương phản 4.01:1 (cần ≥ 4.5:1) — chữ #E7000B trên nền #FDE6E7, cỡ 12px  [1000×2400 light @1; 640×2400 light @1]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > DisplayPage >> div#group-b > div[1] > text "BT"  ## tương phản 4.35:1 (cần ≥ 4.5:1) — chữ #737373 trên nền #F5F5F5, cỡ 14px  [1000×2400 light @1; 640×2400 light @1]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > DisplayPage >> div[1] > text "A"  ## tương phản 4.35:1 (cần ≥ 4.5:1) — chữ #737373 trên nền #F5F5F5, cỡ 12px  [1000×2400 light @1; 640×2400 light @1]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > DisplayPage >> div[1] > text "B"  ## tương phản 4.35:1 (cần ≥ 4.5:1) — chữ #737373 trên nền #F5F5F5, cỡ 12px  [1000×2400 light @1; 640×2400 light @1]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > DisplayPage >> div[1] > text "VE"  ## tương phản 4.35:1 (cần ≥ 4.5:1) — chữ #737373 trên nền #F5F5F5, cỡ 14px  [1000×2400 light @1; 640×2400 light @1]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > DisplayPage >> div[3] > text "+5"  ## tương phản 4.35:1 (cần ≥ 4.5:1) — chữ #737373 trên nền #F5F5F5, cỡ 12px  [1000×2400 light @1; 640×2400 light @1]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > DisplayPage >> div[3] > text "Xoá"  ## tương phản 4.01:1 (cần ≥ 4.5:1) — chữ #E7000B trên nền #FDE6E7, cỡ 14px  [1000×2400 light @1; 640×2400 light @1]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > DisplayPage >> div[4] > text "+3"  ## tương phản 4.35:1 (cần ≥ 4.5:1) — chữ #737373 trên nền #F5F5F5, cỡ 14px  [1000×2400 light @1; 640×2400 light @1]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > DisplayPage >> div[5] > text "Destructive"  ## tương phản 4.01:1 (cần ≥ 4.5:1) — chữ #E7000B trên nền #FDE6E7, cỡ 14px  [1000×2400 light @1; 640×2400 light @1]
+
+[forms]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > FormsPage >> InputOtp >> div[1] > text "0"  ## tương phản 3.71:1 (cần ≥ 4.5:1) — chữ #858585 trên nền #FFFFFF, cỡ 14px  [1000×2400 light @1; 640×2400 light @1]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > FormsPage >> InputOtp >> div[2] > text "0"  ## tương phản 3.71:1 (cần ≥ 4.5:1) — chữ #858585 trên nền #FFFFFF, cỡ 14px  [1000×2400 light @1; 640×2400 light @1]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > FormsPage >> InputOtp >> div[3] > text "0"  ## tương phản 3.71:1 (cần ≥ 4.5:1) — chữ #858585 trên nền #FFFFFF, cỡ 14px  [1000×2400 light @1; 640×2400 light @1]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > FormsPage >> InputOtp >> div[4] > text "0"  ## tương phản 3.71:1 (cần ≥ 4.5:1) — chữ #858585 trên nền #FFFFFF, cỡ 14px  [1000×2400 light @1; 640×2400 light @1]
+
+[navigation]
+
+[overlays]
+info    | low-contrast  | ×1 | PageHost > div#gallery-page > OverlaysPage >> div[2] > text "Xoá tài khoản"  ## tương phản 4.01:1 (cần ≥ 4.5:1) — chữ #E7000B trên nền #FDE6E7, cỡ 14px  [1000×2400 light @1; 640×2400 light @1]

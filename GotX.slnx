@@ -1,0 +1,22 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/GotX.Core/GotX.Core.csproj" />
+    <Project Path="src/GotX.Raster/GotX.Raster.csproj" />
+    <Project Path="src/GotX.Platform.Windows/GotX.Platform.Windows.csproj" />
+    <Project Path="src/GotX.Components/GotX.Components.csproj" />
+    <Project Path="src/GotX.Test/GotX.Test.csproj" />
+  </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/Hello/Hello.csproj" />
+    <Project Path="samples/Headless/Headless.csproj" />
+    <Project Path="samples/Components/Components.csproj" />
+    <Project Path="samples/ComponentsCheck/ComponentsCheck.csproj" />
+    <Project Path="samples/Shadcn/Shadcn.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/GotX.Tests/GotX.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/StyleGen/StyleGen.csproj" />
+  </Folder>
+</Solution>
