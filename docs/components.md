@@ -138,6 +138,7 @@ Helper dùng chung của Components (`src/GotX.Components/Core/`):
 | `Forms/` | Checkbox, Input, Textarea, Label, Field, InputGroup, InputOtp, RadioGroup, Switch, Slider, Toggle, ToggleGroup, NativeSelect, Progress, Calendar, DatePicker |
 | `Overlays/` | Dialog, AlertDialog, Sheet, Drawer, Popover, Tooltip, HoverCard, Select, Combobox, Command, DropdownMenu, ContextMenu, Menubar, NavigationMenu, Toast/Toaster |
 | `Navigation/` | Accordion, Collapsible, Tabs, Breadcrumb, Pagination, Table, ScrollArea, Resizable, Carousel, BarChart + Chart (cột/đường/vùng), Sidebar, DataTable, SidebarNav |
+| `Lists/` | VirtualList (danh sách dọc ảo hoá, chiều cao cố định hoặc đo được; DataTable `Virtualized = true` dùng nó) |
 | `Chat/` | Bubble, Message, MessageScroller, Attachment, Marker, CodeBlock, Trace, Questionnaire |
 
 **Typography** (`Display/Ui.Typography.cs`) – `Ui.H1…H4, P, Lead, Large, Small, Muted, Blockquote, InlineCode, List`, đặt trong `Ui.Prose`
@@ -211,3 +212,5 @@ dotnet run --project samples/Components                        # gallery có c�
   `Scroll`, `Frames`, `Wait`, `Box(w, "key")`, `Exists`, `Pixel(w, point)`, `Save(w, "tên.png")`, `Check("mô tả", điều kiện)`.
   Mẫu: `samples/ComponentsCheck/CoreChecks.cs`.
 - Kiểm tra phải đo hành vi thật (state sau click, vị trí overlay, màu pixel), không dùng dữ liệu giả để cho qua.
+
+**VirtualList** (`Lists/VirtualList*.cs`, `HeightIndex.cs`) – chỉ hàng nhìn thấy + `Overscan` thành node (100.000 hàng ≈ 65 node). `Count` + `ItemKey(i)` (key ổn định theo dữ liệu) + `RenderItem(w, i, active)`; `ItemHeight` cố định hoặc `VariableHeight` (hàng được đo bằng hình học thật, nhớ theo key, tổng chiều cao là ước lượng). `Changed()` sau khi dữ liệu đổi (giữ hàng đầu khung làm mỏ neo, hàng đang chọn theo key). `ScrollToIndex(i, Nearest|Start|End)`, phím ↑ ↓ PageUp PageDown Home End Enter. Đệm trên/dưới dựng từ các div `h-[2^k px]` dùng chung (không sinh class mới mỗi vị trí cuộn). DataTable `Virtualized = true` thay phân trang bằng vùng cuộn này (ô tiêu đề chọn mọi hàng sau lọc; lọc/sắp xếp về đầu). Không tự bắt click hàng; chưa có ngang/lưới/nhóm.

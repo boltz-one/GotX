@@ -14,6 +14,7 @@ static class DataChecks
         DatePickerChecks(h);
         DataTableChecks.Run(h);
         DataSidebarChecks.Run(h);
+        VirtualListChecks.Run(h);
     }
 
     static void Typography(CheckHarness h)

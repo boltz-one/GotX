@@ -123,8 +123,10 @@ public sealed partial class Window
         float k = 1 - (float)Math.Exp(-dt / 0.06);
         st.X += (st.TargetX - st.X) * k;
         st.Y += (st.TargetY - st.Y) * k;
-        if (MathF.Abs(st.TargetX - st.X) < 0.25f) st.X = st.TargetX;
-        if (MathF.Abs(st.TargetY - st.Y) < 0.25f) st.Y = st.TargetY;
+        // Ngưỡng bám đích tăng theo độ lớn: ở vài triệu px một bước float đã ≥ 0,5 nên bước nội suy nhỏ bị làm tròn về chỗ cũ và hoạt ảnh không bao giờ kết thúc.
+        float snapX = MathF.Max(0.25f, MathF.Abs(st.TargetX) * 1e-6f), snapY = MathF.Max(0.25f, MathF.Abs(st.TargetY) * 1e-6f);
+        if (MathF.Abs(st.TargetX - st.X) < snapX) st.X = st.TargetX;
+        if (MathF.Abs(st.TargetY - st.Y) < snapY) st.Y = st.TargetY;
         st.X = Math.Clamp(st.X, 0, st.MaxX);
         st.Y = Math.Clamp(st.Y, 0, st.MaxY);
         st.LastTime = _now;

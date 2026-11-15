@@ -29,7 +29,7 @@ public sealed partial class DataTable<T>
     {
         Refresh();
         int delta = 0;
-        for (int p = _page * _pageSize, end = Math.Min(_count, p + _pageSize); p < end; p++)
+        for (int p = PageStart, end = PageEnd; p < end; p++)
         {
             if (_selected[_order[p]] == selected) continue;
             _selected[_order[p]] = selected;
@@ -42,6 +42,7 @@ public sealed partial class DataTable<T>
     {
         _selectedCount += delta;
         _selectionText = null;
+        _virtual?.Notify(); // hàng ảo đọc trạng thái chọn của bảng
         Notify();
         Emit(new SelectionChanged(_selectedCount));
     }
@@ -49,7 +50,7 @@ public sealed partial class DataTable<T>
     /// <summary>0 = trang hiện tại chưa chọn hàng nào, 1 = đã chọn hết, 2 = chọn một phần.</summary>
     int PageSelection()
     {
-        int on = 0, start = _page * _pageSize, end = Math.Min(_count, start + _pageSize);
+        int on = 0, start = PageStart, end = PageEnd;
         for (int p = start; p < end; p++) if (_selected[_order[p]]) on++;
         return on == 0 ? 0 : on == end - start ? 1 : 2;
     }

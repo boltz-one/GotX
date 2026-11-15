@@ -37,6 +37,9 @@ DiagnosticsTests.Register(suite);
 StateAndScrollTests.Register(suite);
 RegressionTests.Register(suite);
 TailwindFeatureTests.Register(suite);
+VirtualListTests.Register(suite);
+VirtualListVariableTests.Register(suite);
+VirtualDataTableTests.Register(suite);
 
 // 3. Các trang gallery của GotX.Components: lint (so với lint-baseline.txt) và hiệu năng.
 GalleryTests.Register(suite);

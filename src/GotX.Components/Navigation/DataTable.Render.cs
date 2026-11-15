@@ -16,8 +16,9 @@ public sealed partial class DataTable<T>
         Refresh();
         var root = w.Div().Class("relative flex w-full flex-col gap-4");
         if (ShowToolbar) root.Child(Toolbar(w));
-        root.Child(w.Div().Class(FrameClass).Child(Ui.Table(w).Child(HeaderRow(w)).Child(Body(w))));
-        if (ShowPagination) root.Child(Footer(w));
+        root.Child(w.Div().Class(FrameClass).Child(Ui.Table(w).Child(HeaderRow(w)).Child(_virtualized ? VirtualBody(w) : Body(w))));
+        if (ShowPagination && !_virtualized) root.Child(Footer(w));
+        else if (_virtualized && Selectable) root.Child(w.Div().Class("px-2 text-sm text-muted-foreground").Child(SelectionText));
         // View của menu hàng không có hình: đặt absolute để nó không chiếm một khoảng gap trong cột.
         if (RowActions is not null && _rowMenu is not null) root.Child(w.View(_rowMenu).Class("absolute"));
         return root;
@@ -72,33 +73,36 @@ public sealed partial class DataTable<T>
         var refs = Indexed<DataTable<T>>.Ensure(ref _rowRefs, this, _items.Count);
         string grid = Grid();
         int start = _page * _pageSize, end = Math.Min(_count, start + _pageSize);
-        for (int p = start; p < end; p++)
-        {
-            int index = _order[p];
-            var item = _items[index];
-            var row = Ui.TableRow(w, _selected[index]).Class(grid).Key(RowKey(index));
-            if (p == end - 1) row.Class("border-b-0");
-            if (Selectable)
-                row.Child(w.Div().Class(ControlCell).Child(DataTableParts.CheckBox(w, _selected[index] ? 1 : 0).Key(RowCheckKey(index))
-                    .OnClick(refs[index], static (r, _) => r.Owner.SetSelected(r.Index, !r.Owner._selected[r.Index]))));
-            foreach (var column in _columns)
-            {
-                if (!column.Visible) continue;
-                var cell = Ui.TableCell(w, column.Align).Class("min-w-0");
-                row.Child(column.Cell is { } draw ? cell.Child(draw(w, item))
-                    : cell.Child(w.Div().Class("truncate").Child(column.Text?.Invoke(item) ?? "")));
-            }
-            if (RowActions is not null)
-            {
-                string key = RowActionKey(index);
-                row.Child(w.Div().Class(ControlCell).Child(w.Div().Class(DataTableParts.ActionButton).Focusable().Key(key).Anchor(key)
-                    .OnClick(refs[index], static (r, _) => r.Owner.OpenRowMenu(r.Index))
-                    .OnKey(refs[index], static (r, e) => { if (e.Key != GotX.Key.Down) return false; r.Owner.OpenRowMenu(r.Index); return true; })
-                    .Child(Icon.MoreHorizontal(w))));
-            }
-            body.Child(row);
-        }
+        for (int p = start; p < end; p++) body.Child(BodyRow(w, p, refs, grid, p == end - 1));
         return body;
+    }
+
+    // Một hàng dữ liệu ở vị trí p (sau lọc và sắp xếp); dùng chung cho chế độ phân trang và chế độ ảo hoá.
+    Div BodyRow(Window w, int p, Indexed<DataTable<T>>[] refs, string grid, bool last)
+    {
+        int index = _order[p];
+        var item = _items[index];
+        var row = Ui.TableRow(w, _selected[index]).Class(grid).Key(RowKey(index));
+        if (last) row.Class("border-b-0");
+        if (Selectable)
+            row.Child(w.Div().Class(ControlCell).Child(DataTableParts.CheckBox(w, _selected[index] ? 1 : 0).Key(RowCheckKey(index))
+                .OnClick(refs[index], static (r, _) => r.Owner.SetSelected(r.Index, !r.Owner._selected[r.Index]))));
+        foreach (var column in _columns)
+        {
+            if (!column.Visible) continue;
+            var cell = Ui.TableCell(w, column.Align).Class("min-w-0");
+            row.Child(column.Cell is { } draw ? cell.Child(draw(w, item))
+                : cell.Child(w.Div().Class("truncate").Child(column.Text?.Invoke(item) ?? "")));
+        }
+        if (RowActions is not null)
+        {
+            string key = RowActionKey(index);
+            row.Child(w.Div().Class(ControlCell).Child(w.Div().Class(DataTableParts.ActionButton).Focusable().Key(key).Anchor(key)
+                .OnClick(refs[index], static (r, _) => r.Owner.OpenRowMenu(r.Index))
+                .OnKey(refs[index], static (r, e) => { if (e.Key != GotX.Key.Down) return false; r.Owner.OpenRowMenu(r.Index); return true; })
+                .Child(Icon.MoreHorizontal(w))));
+        }
+        return row;
     }
 
     Div PageButton(Window w, string key, Func<Window, Div> icon, bool disabled, bool wideOnly) =>

@@ -156,12 +156,13 @@ public sealed partial class DataTable<T> : View
             _grid = null;
             foreach (var (item, target) in _columnItems) if (ReferenceEquals(target, column)) item.Checked = visible;
             _columnsMenu?.Panel.Notify();
+            _virtual?.Notify();
             Notify();
             Emit(new ColumnVisibilityChanged(columnId, visible));
         }
     }
 
-    void Invalidate() { _stale = true; _pageText = _selectionText = null; Notify(); }
+    void Invalidate() { _stale = true; _pageText = _selectionText = null; Notify(); _virtual?.Notify(); }
 
     void PagingChanged() { _pageText = null; Notify(); Emit(new PageChanged(_page + 1, PageCount)); }
 
@@ -189,5 +190,6 @@ public sealed partial class DataTable<T> : View
             }));
         }
         _page = Math.Clamp(_page, 0, Math.Max(1, (_count + _pageSize - 1) / _pageSize) - 1);
+        SyncVirtual();
     }
 }
