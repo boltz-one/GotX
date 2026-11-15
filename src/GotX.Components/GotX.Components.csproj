@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Bộ component kiểu shadcn/ui dựng trên GotX.Core. Không có PackageReference nào. -->
+  <ItemGroup>
+    <ProjectReference Include="../GotX.Core/GotX.Core.csproj" />
+  </ItemGroup>
+</Project>
