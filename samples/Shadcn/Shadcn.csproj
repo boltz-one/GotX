@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Bản port trang chủ và các block của shadcn/ui sang GotX (ví dụ độc lập, không dùng chung gallery component). -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <PublishAot>true</PublishAot>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/GotX.Platform.Windows/GotX.Platform.Windows.csproj" />
+    <ProjectReference Include="../../src/GotX.Components/GotX.Components.csproj" />
+    <!-- Chế độ chụp màn hình headless:Pixels/ToRgba của GotX.Test và renderer CPU (GotX.Raster, qua GotX.Test). -->
+    <ProjectReference Include="../../src/GotX.Test/GotX.Test.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Geist / Geist Mono (OFL-1.1) – font của ui.shadcn.com. -->
+    <None Include="Assets/fonts/**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
