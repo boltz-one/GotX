@@ -1,0 +1,53 @@
+# Kết quả build / publish
+bin/
+obj/
+artifacts/
+.artifacts/
+publish/
+*.binlog
+*.nupkg
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.DotSettings.user
+*.swp
+
+# Kết quả chạy sample và test (ảnh, báo cáo). Ảnh chuẩn trong __snapshots__/ và samples/Shadcn/screenshots/ vẫn được commit.
+out/
+.out/
+test-out/
+components-out/
+TestResults/
+report.json
+*.actual.png
+*.diff.png
+
+# Nhật ký hiệu năng (GOTX_LOG=...) và kết quả đo của tools/GotX.Perf; perf-baseline.json thì commit
+*.gotxlog
+*.perf.jsonl
+perf-logs/
+perf-out/
+!tools/GotX.Perf/perf-baseline.json
+
+# Node (tools/ShadcnRef không dùng package, nhưng đề phòng npm install nhầm)
+node_modules/
+npm-debug.log*
+package-lock.json
+
+# Nhật ký chung
+*.log
+
+# Hệ điều hành
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Cấu hình riêng của công cụ AI trên máy
+.claude/settings.local.json
+
+# Bản gộp mã nguồn cho công cụ tài liệu
+repomix-output.xml

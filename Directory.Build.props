@@ -1,0 +1,13 @@
+<Project>
+  <PropertyGroup>
+    <!-- Có thể ghi đè bằng biến môi trường GotXTargetFramework khi build bằng SDK cũ. -->
+    <GotXTargetFramework Condition="'$(GotXTargetFramework)' == ''">net11.0</GotXTargetFramework>
+    <TargetFramework>$(GotXTargetFramework)</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsAotCompatible>true</IsAotCompatible>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+</Project>
