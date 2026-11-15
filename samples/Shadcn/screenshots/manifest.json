@@ -2,7 +2,7 @@
   "captures": {
     "home-1440-light": {
       "url": "https://ui.shadcn.com/",
-      "date": "2026-11-15T13:14:03.023Z",
+      "date": "2026-11-15T15:50:22.320Z",
       "viewport": [
         1440,
         900
@@ -15,7 +15,7 @@
     },
     "home-1440-dark": {
       "url": "https://ui.shadcn.com/",
-      "date": "2026-11-15T13:14:05.883Z",
+      "date": "2026-11-15T15:50:24.792Z",
       "viewport": [
         1440,
         900
@@ -28,7 +28,7 @@
     },
     "home-1024-light": {
       "url": "https://ui.shadcn.com/",
-      "date": "2026-11-15T13:14:08.596Z",
+      "date": "2026-11-15T15:50:27.508Z",
       "viewport": [
         1024,
         900
@@ -41,7 +41,7 @@
     },
     "home-1024-dark": {
       "url": "https://ui.shadcn.com/",
-      "date": "2026-11-15T13:14:11.346Z",
+      "date": "2026-11-15T15:50:29.878Z",
       "viewport": [
         1024,
         900
@@ -54,7 +54,7 @@
     },
     "home-640-light": {
       "url": "https://ui.shadcn.com/",
-      "date": "2026-11-15T13:14:13.802Z",
+      "date": "2026-11-15T15:50:31.950Z",
       "viewport": [
         640,
         900
@@ -67,7 +67,7 @@
     },
     "home-640-dark": {
       "url": "https://ui.shadcn.com/",
-      "date": "2026-11-15T13:14:16.235Z",
+      "date": "2026-11-15T15:50:33.988Z",
       "viewport": [
         640,
         900
