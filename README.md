@@ -148,6 +148,7 @@ Mỗi view nhớ kết quả đo, bounds, clip và đoạn primitive của frame
 | `samples/Components` | Gallery component (Windows) |
 | `samples/ComponentsCheck` | Kiểm tra hành vi và ảnh của component, headless |
 | `tools/StyleGen` | Sinh `Styled.g.cs` và `Tw.g.cs` |
+| `tools/GotX.Perf` | Đọc nhật ký hiệu năng (`GOTX_LOG`), so sánh, bench kịch bản headless, chạy cửa sổ thật |
 
 Muốn đổi một việc thì sửa file nào: `docs/codebase-summary.md` §4. Bản đồ đầy đủ: `docs/codebase-summary.md` §2.
 
@@ -162,6 +163,7 @@ Muốn đổi một việc thì sửa file nào: `docs/codebase-summary.md` §4.
 | [docs/tailwind.md](docs/tailwind.md) | Cơ chế utility của Tailwind CSS và bảng class được hỗ trợ |
 | [docs/components.md](docs/components.md) | Quy ước component, API sự kiện và overlay, danh sách component |
 | [docs/testing.md](docs/testing.md) | GotX.Test: harness, assertion, lint, snapshot, đo hiệu năng |
+| [docs/performance.md](docs/performance.md) | Nhật ký hiệu năng `GOTX_LOG`, công cụ `tools/GotX.Perf`, bench, kết quả tối ưu |
 | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) | Ghi công và giấy phép: font-rs, Tailwind CSS, shadcn/ui, Lucide |
 
 ## Giới hạn hiện tại

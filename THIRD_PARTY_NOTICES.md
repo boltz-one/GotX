@@ -20,7 +20,11 @@ bản quyền Tailwind Labs, Inc.
 Bộ component trong `src/GotX.Components` tái hiện thiết kế, tên variant và chuỗi class của shadcn/ui
 (https://ui.shadcn.com); token màu trong `Core/ComponentTheme.cs` theo theme neutral của shadcn/ui. Ví dụ
 `samples/Shadcn` port trang chủ và các block của ui.shadcn.com (văn bản, dữ liệu mẫu, bố cục); ảnh tham chiếu trong
-`samples/Shadcn/screenshots/reference/` là ảnh chụp trang đó, chỉ dùng để đối chiếu. Bản quyền shadcn.
+`samples/Shadcn/screenshots/reference/` là ảnh chụp trang đó, chỉ dùng để đối chiếu. `samples/Shadcn/Home/Assets/full-{light,dark}-896.png` là bản thu nhỏ của `apps/v4/public/images/full-*.png` trong repo shadcn-ui (MIT). Bản quyền shadcn.
+
+## Hugeicons — MIT
+
+Dữ liệu path của các icon trong `samples/Shadcn/Home/HugeIcons.cs` lấy từ `@hugeicons/core-free-icons` 4.4.0 (https://hugeicons.com), bản quyền Hugeicons.
 
 ## Lucide — ISC
 

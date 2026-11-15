@@ -18,5 +18,7 @@
   </Folder>
   <Folder Name="/tools/">
     <Project Path="tools/StyleGen/StyleGen.csproj" />
+    <Project Path="tools/GotX.Perf/GotX.Perf.csproj" />
+    <Project Path="tools/GotX.Port/GotX.Port.csproj" />
   </Folder>
 </Solution>

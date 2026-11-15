@@ -57,6 +57,35 @@ Quy tắc chung:
 - Icon: `Icon.Check / X / Plus / Minus / ChevronDown|Up|Left|Right / Dot / Circle / MoreHorizontal / Search / Spinner`
   (`Core/Icon.cs`), mỗi cái là một ô 16px lấy màu chữ của cha. Cần icon khác thì ghép từ viền/hộp theo cùng cách.
 
+### Style registry (`ComponentStyle`)
+
+Class của mọi component nằm trong bảng `ComponentStyleSheet` (`src/GotX.Components/Styles/`), không nằm rải trong code:
+`ComponentStyleSheet.Default` = chuỗi GotX vẫn dùng (khớp các block new-york-v4), `ComponentStyleSheet.Rhea` = style "rhea"
+của shadcn (`registry/styles/style-rhea.css` ghép với `registry/bases/base/ui/*.tsx`: control cao 32px bo 18px nền
+`input/50`, thẻ bo 24px đệm 20px `shadow-sm`, menu bo 18px dòng 32px, Select mở đè lên nút…), `ComponentStyleSheet.NewYorkV4`
+= `registry/new-york-v4/ui/*.tsx` (style của các block: control h-9 bo md `shadow-xs`, thẻ có viền đệm 24px…).
+
+- Style của cả app: `ComponentTheme.Install(style)` lúc khởi động; đổi lúc chạy (vd. khi đổi trang):
+  `ComponentTheme.Use(app, style)` – đặt style mặc định rồi `app.InvalidateAllWindows()`. `ComponentTheme.Style` đọc lại.
+- Trộn style trong một app (như React chọn style theo chỗ import): `using var _ = ComponentStyles.Use(ComponentStyle.Rhea);`
+  ở đầu `Render` / `OnCreated` của view. Hàm `Ui.*` đọc bảng của phạm vi gần nhất; component có state (Checkbox, Select,
+  DropdownMenu, Tooltip, AlertDialog, Input…) tạo trong một phạm vi thì ghim bảng đó (cả khi vẽ lại hay vẽ trong overlay),
+  tạo ngoài phạm vi thì theo style chung lúc chạy.
+- File component tự giữ bảng riêng (Tabs, Table…): tra `ComponentStyles.Current.Style` (enum, bảng dẫn xuất giữ nguyên) vào
+  mảng dựng sẵn theo `(int)style`; chuỗi class khác lấy thẳng `ComponentStyles.Current.<Thuộc tính>`.
+- Style mới = dữ liệu, không phải code: `(ComponentStyleSheet.Rhea with { MenuPanel = "…", … }).Compile()` (xem
+  `samples/Shadcn/Home/HomeStyle.cs`: rhea + màu portal của site). `Compile()` dựng sẵn các bảng ghép (variant × size),
+  lúc vẽ chỉ đọc một biến và tra mảng – không nối chuỗi.
+- Bảng rhea bao: Button, Badge, Card, Item, Empty, Progress, Kbd, ButtonGroupText, Breadcrumb, Input/Textarea, InputGroup,
+  Select (nút, danh sách, mục, `SelectAlignItem`), Checkbox, RadioGroup, Switch, Field*, Label, menu (DropdownMenu /
+  ContextMenu / Menubar), Tooltip, AlertDialog, Bubble. Bảng NewYorkV4 bao thêm Avatar, Skeleton, Toggle/ToggleGroup,
+  Sheet/Drawer (tấm, tiêu đề), Dialog, Accordion, Popover (`ComponentStyleSheet.More.cs`). Component khác (Collapsible không
+  có class riêng; Tabs/Table/Chart/DataTable/SidebarNav/DatePicker/Typography tự giữ bảng theo `ComponentStyles.Current.Style`)
+  vẽ theo chuỗi mặc định ở mọi style.
+- Ghi đè theo chỗ dùng: `DropdownMenu.TriggerClass` / `TriggerOpenClass` (lớp bọc là chính nút, `aria-expanded:bg-muted`),
+  `MenuOwner.MenuClass` (độ rộng tấm menu), `MenuItem.Custom(w => …)` (dòng tự vẽ, không bấm được), `Select.TriggerClass` /
+  `ContentClass`, `TextEntry.BoxClassOverride` (`Func<bool, string>`, đối số = đang lỗi), `Textarea.MinBoxHeight`; mục
+  RadioGroup nhãn rỗng chỉ còn nút tròn.
 ## 3. Sự kiện và overlay (API của Core)
 
 | Việc | API |

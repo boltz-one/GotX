@@ -14,4 +14,7 @@
     <!-- Geist / Geist Mono (OFL-1.1) – font của ui.shadcn.com. -->
     <None Include="Assets/fonts/**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Home/Assets/**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

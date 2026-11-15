@@ -98,6 +98,8 @@ khoá = luật + đường dẫn). Chỉ vấn đề mới làm hỏng test; s�
 
 ## 6. Hiệu năng
 
+Nhật ký, bench và tối ưu liên tục: [performance.md](performance.md). Test ghim hiệu năng: `tests/GotX.Tests/Perf/` (nhật ký, cache chữ/Tailwind, renderer CPU so với phép tính từng pixel, ngân sách trang lớn).
+
 - `Measure` trả min/trung vị/p95 của layout, paint, toàn bộ Draw, raster CPU (đo riêng), cấp phát/frame, số view render/phát lại. Trace bị gỡ trong lúc đo.
 - `ExpectIdle`: sau khi đứng yên, các frame tiếp theo phải render 0 view. Lỗi liệt kê view đã render + view bị ViewDirty.
 - `ExpectRenders(action, max)`: một thao tác chỉ render lại từng ấy lượt view (Notify một view làm bẩn cả các view cha).

@@ -299,6 +299,8 @@ Hai backend dùng chung công thức SDF và erf. `GOTX_RENDERER=software` ép d
 - `Window.LastFrame` (`FrameStats`): thời gian layout, paint, tổng (ms); view render và phát lại; số node, primitive, hitbox, hover; byte cấp phát.
 - `Window.Inspect(size, scale)` → `UiSnapshot`: vẽ một frame với cache tắt; `InspectBegin/End` ghi `UiNode` cho mỗi node (hộp layout và màn hình, clip, class, `TextStyle`, đoạn primitive `[PrimStart, PrimEnd)`).
 
+- `Window.Log` (`PerfLog`, bật bằng `GOTX_LOG=<file>`): mỗi frame một dòng JSON (thời gian từng pha, view render, nguyên nhân bẩn, cấp phát, GC, input, độ trễ) + bản ghi `present` của platform (raster CPU / nộp GPU / Present / thời gian GPU), khởi động, cảnh báo. Tắt thì chỉ tốn một phép so sánh null. Định dạng và công cụ đọc: [performance.md](performance.md).
+
 `GotX.Test`: `UiTest.Open` dùng đồng hồ giả. `Step()` cộng 16 ms, chạy `RunTimers`, `Draw`, `Flush`. `Settle` dựa trên `FramePending` và `WantsAnimationFrame`. Ảnh chụp dùng `SoftwareRenderer.Render`. Chi tiết: [testing.md](testing.md) §8.
 
 ## 13. Lớp component

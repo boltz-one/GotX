@@ -17,6 +17,16 @@ RunnerTests.Register(suite);
 
 // 2. Tính năng của Core.
 FocusTests.Register(suite);
+BackgroundClipTests.Register(suite);
+ShadowExclusionTests.Register(suite);
+GridFrMinTests.Register(suite);
+FitContentTests.Register(suite);
+TextInputAlignTests.Register(suite);
+StrokeCoverageTests.Register(suite);
+FlexWrapMeasureTests.Register(suite);
+BaselineAlignTests.Register(suite);
+FlexBasisTests.Register(suite);
+ShrinkWrapTests.Register(suite);
 OverlayFocusTests.Register(suite);
 TimerTests.Register(suite);
 VectorTests.Register(suite);
@@ -34,5 +44,14 @@ GalleryTests.Register(suite);
 ShadcnHomeTests.Register(suite);
 ShadcnBlocksTests.Register(suite);
 ShadcnFidelityTests.Register(suite);
+
+// 5. Hiệu năng: nhật ký PerfLog, các cache đường nóng, đường nhanh của renderer CPU, ngân sách trên trang lớn (xem docs/performance.md).
+PerfLogTests.Register(suite);
+PerfCacheTests.Register(suite);
+PerfRasterTests.Register(suite);
+PerfBudgetTests.Register(suite);
+
+// 5. tools/GotX.Port (công cụ cho skill gotx-port): trích class, gợi ý class chưa hỗ trợ, html/gpui → GotX, diff ảnh.
+PortToolTests.Register(suite);
 
 return suite.Run(args);
