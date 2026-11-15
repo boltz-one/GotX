@@ -1,0 +1,449 @@
+{
+  "captures": {
+    "home-1440-light": {
+      "url": "https://ui.shadcn.com/",
+      "date": "2026-11-15T13:14:03.023Z",
+      "viewport": [
+        1440,
+        900
+      ],
+      "image": [
+        1440,
+        1829
+      ],
+      "elements": 375
+    },
+    "home-1440-dark": {
+      "url": "https://ui.shadcn.com/",
+      "date": "2026-11-15T13:14:05.883Z",
+      "viewport": [
+        1440,
+        900
+      ],
+      "image": [
+        1440,
+        1829
+      ],
+      "elements": 375
+    },
+    "home-1024-light": {
+      "url": "https://ui.shadcn.com/",
+      "date": "2026-11-15T13:14:08.596Z",
+      "viewport": [
+        1024,
+        900
+      ],
+      "image": [
+        1024,
+        1765
+      ],
+      "elements": 300
+    },
+    "home-1024-dark": {
+      "url": "https://ui.shadcn.com/",
+      "date": "2026-11-15T13:14:11.346Z",
+      "viewport": [
+        1024,
+        900
+      ],
+      "image": [
+        1024,
+        1765
+      ],
+      "elements": 300
+    },
+    "home-640-light": {
+      "url": "https://ui.shadcn.com/",
+      "date": "2026-11-15T13:14:13.802Z",
+      "viewport": [
+        640,
+        900
+      ],
+      "image": [
+        640,
+        1297
+      ],
+      "elements": 11
+    },
+    "home-640-dark": {
+      "url": "https://ui.shadcn.com/",
+      "date": "2026-11-15T13:14:16.235Z",
+      "viewport": [
+        640,
+        900
+      ],
+      "image": [
+        640,
+        1297
+      ],
+      "elements": 11
+    },
+    "dashboard-01-1440-light": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/dashboard-01",
+      "date": "2026-11-15T13:14:19.064Z",
+      "viewport": [
+        1440,
+        900
+      ],
+      "image": [
+        1440,
+        900
+      ],
+      "elements": 464
+    },
+    "dashboard-01-1440-dark": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/dashboard-01",
+      "date": "2026-11-15T13:14:21.658Z",
+      "viewport": [
+        1440,
+        900
+      ],
+      "image": [
+        1440,
+        900
+      ],
+      "elements": 464
+    },
+    "dashboard-01-1024-light": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/dashboard-01",
+      "date": "2026-11-15T13:14:24.447Z",
+      "viewport": [
+        1024,
+        768
+      ],
+      "image": [
+        1024,
+        768
+      ],
+      "elements": 459
+    },
+    "dashboard-01-1024-dark": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/dashboard-01",
+      "date": "2026-11-15T13:14:27.021Z",
+      "viewport": [
+        1024,
+        768
+      ],
+      "image": [
+        1024,
+        768
+      ],
+      "elements": 459
+    },
+    "sidebar-07-1440-light": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/sidebar-07",
+      "date": "2026-11-15T13:14:29.557Z",
+      "viewport": [
+        1440,
+        900
+      ],
+      "image": [
+        1440,
+        900
+      ],
+      "elements": 89
+    },
+    "sidebar-07-1440-dark": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/sidebar-07",
+      "date": "2026-11-15T13:14:31.908Z",
+      "viewport": [
+        1440,
+        900
+      ],
+      "image": [
+        1440,
+        900
+      ],
+      "elements": 89
+    },
+    "sidebar-07-1024-light": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/sidebar-07",
+      "date": "2026-11-15T13:14:34.283Z",
+      "viewport": [
+        1024,
+        768
+      ],
+      "image": [
+        1024,
+        768
+      ],
+      "elements": 89
+    },
+    "sidebar-07-1024-dark": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/sidebar-07",
+      "date": "2026-11-15T13:14:36.630Z",
+      "viewport": [
+        1024,
+        768
+      ],
+      "image": [
+        1024,
+        768
+      ],
+      "elements": 89
+    },
+    "sidebar-03-1440-light": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/sidebar-03",
+      "date": "2026-11-15T13:14:38.955Z",
+      "viewport": [
+        1440,
+        900
+      ],
+      "image": [
+        1440,
+        900
+      ],
+      "elements": 94
+    },
+    "sidebar-03-1440-dark": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/sidebar-03",
+      "date": "2026-11-15T13:14:41.298Z",
+      "viewport": [
+        1440,
+        900
+      ],
+      "image": [
+        1440,
+        900
+      ],
+      "elements": 94
+    },
+    "sidebar-03-1024-light": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/sidebar-03",
+      "date": "2026-11-15T13:14:43.616Z",
+      "viewport": [
+        1024,
+        768
+      ],
+      "image": [
+        1024,
+        768
+      ],
+      "elements": 94
+    },
+    "sidebar-03-1024-dark": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/sidebar-03",
+      "date": "2026-11-15T13:14:45.931Z",
+      "viewport": [
+        1024,
+        768
+      ],
+      "image": [
+        1024,
+        768
+      ],
+      "elements": 94
+    },
+    "login-03-1440-light": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/login-03",
+      "date": "2026-11-15T13:14:48.302Z",
+      "viewport": [
+        1440,
+        900
+      ],
+      "image": [
+        1440,
+        900
+      ],
+      "elements": 30
+    },
+    "login-03-1440-dark": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/login-03",
+      "date": "2026-11-15T13:14:50.798Z",
+      "viewport": [
+        1440,
+        900
+      ],
+      "image": [
+        1440,
+        900
+      ],
+      "elements": 30
+    },
+    "login-03-1024-light": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/login-03",
+      "date": "2026-11-15T13:14:53.126Z",
+      "viewport": [
+        1024,
+        768
+      ],
+      "image": [
+        1024,
+        768
+      ],
+      "elements": 30
+    },
+    "login-03-1024-dark": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/login-03",
+      "date": "2026-11-15T13:14:55.443Z",
+      "viewport": [
+        1024,
+        768
+      ],
+      "image": [
+        1024,
+        768
+      ],
+      "elements": 30
+    },
+    "login-04-1440-light": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/login-04",
+      "date": "2026-11-15T13:14:57.784Z",
+      "viewport": [
+        1440,
+        900
+      ],
+      "image": [
+        1440,
+        900
+      ],
+      "elements": 32
+    },
+    "login-04-1440-dark": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/login-04",
+      "date": "2026-11-15T13:15:00.121Z",
+      "viewport": [
+        1440,
+        900
+      ],
+      "image": [
+        1440,
+        900
+      ],
+      "elements": 32
+    },
+    "login-04-1024-light": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/login-04",
+      "date": "2026-11-15T13:15:02.461Z",
+      "viewport": [
+        1024,
+        768
+      ],
+      "image": [
+        1024,
+        768
+      ],
+      "elements": 32
+    },
+    "login-04-1024-dark": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/login-04",
+      "date": "2026-11-15T13:15:04.781Z",
+      "viewport": [
+        1024,
+        768
+      ],
+      "image": [
+        1024,
+        768
+      ],
+      "elements": 32
+    },
+    "signup-03-1440-light": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/signup-03",
+      "date": "2026-11-15T13:18:04.689Z",
+      "viewport": [
+        1440,
+        900
+      ],
+      "image": [
+        1440,
+        900
+      ],
+      "elements": 30
+    },
+    "signup-03-1440-dark": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/signup-03",
+      "date": "2026-11-15T13:18:07.337Z",
+      "viewport": [
+        1440,
+        900
+      ],
+      "image": [
+        1440,
+        900
+      ],
+      "elements": 30
+    },
+    "signup-03-1024-light": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/signup-03",
+      "date": "2026-11-15T13:18:09.642Z",
+      "viewport": [
+        1024,
+        768
+      ],
+      "image": [
+        1024,
+        768
+      ],
+      "elements": 30
+    },
+    "signup-03-1024-dark": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/signup-03",
+      "date": "2026-11-15T13:18:12.157Z",
+      "viewport": [
+        1024,
+        768
+      ],
+      "image": [
+        1024,
+        768
+      ],
+      "elements": 30
+    },
+    "signup-04-1440-light": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/signup-04",
+      "date": "2026-11-15T13:18:14.491Z",
+      "viewport": [
+        1440,
+        900
+      ],
+      "image": [
+        1440,
+        900
+      ],
+      "elements": 38
+    },
+    "signup-04-1440-dark": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/signup-04",
+      "date": "2026-11-15T13:18:16.815Z",
+      "viewport": [
+        1440,
+        900
+      ],
+      "image": [
+        1440,
+        900
+      ],
+      "elements": 38
+    },
+    "signup-04-1024-light": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/signup-04",
+      "date": "2026-11-15T13:18:19.164Z",
+      "viewport": [
+        1024,
+        768
+      ],
+      "image": [
+        1024,
+        768
+      ],
+      "elements": 38
+    },
+    "signup-04-1024-dark": {
+      "url": "https://ui.shadcn.com/view/new-york-v4/signup-04",
+      "date": "2026-11-15T13:18:21.479Z",
+      "viewport": [
+        1024,
+        768
+      ],
+      "image": [
+        1024,
+        768
+      ],
+      "elements": 38
+    }
+  },
+  "browser": "Edg/157.0.4341.46",
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0",
+  "notes": "deviceScaleFactor 1; animations/transitions disabled by injected CSS; prefers-reduced-motion: reduce; theme forced by localStorage \"theme\" + prefers-color-scheme; home: full page, site header hidden (display:none); blocks: viewport only. Rects in layout maps are document CSS px."
+}
