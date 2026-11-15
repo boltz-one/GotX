@@ -1,0 +1,154 @@
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Text;
+using GotX.Text;
+using GotX.Widgets;
+
+namespace GotX;
+
+public sealed partial class Window
+{
+    const float FauxSlant = 0.2f;
+
+    void PaintText(string text, Bounds b, in TextStyle ts, Bounds deviceClip, Xf xf)
+    {
+        text = Text.ApplyCase(text, ts.Case);
+        Text.WrapStyled(text, ts, ts.NoWrap ? float.NaN : b.Width + 0.01f, _lines);
+        float align = ts.Align switch { TextAlign.Center => 0.5f, TextAlign.Right => 1f, _ => 0f };
+        var color = Fade(ts.Color, ts.Opacity);
+        int shown = ts.LineClamp > 0 ? Math.Min(_lines.Count, ts.LineClamp) : _lines.Count;
+        for (int i = 0; i < shown; i++)
+        {
+            var l = _lines[i];
+            float y = b.Y + i * ts.LineHeight;
+            if (i == shown - 1 && shown < _lines.Count) { PaintClampedLine(text, l, b, y, align, ts, color, deviceClip, xf); continue; }
+            if (ts.Ellipsis && l.Width > b.Width + 0.5f)
+            {
+                // truncate: cắt sao cho phần còn lại + "…" vừa độ rộng
+                float dots = Text.Measure("…", ts);
+                int cut = Text.FitIndex(text, l.Start, l.End, MathF.Max(0, b.Width - dots), ts);
+                float w = Text.MeasureRange(text, l.Start, cut, ts);
+                PaintRun(text, l.Start, cut, b.X, y, ts, color, deviceClip, xf);
+                PaintRun("…", 0, 1, b.X + w, y, ts, color, deviceClip, xf);
+                PaintDecoration(b.X, y, w + dots, ts, color, deviceClip, xf);
+                continue;
+            }
+            float x = b.X + (b.Width - l.Width) * align;
+            PaintRun(text, l.Start, l.End, x, y, ts, color, deviceClip, xf);
+            PaintDecoration(x, y, l.Width, ts, color, deviceClip, xf);
+        }
+    }
+
+    /// <summary>
+    /// Dòng cuối của line-clamp khi còn chữ phía sau: cắt bớt (bỏ khoảng trắng cuối) để "…" vừa bề rộng hộp,
+    /// đặt "…" ngay sau chữ – như -webkit-line-clamp của trình duyệt.
+    /// </summary>
+    void PaintClampedLine(string text, TextLine l, Bounds b, float y, float align, in TextStyle ts, Rgba color, Bounds deviceClip, Xf xf)
+    {
+        float dots = Text.Measure("…", ts);
+        int end = l.End;
+        while (end > l.Start && text[end - 1] == ' ') end--;
+        if (Text.MeasureRange(text, l.Start, end, ts) + dots > b.Width + 0.5f)
+        {
+            end = Text.FitIndex(text, l.Start, end, MathF.Max(0, b.Width - dots), ts);
+            while (end > l.Start && text[end - 1] == ' ') end--;
+        }
+        float w = Text.MeasureRange(text, l.Start, end, ts);
+        float x = b.X + MathF.Max(0, b.Width - (w + dots)) * align;
+        PaintRun(text, l.Start, end, x, y, ts, color, deviceClip, xf);
+        PaintRun("…", 0, 1, x + w, y, ts, color, deviceClip, xf);
+        PaintDecoration(x, y, w + dots, ts, color, deviceClip, xf);
+    }
+
+    /// <summary>
+    /// underline / line-through: một nét ngang theo đường gốc (hoặc giữa chiều cao chữ thường) của dòng.
+    /// decoration-{màu} / decoration-2 đổi màu và độ dày; underline-offset-4 đặt mép trên nét cách đường gốc 4px (CSS đo từ đường gốc).
+    /// </summary>
+    void PaintDecoration(float x, float y, float width, in TextStyle ts, Rgba color, Bounds deviceClip, Xf xf)
+    {
+        if (ts.Decoration == TextDecoration.None || width <= 0) return;
+        var font = Text.FontFor(ts);
+        float k = ts.FontSize / font.UnitsPerEm;
+        float ascent = font.Ascender * k, descent = -font.Descender * k;
+        float baseline = y + (ts.LineHeight - (ascent + descent)) / 2 + ascent;
+        float thick = ts.DecorationThickness > 0 ? ts.DecorationThickness : MathF.Max(1, MathF.Round(ts.FontSize / 14));
+        float top = ts.Decoration != TextDecoration.Underline ? baseline - ascent * 0.3f
+            : ts.UnderlineOffset is { } off ? baseline + off : baseline + thick;
+        if (ts.DecorationColor is { } dc) color = Fade(dc, ts.Opacity);
+        AddRect(new Bounds(x, MathF.Round(top), width, thick), color, deviceClip, xf);
+    }
+
+    /// <summary>Vẽ một đoạn chữ trên một dòng, gốc trái-trên (x, y) toạ độ layout; xf phóng cả cỡ chữ.</summary>
+    void PaintRun(string text, int start, int end, float x, float y, in TextStyle ts, Rgba color, Bounds deviceClip, Xf xf)
+    {
+        var font = Text.FontFor(ts);
+        float px = ts.FontSize * xf.S * _scale;
+        float spacing = ts.LetterSpacing * xf.S * _scale;
+        // Không có font nghiêng thật cho họ này → nghiêng giả bằng phép trượt ngang quanh đường gốc.
+        bool fauxItalic = ts.Italic && !font.Italic;
+        float k = px / font.UnitsPerEm;
+        float ascent = font.Ascender * k, descent = -font.Descender * k;
+        if (!xf.IsSimple) { PaintRunRotated(text, start, end, x, y, ts, color, deviceClip, xf, font, px, k, ascent, descent, spacing); return; }
+        var o = xf.Apply(new Point(x, y));
+        float baseline = MathF.Round(o.Y * _scale + (ts.LineHeight * xf.S * _scale - (ascent + descent)) / 2 + ascent);
+        float dx = o.X * _scale;
+        var atlas = Text.Atlas;
+        bool kern = font.HasKerning;
+        ushort prev = 0;
+
+        for (int i = start; i < end;)
+        {
+            Rune.DecodeFromUtf16(text.AsSpan(i, end - i), out var r, out int len);
+            i += len;
+            if (r.Value == '\n') continue;
+            ushort g = font.Glyph(r.Value, ts.TabularNums);
+            if (kern) dx += font.Kern(prev, g) * k;
+            prev = g;
+            int gi = atlas.Get(font, g, px);
+            var mask = atlas[gi];
+            if (mask.Width > 0)
+            {
+                var gb = new Bounds(MathF.Round(dx) + mask.Left, baseline + mask.Top, mask.Width, mask.Height);
+                Mat2 slant = default;
+                if (fauxItalic)
+                {
+                    // Trượt quanh tâm glyph rồi bù lại để điểm trên đường gốc đứng yên.
+                    slant = new Mat2(1, -FauxSlant, 0, 1);
+                    gb = gb.Offset(FauxSlant * (baseline - (gb.Y + gb.Height / 2)), 0);
+                }
+                Add(new Primitive { Kind = PrimitiveKind.Glyph, Bounds = gb, Transform = slant, Glyph = gi, Color = color, Clip = deviceClip });
+            }
+            dx += font.AdvanceWidth(g) * k + spacing;
+        }
+    }
+
+    /// <summary>Chữ bị xoay: tính vị trí từng glyph trong toạ độ layout rồi đặt theo phép biến đổi (không làm tròn pixel).</summary>
+    void PaintRunRotated(string text, int start, int end, float x, float y, in TextStyle ts, Rgba color, Bounds deviceClip,
+        Xf xf, Text.Font font, float px, float k, float ascent, float descent, float spacing)
+    {
+        float unit = xf.S * _scale; // số pixel thiết bị trên 1 đơn vị layout
+        float baseline = y + ((ts.LineHeight * unit - (ascent + descent)) / 2 + ascent) / unit;
+        float pen = x;
+        var atlas = Text.Atlas;
+        bool kern = font.HasKerning;
+        ushort prev = 0;
+        for (int i = start; i < end;)
+        {
+            Rune.DecodeFromUtf16(text.AsSpan(i, end - i), out var r, out int len);
+            i += len;
+            if (r.Value == '\n') continue;
+            ushort g = font.Glyph(r.Value, ts.TabularNums);
+            if (kern) pen += font.Kern(prev, g) * k / unit;
+            prev = g;
+            int gi = atlas.Get(font, g, px);
+            var mask = atlas[gi];
+            if (mask.Width > 0)
+            {
+                var local = new Bounds(pen + mask.Left / unit, baseline + mask.Top / unit, mask.Width / unit, mask.Height / unit);
+                var bounds = Place(local, xf, out Mat2 rot);
+                Add(new Primitive { Kind = PrimitiveKind.Glyph, Bounds = bounds, Transform = rot, Glyph = gi, Color = color, Clip = deviceClip });
+            }
+            pen += (font.AdvanceWidth(g) * k + spacing) / unit;
+        }
+    }
+}

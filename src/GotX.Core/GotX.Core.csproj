@@ -1,0 +1,3 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Không có PackageReference nào: chỉ BCL. -->
+</Project>
