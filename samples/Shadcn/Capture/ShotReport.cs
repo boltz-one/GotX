@@ -27,7 +27,7 @@ public static class ShotReport
 
             Home is captured full page **without the site header** on both sides (the GotX home view has no site header; the
             reference hides `header.sticky`). Blocks: viewport only. Folders: `reference/`, `gotx/`, `diff/` (dimmed reference;
-            magenta = channel Δ > 24, amber = 1–24, blue = area only one image has), `compare/` (reference | GotX, diff below; halved when wide).
+            magenta = channel Δ > 24, amber = 1–24, blue = area only one image has), `compare/` (reference | GotX, diff below; halved when wide). `diff/` and `compare/` are not tracked in git: run `--screenshots` to create them.
 
             **Layout match**: reference elements paired with GotX nodes by normalized text (case-insensitive). *Texts*: DOM text runs
             (Range rect = union of the rendered line boxes) ↔ GotX text nodes (union of the painted lines: wrapped exactly like the

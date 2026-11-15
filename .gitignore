@@ -51,3 +51,9 @@ Desktop.ini
 
 # Bản gộp mã nguồn cho công cụ tài liệu
 repomix-output.xml
+
+# Generated comparison images (regenerate with: dotnet run --project samples/Shadcn -- --screenshots)
+samples/Shadcn/screenshots/compare/
+samples/Shadcn/screenshots/diff/
+samples/Shadcn/screenshots/states/compare/
+samples/Shadcn/screenshots/states/diff/
