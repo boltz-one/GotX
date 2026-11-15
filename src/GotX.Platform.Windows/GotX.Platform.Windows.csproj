@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../GotX.Core/GotX.Core.csproj" />
+    <ProjectReference Include="../GotX.Raster/GotX.Raster.csproj" />
+  </ItemGroup>
+</Project>
