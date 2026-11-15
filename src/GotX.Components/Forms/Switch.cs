@@ -13,31 +13,11 @@ public sealed class Switch : View
     /// <summary>Trạng thái bật/tắt vừa đổi.</summary>
     public readonly record struct CheckedChanged(bool Checked);
 
-    const string TrackBase = "relative inline-flex shrink-0 items-center rounded-full border transition-all ";
-    const string TrackIdle = "border-transparent ", TrackFocus = "border-ring ring-3 ring-ring/50 ";
-
-    // [(cỡ * 2 + bật) * 2 + đang focus bằng phím]: chọn sẵn chuỗi, không nối class mỗi frame. Cả hàng (công tắc + nhãn)
-    // là phần tử focus, vòng focus chỉ vẽ quanh công tắc như shadcn.
-    static readonly string[] Tracks = BuildTracks();
-
-    static string[] BuildTracks()
-    {
-        string[] sizes = ["h-[18.4px] w-8 ", "h-[14px] w-6 "];
-        string[] states = ["bg-input dark:bg-input/80", "bg-primary"];
-        var table = new string[8];
-        for (int i = 0; i < 8; i++)
-            table[i] = TrackBase + ((i & 1) != 0 ? TrackFocus : TrackIdle) + sizes[i >> 2] + states[(i >> 1) & 1];
-        return table;
-    }
-
-    // Con chạy dịch đúng (rộng track − rộng con chạy − 2px viền) như translate-x-[calc(100%-2px)] của shadcn.
-    static readonly string[] Thumbs =
-    [
-        "block size-4 rounded-full bg-background transition-transform translate-x-0 dark:bg-foreground",
-        "block size-4 rounded-full bg-background transition-transform translate-x-[14px] dark:bg-primary-foreground",
-        "block size-3 rounded-full bg-background transition-transform translate-x-0 dark:bg-foreground",
-        "block size-3 rounded-full bg-background transition-transform translate-x-[10px] dark:bg-primary-foreground",
-    ];
+    // Bảng class của style lúc tạo: track [(cỡ * 2 + bật) * 2 + đang focus bằng phím], con chạy [cỡ * 2 + bật]. Cả hàng
+    // (công tắc + nhãn) là phần tử focus, vòng focus chỉ vẽ quanh công tắc như shadcn.
+    // Bảng ghim lúc tạo nếu được tạo trong ComponentStyles.Use(...); không thì theo style chung của app (đổi được lúc chạy).
+    readonly ComponentStyleSheet? _pinned = ComponentStyles.Scoped;
+    ComponentStyleSheet _sheet => _pinned ?? ComponentStyles.S;
 
     /// <summary>Đang bật.</summary>
     public bool Checked
@@ -79,7 +59,7 @@ public sealed class Switch : View
             .Key(_key).Focusable()
             .Disabled(Disabled)
             .OnClick(this, static (s, _) => s.Toggle())
-            .Child(w.Div().Class(Tracks[i * 2 + (ring ? 1 : 0)]).Child(w.Div().Class(Thumbs[i])));
+            .Child(w.Div().Class(_sheet.SwitchTrack[i * 2 + (ring ? 1 : 0)]).Child(w.Div().Class(_sheet.SwitchThumb[i])));
         if (Label is { } label) row.Child(w.Div().Class("text-sm font-medium leading-none").Child(label));
         return row;
     }

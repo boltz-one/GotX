@@ -6,23 +6,7 @@ public enum AvatarSize : byte { Default, Sm, Lg }
 public static partial class Ui
 {
     // Không có group-data-[size] nên kích thước được truyền tường minh cho từng phần (avatar, badge, count) và tra
-    // bảng dựng sẵn.
-    static readonly string[] AvatarRoot =
-    [
-        "relative flex size-8 shrink-0 rounded-full",
-        "relative flex size-6 shrink-0 rounded-full",
-        "relative flex size-10 shrink-0 rounded-full",
-    ];
-
-    static readonly string[] AvatarFallbackClasses =
-    [
-        "flex size-full items-center justify-center rounded-full bg-muted text-sm text-muted-foreground",
-        "flex size-full items-center justify-center rounded-full bg-muted text-xs text-muted-foreground",
-        "flex size-full items-center justify-center rounded-full bg-muted text-sm text-muted-foreground",
-    ];
-
-    // after:border của shadcn → một lớp absolute phủ lên (không có mix-blend, nên dùng màu border bán trong suốt sẵn có).
-    const string AvatarRing = "absolute inset-0 rounded-full border border-border";
+    // bảng dựng sẵn (gốc, chữ viết tắt, viền, ảnh theo style – ComponentStyleSheet.Avatar*).
 
     static readonly string[] AvatarBadgeClasses =
     [
@@ -38,7 +22,6 @@ public static partial class Ui
         "relative flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-sm text-muted-foreground ring-2 ring-background",
     ];
 
-    const string AvatarImageClass = "size-full rounded-full object-cover";
 
     /// <summary>
     /// Avatar tròn chỉ có chữ viết tắt (AvatarFallback). Thêm chấm trạng thái bằng
@@ -51,11 +34,16 @@ public static partial class Ui
     /// thì hiện <paramref name="initials"/> như AvatarFallback. Tạo <see cref="ImageSource"/> một lần rồi giữ lại.
     /// </summary>
     public static Div Avatar(Window w, ImageSource? image, string initials, AvatarSize size = AvatarSize.Default) =>
-        w.Div().Class(AvatarRoot[(int)size])
+        AvatarParts(w, ComponentStyles.S, image, initials, size);
+
+    static Div AvatarParts(Window w, ComponentStyleSheet s, ImageSource? image, string initials, AvatarSize size)
+    {
+        var avatar = w.Div().Class(s.AvatarRoot[(int)size])
             .Child(image is null
-                ? w.Div().Class(AvatarFallbackClasses[(int)size]).Child(initials)
-                : w.Image(image).Class(AvatarImageClass))
-            .Child(w.Div().Class(AvatarRing));
+                ? w.Div().Class(s.AvatarFallback[(int)size]).Child(initials)
+                : w.Image(image).Class(s.AvatarImage));
+        return s.AvatarRing.Length > 0 ? avatar.Child(w.Div().Class(s.AvatarRing)) : avatar;
+    }
 
     /// <summary>Chấm nhỏ ở góc dưới phải avatar (trạng thái online…); cùng <paramref name="size"/> với avatar.</summary>
     public static Div AvatarBadge(Window w, AvatarSize size = AvatarSize.Default) => w.Div().Class(AvatarBadgeClasses[(int)size]);

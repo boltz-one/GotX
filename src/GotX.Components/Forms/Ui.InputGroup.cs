@@ -12,35 +12,23 @@ public enum InputGroupAlign : byte { InlineStart, InlineEnd, BlockStart, BlockEn
 /// </summary>
 public static partial class Ui
 {
-    const string GroupRow = "flex h-8 w-full min-w-0 items-center rounded-lg border transition-colors dark:bg-input/30 ";
-    const string GroupStacked = "flex w-full min-w-0 flex-col rounded-lg border transition-colors dark:bg-input/30 ";
-    const string GroupIdle = "border-input", GroupFocused = "border-ring ring-3 ring-ring/50";
-
-    // [xếp dọc * 2 + ô đang focus]
-    static readonly string[] InputGroupClasses =
-        [GroupRow + GroupIdle, GroupRow + GroupFocused, GroupStacked + GroupIdle, GroupStacked + GroupFocused];
 
     /// <summary>Khung nhóm; <paramref name="stacked"/> = xếp dọc (phần phụ BlockStart/BlockEnd hoặc textarea).</summary>
-    public static Div InputGroup(Window w, bool stacked = false) => w.Div().Class(InputGroupClasses[stacked ? 2 : 0]);
+    public static Div InputGroup(Window w, bool stacked = false) => w.Div().Class(ComponentStyles.S.InputGroup[stacked ? 2 : 0]);
 
     /// <summary>
     /// Khung nhóm có vòng focus: viền và vòng sáng lên khi <paramref name="control"/> giữ focus. Ô nhập đổi focus thì
     /// view chứa nó được vẽ lại, nên chỉ cần hỏi trạng thái lúc dựng.
     /// </summary>
     public static Div InputGroup(Window w, TextEntry control, bool stacked = false) =>
-        w.Div().Class(InputGroupClasses[(stacked ? 2 : 0) + (control.IsFocused ? 1 : 0)]);
+        w.Div().Class(ComponentStyles.S.InputGroup[(stacked ? 2 : 0) + (control.IsFocused ? 1 : 0)]);
 
     /// <summary>Ô nhập của nhóm: giãn hết phần còn lại. <paramref name="input"/> nên có <c>InGroup = true</c>.</summary>
     public static Div InputGroupControl(Window w, TextEntry input) => w.Div().Class("flex-1 min-w-0").Child(w.View(input));
 
     /// <summary>Phần phụ (icon, chữ, nút) ở đầu/cuối dòng hoặc trên/dưới ô.</summary>
-    public static Div InputGroupAddon(Window w, InputGroupAlign align = InputGroupAlign.InlineStart) => w.Div().Class(align switch
-    {
-        InputGroupAlign.InlineStart => "flex shrink-0 items-center justify-center gap-2 pl-2 text-sm font-medium text-muted-foreground",
-        InputGroupAlign.InlineEnd => "flex shrink-0 items-center justify-center gap-2 pr-2 text-sm font-medium text-muted-foreground",
-        InputGroupAlign.BlockStart => "flex w-full items-center justify-start gap-2 px-2.5 pt-2 text-sm font-medium text-muted-foreground",
-        _ => "flex w-full items-center justify-start gap-2 px-2.5 pb-2 text-sm font-medium text-muted-foreground",
-    });
+    public static Div InputGroupAddon(Window w, InputGroupAlign align = InputGroupAlign.InlineStart) =>
+        w.Div().Class(ComponentStyles.S.InputGroupAddon[(int)align]);
 
     /// <summary>
     /// Phần phụ mà bấm vào thì focus <paramref name="control"/> (như onClick của InputGroupAddon gốc). Nút bên trong
@@ -51,7 +39,7 @@ public static partial class Ui
 
     /// <summary>Chữ trong phần phụ (đơn vị, tiền tố URL…).</summary>
     public static Div InputGroupText(Window w, string text) =>
-        w.Div().Class("flex items-center gap-2 text-sm text-muted-foreground").Child(text);
+        w.Div().Class(ComponentStyles.S.InputGroupText).Child(text);
 
     /// <summary>Nút nhỏ trong phần phụ (mặc định ghost, cao 24px); là điểm dừng Tab như mọi nút.</summary>
     public static Div InputGroupButton(Window w, string? label = null, ButtonVariant variant = ButtonVariant.Ghost) =>

@@ -15,7 +15,9 @@ public sealed class Popover : View
     FragmentView _content = null!;
     Window? _window;
     string? _anchor, _triggerKey, _contentKey;
-    static readonly string DefaultTrigger = Ui.ButtonClasses(ButtonVariant.Outline) + " " + FocusRing.Ring;
+    // Bảng ghim lúc tạo nếu tạo trong ComponentStyles.Use(...); không thì theo style chung của app.
+    readonly ComponentStyleSheet? _pinned = ComponentStyles.Scoped;
+    ComponentStyleSheet _sheet => _pinned ?? ComponentStyles.S;
 
     /// <summary>Popover vừa mở / vừa đóng.</summary>
     public readonly record struct OpenChanged(bool Open);
@@ -73,9 +75,10 @@ public sealed class Popover : View
     public override Div Render(Window w)
     {
         _window = w;
+        using var _ = ComponentStyles.Use(_sheet); // nút mở tự vẽ (Trigger) theo cùng style
         var trigger = Trigger is { } t
-            ? w.Div().Class("flex rounded-lg " + FocusRing.RingOnly).Child(t(w))
-            : w.Div().Class(DefaultTrigger).Child(TriggerText);
+            ? w.Div().Class(_sheet.MenuTriggerWrapper).Child(t(w))
+            : w.Div().Class(Ui.ButtonClasses(ButtonVariant.Outline)).Class(FocusRing.Ring).Child(TriggerText);
         // Lớp "flex" ngoài cùng giữ nút co theo nội dung dù view được đặt trong khối dọc.
         return w.Div().Class("flex").Child(trigger.Key(TriggerKey).Anchor(AnchorName).Focusable()
             .OnClick(this, static (p, _) => { if (p.IsOpen) p.Close(); else p.Open(); }));
@@ -83,14 +86,15 @@ public sealed class Popover : View
 
     Div RenderContent(Window w)
     {
-        var panel = w.Div().Class("flex flex-col gap-2.5 rounded-lg bg-popover p-2.5 text-sm text-popover-foreground shadow-md ring-1 ring-foreground/10")
-            .TakeFocus(ContentKey);
+        var s = _sheet;
+        using var _ = ComponentStyles.Use(s); // Body theo cùng style
+        var panel = w.Div().Class(s.PopoverPanel).TakeFocus(ContentKey);
         if (PanelClass.Length > 0) panel.Class(PanelClass);
         if (Title.Length > 0 || Description.Length > 0)
         {
-            var header = w.Div().Class("flex flex-col gap-0.5 text-sm");
-            if (Title.Length > 0) header.Child(w.Div().Class("font-medium").Child(Title));
-            if (Description.Length > 0) header.Child(w.Div().Class("text-muted-foreground").Child(Description));
+            var header = w.Div().Class(s.PopoverHeader);
+            if (Title.Length > 0) header.Child(w.Div().Class(s.PopoverTitle).Child(Title));
+            if (Description.Length > 0) header.Child(w.Div().Class(s.PopoverDescription).Child(Description));
             panel.Child(header);
         }
         if (Body is { } body) panel.Child(body(w));

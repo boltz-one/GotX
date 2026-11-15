@@ -38,6 +38,15 @@ public sealed class DropdownMenu : MenuOwner
     /// </summary>
     public Func<Window, Div>? Trigger { get; set; }
 
+    /// <summary>
+    /// Class của phần tử bọc <see cref="Trigger"/> – chính là nút (nhận focus, hover, vòng focus). Mặc định là lớp bọc
+    /// trong suốt bo góc; đặt class của nút (<c>Ui.ButtonClasses(…)</c>) để lớp bọc là nút thật và Trigger chỉ còn icon.
+    /// </summary>
+    public string? TriggerClass { get; set; }
+
+    /// <summary>Class thêm cho nút mở khi menu đang mở (<c>aria-expanded:bg-muted</c> của nút shadcn).</summary>
+    public string TriggerOpenClass { get; set; } = "";
+
     public Placement Placement { get; set; } = Placement.BottomStart;
 
     /// <summary>Menu rộng tối thiểu bằng nút mở (như w-(--anchor-width) của shadcn).</summary>
@@ -87,10 +96,12 @@ public sealed class DropdownMenu : MenuOwner
     /// <summary>Vẽ nút mở; danh sách được vẽ riêng trong lớp overlay.</summary>
     public override Div Render(Window w)
     {
+        using var _ = ComponentStyles.Use(Sheet); // nút mở tự vẽ (Trigger) theo style lúc tạo menu
         _window = w;
         var trigger = Trigger is { } t
-            ? w.Div().Class("flex rounded-lg " + FocusRing.RingOnly).Child(t(w))
+            ? w.Div().Class(TriggerClass ?? Sheet.MenuTriggerWrapper).Child(t(w))
             : w.Div().Class(DefaultTrigger).Child(TriggerText).Child(Icon.ChevronDown(w));
+        if (IsOpen && TriggerOpenClass.Length > 0) trigger.Class(TriggerOpenClass);
         // Lớp "flex" ngoài cùng giữ nút co theo nội dung dù view được đặt trong khối dọc.
         return w.Div().Class("flex").Child(trigger.Key(TriggerKey).Anchor(AnchorName).Focusable()
             .OnClick(this, static (m, _) => { if (m.IsOpen) m.Close(); else m.Open(); })

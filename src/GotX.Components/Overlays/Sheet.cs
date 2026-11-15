@@ -10,26 +10,21 @@ namespace GotX.Components;
 /// </summary>
 public sealed class Sheet : SidePanel
 {
-    // Viền chỉ ở cạnh hướng vào trong cửa sổ, như data-[side=…]:border-* của shadcn.
-    static readonly string[] PanelClasses =
-    [
-        "relative flex flex-col gap-4 h-full w-96 max-w-full bg-popover text-sm text-popover-foreground shadow-lg border-l border-border",
-        "relative flex flex-col gap-4 h-full w-96 max-w-full bg-popover text-sm text-popover-foreground shadow-lg border-r border-border",
-        "relative flex flex-col gap-4 w-full bg-popover text-sm text-popover-foreground shadow-lg border-b border-border",
-        "relative flex flex-col gap-4 w-full bg-popover text-sm text-popover-foreground shadow-lg border-t border-border",
-    ];
+    // Tấm theo cạnh (ComponentStyleSheet.SheetPanel): viền chỉ ở cạnh hướng vào trong cửa sổ, như data-[side=…]:border-*.
 
     public bool ShowCloseButton { get; set; } = true;
 
     /// <summary>Vẽ tấm (được gọi trong lớp overlay).</summary>
     public override Div Render(Window w)
     {
-        var panel = w.Div().Class(PanelClasses[(int)Side]).TakeFocus(ContentKey);
+        var s = StyleSheet;
+        using var _ = ComponentStyles.Use(s); // Body/Footer và nút × theo cùng style
+        var panel = w.Div().Class(s.SheetPanel[(int)Side]).TakeFocus(ContentKey);
         if (PanelClass.Length > 0) panel.Class(PanelClass);
-        if (Header(w, "flex flex-col gap-0.5 p-4") is { } header) panel.Child(header);
-        BodyAndFooter(w, panel, Horizontal ? "px-4" : "flex-1 px-4", "flex flex-col gap-2 p-4");
+        if (Header(w, s.SheetHeader) is { } header) panel.Child(header);
+        BodyAndFooter(w, panel, Horizontal ? "px-4" : "flex-1 px-4", s.SheetFooter);
         if (ShowCloseButton)
-            panel.Child(OverlayParts.CloseButton(w, CloseKey, "absolute top-3 right-3").OnClick(this, static (s, _) => s.Close()));
+            panel.Child(OverlayParts.CloseButton(w, CloseKey, s.SheetClosePosition).OnClick(this, static (p, _) => p.Close()));
         return panel;
     }
 }

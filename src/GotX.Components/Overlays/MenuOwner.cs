@@ -12,6 +12,11 @@ public abstract class MenuOwner : View
 {
     private protected MenuOwner() { }
 
+    /// <summary>Bảng class của style lúc tạo menu – các panel (vẽ trong overlay) dùng chung bảng này.</summary>
+    // Bảng ghim lúc tạo nếu được tạo trong ComponentStyles.Use(...); không thì theo style chung của app (đổi được lúc chạy).
+    readonly ComponentStyleSheet? _pinned = ComponentStyles.Scoped;
+    internal ComponentStyleSheet Sheet => _pinned ?? ComponentStyles.S;
+
     /// <summary>Danh sách dòng của menu thứ <paramref name="menu"/>.</summary>
     private protected abstract IReadOnlyList<MenuItem> ItemsOf(int menu);
 
@@ -23,6 +28,9 @@ public abstract class MenuOwner : View
     /// Tắt để dừng lại ở hai đầu như Radix.
     /// </summary>
     public bool LoopFocus { get; set; } = true;
+
+    /// <summary>Class thêm cho tấm danh sách gốc (không áp cho menu con), ví dụ độ rộng <c>"w-40"</c>.</summary>
+    public string MenuClass { get; set; } = "";
 
     /// <summary>Tạo panel cho menu thứ <paramref name="menu"/> (gọi trong OnCreated).</summary>
     private protected MenuPanel NewPanel(int menu) => App.New(new MenuPanel(this, menu, null));

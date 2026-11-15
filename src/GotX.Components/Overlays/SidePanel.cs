@@ -9,6 +9,11 @@ public enum PanelSide : byte { Right, Left, Top, Bottom }
 /// </summary>
 public abstract class SidePanel : View
 {
+    // Bảng ghim lúc tạo nếu được tạo trong ComponentStyles.Use(...); không thì theo style chung của app.
+    readonly ComponentStyleSheet? _pinned = ComponentStyles.Scoped;
+    /// <summary>Bảng class đang dùng (ghim hoặc style chung).</summary>
+    private protected ComponentStyleSheet StyleSheet => _pinned ?? ComponentStyles.S;
+
     readonly PopupSlot _slot = new();
     string? _contentKey, _closeKey;
 
@@ -71,8 +76,8 @@ public abstract class SidePanel : View
     {
         if (Title.Length == 0 && Description.Length == 0) return null;
         var header = w.Div().Class(cls);
-        if (Title.Length > 0) header.Child(w.Div().Class("text-base font-medium text-foreground").Child(Title));
-        if (Description.Length > 0) header.Child(w.Div().Class("text-sm text-muted-foreground").Child(Description));
+        if (Title.Length > 0) header.Child(w.Div().Class(StyleSheet.PanelTitle).Child(Title));
+        if (Description.Length > 0) header.Child(w.Div().Class(StyleSheet.PanelDescription).Child(Description));
         return header;
     }
 

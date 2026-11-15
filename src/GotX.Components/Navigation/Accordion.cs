@@ -13,11 +13,9 @@ public sealed record AccordionItem(string Title, string? Text = null, Func<Windo
 /// </summary>
 public sealed class Accordion : View
 {
-    const string TriggerClass =
-        "flex items-start justify-between gap-4 rounded-lg border border-transparent py-2.5 text-left text-sm font-medium cursor-pointer " +
-        "transition-all hover:underline focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
-    const string ChevronClosed = "text-muted-foreground transition-transform duration-200";
-    const string ChevronOpen = "text-muted-foreground transition-transform duration-200 rotate-180";
+    // Class theo style (ComponentStyleSheet.Accordion*); ghim lúc tạo nếu tạo trong ComponentStyles.Use(...).
+    readonly ComponentStyleSheet? _pinned = ComponentStyles.Scoped;
+    ComponentStyleSheet _sheet => _pinned ?? ComponentStyles.S;
 
     IReadOnlyList<AccordionItem> _items = [];
     bool[] _open = [];
@@ -93,20 +91,21 @@ public sealed class Accordion : View
         _window = w;
         var keys = EnsureKeys();
         var refs = Indexed<Accordion>.Ensure(ref _refs, this, _items.Count);
+        var s = _sheet;
         var root = w.Div().Class("flex w-full flex-col").OnKey(this, static (a, e) => a.KeyDown(e));
         for (int i = 0; i < _items.Count; i++)
         {
             var it = _items[i];
             bool open = _open[i];
             var item = w.Div();
-            if (i < _items.Count - 1) item.Class("border-b border-border");
-            item.Child(w.Div().Key(keys[i * 2]).Class(TriggerClass).Focusable()
+            if (i < _items.Count - 1) item.Class(s.AccordionItemDivider);
+            item.Child(w.Div().Key(keys[i * 2]).Class(s.AccordionTrigger).Focusable()
                 .OnClick(refs[i], static (r, _) => r.Owner.Toggle(r.Index))
                 .Child(w.Div().Class("flex-1").Child(it.Title))
-                .Child(w.Div().Key(keys[i * 2 + 1]).Class(open ? ChevronOpen : ChevronClosed).Child(Icon.ChevronDown(w))));
+                .Child(w.Div().Key(keys[i * 2 + 1]).Class(s.AccordionChevron[open ? 1 : 0]).Child(Icon.ChevronDown(w))));
             if (open)
             {
-                var body = w.Div().Class("pb-2.5 text-sm");
+                var body = w.Div().Class(s.AccordionContent);
                 if (it.Content is { } build) body.Child(build(w));
                 else if (it.Text is { } text) body.Child(text);
                 item.Child(body);

@@ -10,23 +10,21 @@ public static partial class Ui
     /// nối <c>.Class("border border-border")</c>. Bỏ <c>text-balance</c> (GotX chưa có).
     /// </summary>
     public static Div Empty(Window w) =>
-        w.Div().Class("flex w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 rounded-xl border-dashed p-6 text-center");
+        w.Div().Class(ComponentStyles.S.Empty);
 
     /// <summary>Nhóm media + tiêu đề + mô tả.</summary>
-    public static Div EmptyHeader(Window w) => w.Div().Class("flex max-w-sm flex-col items-center gap-2");
+    public static Div EmptyHeader(Window w) => w.Div().Class(ComponentStyles.S.EmptyHeader);
 
     /// <summary>Khung chứa icon/avatar phía trên tiêu đề.</summary>
     public static Div EmptyMedia(Window w, EmptyMediaVariant variant = EmptyMediaVariant.Default) =>
-        w.Div().Class(variant == EmptyMediaVariant.Icon
-            ? "mb-2 flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground"
-            : "mb-2 flex shrink-0 items-center justify-center");
+        w.Div().Class(ComponentStyles.S.EmptyMedia[(int)variant]);
 
     /// <summary>Tiêu đề.</summary>
-    public static Div EmptyTitle(Window w, string text) => w.Div().Class("text-sm font-medium tracking-tight").Child(text);
+    public static Div EmptyTitle(Window w, string text) => w.Div().Class(ComponentStyles.S.EmptyTitle).Child(text);
 
     /// <summary>Mô tả.</summary>
-    public static Div EmptyDescription(Window w, string text) => w.Div().Class("text-sm leading-relaxed text-muted-foreground").Child(text);
+    public static Div EmptyDescription(Window w, string text) => w.Div().Class(ComponentStyles.S.EmptyDescription).Child(text);
 
     /// <summary>Vùng hành động (nút, ô nhập) dưới phần đầu.</summary>
-    public static Div EmptyContent(Window w) => w.Div().Class("flex w-full max-w-sm min-w-0 flex-col items-center gap-2.5 text-sm");
+    public static Div EmptyContent(Window w) => w.Div().Class(ComponentStyles.S.EmptyContent);
 }

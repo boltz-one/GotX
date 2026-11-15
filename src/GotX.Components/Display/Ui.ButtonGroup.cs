@@ -31,7 +31,7 @@ public static partial class Ui
 
     /// <summary>Ô chữ tĩnh trong nhóm nút (tiền tố, nhãn).</summary>
     public static Div ButtonGroupText(Window w, string text) =>
-        w.Div().Class("flex items-center gap-2 rounded-lg border border-border bg-muted px-2.5 text-sm font-medium").Child(text);
+        w.Div().Class(ComponentStyles.S.ButtonGroupText).Child(text);
 
     /// <summary>
     /// Vạch ngăn giữa các nút có nền liền (variant Default/Secondary, vốn không có viền). Mặc định dọc – dùng trong nhóm ngang.

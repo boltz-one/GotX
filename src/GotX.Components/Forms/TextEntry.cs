@@ -14,6 +14,11 @@ public abstract class TextEntry : View
     bool _invalid;
     Window? _window;
 
+    /// <summary>Bảng class của style đang hiệu lực lúc tạo ô (xem <see cref="ComponentStyles"/>).</summary>
+    // Bảng ghim lúc tạo nếu được tạo trong ComponentStyles.Use(...); không thì theo style chung của app (đổi được lúc chạy).
+    readonly ComponentStyleSheet? _pinned = ComponentStyles.Scoped;
+    private protected ComponentStyleSheet Sheet => _pinned ?? ComponentStyles.S;
+
     /// <summary>Nội dung đổi (gõ, dán, xoá, hoặc gán <see cref="Text"/>).</summary>
     public readonly record struct TextChanged(string Text);
 
@@ -43,6 +48,12 @@ public abstract class TextEntry : View
         get => _invalid;
         set { _invalid = value; ApplyClass(); }
     }
+
+    /// <summary>
+    /// Class khung tự đặt thay cho bảng của style (đối số = đang lỗi); vẫn đúng khi <see cref="Invalid"/> đổi. Hàm nên trả
+    /// chuỗi dựng sẵn – nó được gọi mỗi lần ô vẽ lại.
+    /// </summary>
+    public Func<bool, string>? BoxClassOverride { get; set { field = value; ApplyClass(); } }
 
     /// <summary>Ô nằm trong <c>Ui.InputGroup</c>: bỏ viền/nền/vòng focus để nhóm vẽ thay.</summary>
     public bool InGroup { get; set { field = value; ApplyClass(); } }
@@ -76,17 +87,19 @@ public abstract class TextEntry : View
         _box = App.New(new TextInput
         {
             Multiline = Multiline, MinHeight = MinTextHeight, Text = _text, Placeholder = _placeholder,
-            BoxClass = BoxClass(_invalid),
+            BoxClass = CurrentBoxClass,
         });
         App.Subscribe<TextInput.TextChanged>(_box, e => { _text = e.Text; Emit(new TextChanged(e.Text)); });
         App.Subscribe<TextInput.Submitted>(_box, e => Emit(new Submitted(e.Text)));
     }
 
+    string CurrentBoxClass => BoxClassOverride?.Invoke(_invalid) ?? BoxClass(_invalid);
+
     /// <summary>Gọi lại khi lớp con đổi một tuỳ chọn ảnh hưởng tới class khung.</summary>
     protected void ApplyClass()
     {
         if (_box is null) return;
-        _box.BoxClass = BoxClass(_invalid);
+        _box.BoxClass = CurrentBoxClass;
         _box.Notify();
     }
 
@@ -100,6 +113,9 @@ public abstract class TextEntry : View
                 .Child(w.Div().Class(text.Length > 0 ? "truncate" : "truncate text-muted-foreground").Child(text.Length > 0 ? text : _placeholder));
         }
         var box = Box;
+        // Style của app đổi lúc chạy (ComponentTheme.Use) hay bảng ghim khác: cập nhật class khung của ô nhập bên trong.
+        string cls = CurrentBoxClass;
+        if (!ReferenceEquals(box.BoxClass, cls)) { box.BoxClass = cls; box.Notify(); }
         // Màu placeholder/vùng chọn của TextInput là Rgba cố định chứ không phải class, nên đổi theo dark mode ở đây.
         box.PlaceholderColor = w.DarkMode ? Rgba.FromHex(0xa1a1aa) : Rgba.FromHex(0x737373);
         box.SelectionColor = w.DarkMode ? Rgba.FromHex(0x3f3f46) : Rgba.FromHex(0xd4d4d8);

@@ -16,10 +16,11 @@ public sealed class RadioGroup : View
     /// <summary>Mục được chọn vừa đổi.</summary>
     public readonly record struct ValueChanged(int Index, string Value);
 
-    const string Ring = "relative flex size-4 shrink-0 items-center justify-center rounded-full border border-input dark:bg-input/30";
-    const string RingOn = "relative flex size-4 shrink-0 items-center justify-center rounded-full border border-primary bg-primary";
-    // [đã chọn * 2 + đang focus bằng phím]: vòng focus vẽ quanh nút tròn, dù phần tử focus là cả hàng (nút + nhãn).
-    static readonly string[] Rings = [Ring, Ring + " border-ring ring-3 ring-ring/50", RingOn, RingOn + " ring-3 ring-ring/50"];
+    // Bảng class của style lúc tạo; vòng [đã chọn * 2 + đang focus bằng phím] vẽ quanh nút tròn, dù phần tử focus là cả
+    // hàng (nút + nhãn).
+    // Bảng ghim lúc tạo nếu được tạo trong ComponentStyles.Use(...); không thì theo style chung của app (đổi được lúc chạy).
+    readonly ComponentStyleSheet? _pinned = ComponentStyles.Scoped;
+    ComponentStyleSheet _sheet => _pinned ?? ComponentStyles.S;
     const string Row = "flex items-center gap-2 cursor-pointer disabled:opacity-50";
 
     /// <summary>Nhãn các lựa chọn.</summary>
@@ -71,18 +72,20 @@ public sealed class RadioGroup : View
         var roving = _roving ??= new RovingFocus("gotx-radio-" + Id.Value);
         roving.Sync(w, _items.Count, Math.Max(_index, 0));
         var refs = Indexed<RadioGroup>.Ensure(ref _refs, this, _items.Count);
-        var group = w.Div().Class(Horizontal ? "flex flex-wrap items-center gap-4" : "flex flex-col gap-3");
+        var group = w.Div().Class(_sheet.RadioGroup[Horizontal ? 1 : 0]);
         for (int i = 0; i < _items.Count; i++)
         {
             bool on = i == _index;
-            var ring = w.Div().Class(Rings[(on ? 2 : 0) + (roving.ShowsRing(w, i) ? 1 : 0)]);
-            if (on) ring.Child(w.Div().Class("size-2 rounded-full bg-primary-foreground"));
-            group.Child(w.Div().Class(Row).Disabled(Disabled)
+            var ring = w.Div().Class(_sheet.RadioRing[(on ? 2 : 0) + (roving.ShowsRing(w, i) ? 1 : 0)]);
+            if (on) ring.Child(w.Div().Class(_sheet.RadioDot));
+            var row = w.Div().Class(Row).Disabled(Disabled)
                 .Key(roving.Key(i)).Focusable()
                 .OnKey(refs[i], static (r, e) => r.Owner.OnItemKey(r.Index, e))
                 .OnClick(refs[i], static (r, _) => r.Owner.Pick(r.Index))
-                .Child(ring)
-                .Child(w.Div().Class("text-sm font-medium leading-none").Child(_items[i])));
+                .Child(ring);
+            // Mục không nhãn (bản gốc chỉ có aria-label) chỉ còn nút tròn, không chừa khoảng gap cho nhãn rỗng.
+            if (_items[i].Length > 0) row.Child(w.Div().Class("text-sm font-medium leading-none").Child(_items[i]));
+            group.Child(row);
         }
         return group;
     }

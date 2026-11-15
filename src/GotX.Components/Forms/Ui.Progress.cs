@@ -9,8 +9,8 @@ public static partial class Ui
     public static Div Progress(Window w, float value)
     {
         float f = Math.Clamp(value, 0, 100) / 100f;
-        return w.Div().Class("relative flex h-1 w-full items-center overflow-hidden rounded-full bg-muted")
-            .Child(w.Div().Class("h-full bg-primary transition-all").W(Length.Fraction(f)));
+        var s = ComponentStyles.S;
+        return w.Div().Class(s.ProgressTrack).Child(w.Div().Class(s.ProgressIndicator).W(Length.Fraction(f)));
     }
 
     /// <summary>Thanh tiến độ kèm nhãn bên trái và số phần trăm bên phải (ProgressLabel + ProgressValue).</summary>

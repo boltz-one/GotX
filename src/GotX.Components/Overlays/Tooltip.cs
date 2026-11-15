@@ -12,6 +12,9 @@ public sealed class Tooltip : View
 {
     readonly PopupSlot _slot = new();
     readonly Delay _open = new();
+    // Bảng ghim lúc tạo nếu được tạo trong ComponentStyles.Use(...); không thì theo style chung của app (đổi được lúc chạy).
+    readonly ComponentStyleSheet? _pinned = ComponentStyles.Scoped;
+    ComponentStyleSheet _sheet => _pinned ?? ComponentStyles.S;
     FragmentView _content = null!;
     AfterFrame _afterFrame = null!;
     Window? _window;
@@ -54,7 +57,7 @@ public sealed class Tooltip : View
         // Không đóng khi bấm ra ngoài theo kiểu dropdown: tooltip chỉ theo chuột / focus.
         _slot.Open(_window, _content, new OverlayOptions
         {
-            Anchor = AnchorName, Placement = Placement, Offset = 10, DismissOnOutsideClick = false,
+            Anchor = AnchorName, Placement = Placement, Offset = _sheet.TooltipOffset, DismissOnOutsideClick = false,
         }, () => Emit(new OpenChanged(_slot.IsOpen)));
     }
 
@@ -75,6 +78,7 @@ public sealed class Tooltip : View
     /// <summary>Vẽ phần tử được chú thích; tooltip được vẽ riêng trong lớp overlay.</summary>
     public override Div Render(Window w)
     {
+        using var _ = ComponentStyles.Use(_sheet); // phần tử được chú thích (Trigger) theo style lúc tạo
         _window = w;
         // Core không phát sự kiện focus, nhưng đổi focus làm view chứa phần tử vẽ lại: so focus với anchor ngay ở đây.
         // Hiện/ẩn (mở, đóng overlay) thì để sau frame, không làm giữa lúc cây đang dựng.
@@ -89,15 +93,8 @@ public sealed class Tooltip : View
     {
         // Mũi tên: ô vuông xoay 45° cùng màu nền, đặt ở cạnh hướng về phần tử theo placement thực tế (sau khi lật).
         int side = (int)(_slot.Current?.ActualPlacement ?? Placement) / 3;
-        string arrow = side switch
-        {
-            0 => "absolute left-1/2 -top-1.5 size-2.5 -translate-x-1/2 rotate-45 rounded-[2px] bg-foreground",
-            1 => "absolute left-1/2 -bottom-1.5 size-2.5 -translate-x-1/2 rotate-45 rounded-[2px] bg-foreground",
-            2 => "absolute top-1/2 -left-1.5 size-2.5 -translate-y-1/2 rotate-45 rounded-[2px] bg-foreground",
-            _ => "absolute top-1/2 -right-1.5 size-2.5 -translate-y-1/2 rotate-45 rounded-[2px] bg-foreground",
-        };
-        return w.Div().Class("relative flex max-w-xs items-center gap-1.5 rounded-md bg-foreground px-3 py-1.5 text-xs text-background")
-            .Child(w.Div().Class(arrow))
+        return w.Div().Class(_sheet.TooltipPanel)
+            .Child(w.Div().Class(_sheet.TooltipArrow[Math.Min(side, 3)]))
             .Child(Text);
     }
 }

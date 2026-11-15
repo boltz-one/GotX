@@ -39,6 +39,18 @@ public sealed partial class SidebarNav : View
         set { _groups = value; _rows = null; _activeRow = _activeSub = -1; Notify(); }
     }
 
+    /// <summary>
+    /// Bấm một nút thì nó thành mục đang chọn (tô nền). Tắt đi khi nút của bản gốc chỉ là liên kết <c>href="#"</c> không
+    /// có state "active" (dashboard-01): bấm vẫn phát <see cref="ItemSelected"/> nhưng không tô.
+    /// </summary>
+    public bool Selectable { get; set; } = true;
+
+    /// <summary>
+    /// Tiền tố key ổn định của các nút (<c>{prefix}-{nhóm}-{nút}</c>, <c>…-action</c>, <c>…-{mục con}</c>) – để kịch bản
+    /// kiểm tra bên ngoài trỏ tới; mặc định theo Id của view. Đặt trước lần render đầu.
+    /// </summary>
+    public string? KeyPrefix { get; init; }
+
     /// <summary>Thu gọn còn icon: ẩn nhãn nhóm, chữ, badge, nút phụ, danh sách con; nút thành ô 32px.</summary>
     public bool Collapsed
     {
@@ -64,7 +76,7 @@ public sealed partial class SidebarNav : View
     /// <summary>Chọn một nút hoặc mục con và phát <see cref="ItemSelected"/> (hành vi khi bấm).</summary>
     public void Select(int group, int item, int sub = -1)
     {
-        SetActive(group, item, sub);
+        if (Selectable) SetActive(group, item, sub);
         var data = RowAt(group, item).Data;
         Emit(new ItemSelected(group, item, sub, sub < 0 ? data.Title : data.SubItems[sub]));
     }

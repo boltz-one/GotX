@@ -4,9 +4,13 @@ namespace GotX.Components;
 internal static class OverlayParts
 {
     /// <summary>Nút × ở góc tấm (<paramref name="position"/> là class đặt vị trí): focus được bằng Tab, có vòng focus.</summary>
-    public static Div CloseButton(Window w, string key, string position) =>
-        Ui.Button(w, ButtonVariant.Ghost, ButtonSize.IconSm).Class(position).Class(FocusRing.Ring)
-            .Key(key).Focusable().Child(Icon.X(w));
+    public static Div CloseButton(Window w, string key, string position)
+    {
+        // Style có nút × riêng (v4: icon mờ 70%, không nền) thì dùng nó, không thì nút ghost icon-sm.
+        string own = ComponentStyles.S.OverlayClose;
+        var button = own.Length > 0 ? w.Div().Class(own) : Ui.Button(w, ButtonVariant.Ghost, ButtonSize.IconSm);
+        return button.Class(position).Class(FocusRing.Ring).Key(key).Focusable().Child(Icon.X(w));
+    }
 
     /// <summary>
     /// Tấm nhận focus ngay khi mở: phím (Tab, Escape) thuộc về lớp vừa mở chứ không còn ở nút phía sau, và Tab đầu tiên

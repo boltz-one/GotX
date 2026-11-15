@@ -22,7 +22,7 @@ public sealed partial class SidebarNav
             var menu = w.Div().Class(MenuClass);
             for (int i = 0, flat = _groupStart[g]; i < group.Items.Count; i++, flat++)
                 menu.Child(RenderItem(w, rows[flat], group.SubMenus, itemRefs[flat], subRefs));
-            root.Child(box.Child(menu));
+            root.Child(group.Lead is { } lead ? box.Child(w.Div().Class("flex w-full flex-col gap-2").Child(lead(w)).Child(menu)) : box.Child(menu));
         }
         // View của menu nút phụ không có hình: đặt absolute để nó không chiếm một khoảng gap trong cột.
         return root.Child(w.View(_menu).Class("absolute"));

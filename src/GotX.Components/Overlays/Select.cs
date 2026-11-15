@@ -9,8 +9,10 @@ namespace GotX.Components;
 /// </summary>
 public sealed class Select : View
 {
-    const string Row = "flex items-center justify-between gap-2 rounded-md py-1 pl-1.5 pr-1.5 text-sm cursor-pointer";
-    const string RowOn = Row + " bg-accent text-accent-foreground";
+    // Bảng class của style lúc tạo (danh sách bật ra vẽ trong overlay, ngoài phạm vi style của view cha).
+    // Bảng ghim lúc tạo nếu được tạo trong ComponentStyles.Use(...); không thì theo style chung của app (đổi được lúc chạy).
+    readonly ComponentStyleSheet? _pinned = ComponentStyles.Scoped;
+    ComponentStyleSheet _sheet => _pinned ?? ComponentStyles.S;
 
     IReadOnlyList<string> _items = [];
     string[] _keys = [];
@@ -29,6 +31,12 @@ public sealed class Select : View
     }
 
     public string Placeholder { get; set; } = "Chọn…";
+
+    /// <summary>Class thêm cho nút (ví dụ <c>"w-full"</c> như SelectTrigger className của shadcn).</summary>
+    public string TriggerClass { get; set; } = "";
+
+    /// <summary>Class thêm cho danh sách bật ra (SelectContent className).</summary>
+    public string ContentClass { get; set; } = "";
     public bool Disabled { get; set; }
 
     public int SelectedIndex
@@ -64,10 +72,15 @@ public sealed class Select : View
         if (IsOpen || Disabled || _window is null) return;
         // Như Radix: mở ra thì mục đang chọn được tô sáng; chưa chọn gì thì chưa tô mục nào.
         _active = _index;
-        _popup = _window.OpenOverlay(_list, new OverlayOptions
+        var options = new OverlayOptions { Anchor = _anchor, Placement = Placement.BottomStart, MatchAnchorWidth = true };
+        // Base UI (alignItemWithTrigger): danh sách mở đè lên nút sao cho mục đang chọn nằm đúng chỗ nút, chữ thẳng hàng.
+        if (_sheet.SelectAlignItem is { } align && _index >= 0 && _window.AnchorBounds(_anchor!) is { } t)
         {
-            Anchor = _anchor, Placement = Placement.BottomStart, MatchAnchorWidth = true,
-        });
+            options.Anchor = null;
+            options.Offset = 0;
+            options.AnchorRect = new Bounds(t.X + align.X, t.Y - align.Y - _index * align.Height - (align.Height - t.Height) / 2, t.Width, 0);
+        }
+        _popup = _window.OpenOverlay(_list, options);
         _popup.Closed += () => { _popup = null; Notify(); };
         // Danh sách dài: đưa mục đang chọn vào tầm nhìn. Danh sách chưa được vẽ nên Core giữ yêu cầu tới cuối frame kế.
         if (_active >= 0) _window.ScrollIntoView(ItemKey(_active));
@@ -111,16 +124,15 @@ public sealed class Select : View
     {
         _window = w;
         _anchor ??= "gotx-select-" + Id.Value;
-        return w.Div().Class(
-                "flex h-8 min-w-36 items-center justify-between gap-1.5 rounded-lg border border-input bg-transparent " +
-                "pl-2.5 pr-2 text-sm whitespace-nowrap cursor-pointer transition-colors hover:bg-muted/50 " +
-                "disabled:opacity-50 dark:bg-input/30 dark:hover:bg-input/50 " + FocusRing.Ring)
+        var trigger = w.Div().Class(_sheet.SelectTrigger);
+        if (TriggerClass.Length > 0) trigger.Class(TriggerClass);
+        return trigger
             .Disabled(Disabled)
             .Key(TriggerKey).Anchor(_anchor).Focusable()
             .OnClick(this, static (s, _) => { if (s.IsOpen) s.Close(); else s.Open(); })
             .OnKey(this, static (s, e) => s.TriggerKeyDown(e))
             .Child(w.Div().Class(_index >= 0 ? "truncate" : "truncate text-muted-foreground").Child(Value ?? Placeholder))
-            .Child(w.Div().Class("text-muted-foreground").Child(Icon.ChevronDown(w)));
+            .Child(w.Div().Class(_sheet.SelectChevron).Child(Icon.ChevronDown(w)));
     }
 
     /// <summary>Danh sách lựa chọn, vẽ trong lớp overlay; chính nó giữ focus khi mở.</summary>
@@ -132,14 +144,16 @@ public sealed class Select : View
         {
             var items = owner._items;
             var refs = Indexed<Select>.Ensure(ref _refs, owner, items.Count);
-            var list = w.Div().Key(owner._listKey ??= "gotx-select-list-" + owner.Id.Value).Class(
-                    "flex flex-col p-1 max-h-72 overflow-y-auto rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10")
+            var sheet = owner._sheet;
+            var list = w.Div().Key(owner._listKey ??= "gotx-select-list-" + owner.Id.Value).Class(sheet.SelectList);
+            if (owner.ContentClass.Length > 0) list.Class(owner.ContentClass);
+            list
                 .Focusable().AutoFocus()
                 .OnKey(owner, static (s, e) => s.ListKeyDown(e));
             for (int i = 0; i < items.Count; i++)
             {
                 string key = owner.ItemKey(i);
-                var row = w.Div().Key(key).Anchor(key).Class(i == owner._active ? RowOn : Row)
+                var row = w.Div().Key(key).Anchor(key).Class(sheet.SelectRow[i == owner._active ? 1 : 0])
                     .OnClick(refs[i], static (r, _) => r.Owner.Pick(r.Index))
                     // Rời mục thì tắt sáng (Radix trả focus về danh sách), nên chuột và phím dùng chung một dòng sáng.
                     .OnHover(refs[i], static (r, inside) => { if (inside) r.Owner.SetActive(r.Index, false); else if (r.Owner._active == r.Index) r.Owner.SetActive(-1, false); })

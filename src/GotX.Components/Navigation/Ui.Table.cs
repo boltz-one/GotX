@@ -11,6 +11,9 @@ public enum TableAlign : byte { Left, Center, Right }
 public static partial class Ui
 {
     const string RowBase = "grid items-center border-b border-border transition-colors hover:bg-muted/50";
+    // data-[state=selected]:bg-muted đứng sau hover:bg-muted/50 trong CSS của Tailwind nên thắng khi rê chuột: hàng được
+    // chọn không mang hover (variant hover của GotX vẽ đè lên nền thường).
+    const string RowSelected = "grid items-center border-b border-border bg-muted transition-colors";
 
     static readonly string[] HeadClasses =
     [
@@ -40,7 +43,7 @@ public static partial class Ui
 
     /// <summary>Một hàng (lưới); <paramref name="selected"/> tô nền muted như <c>data-state=selected</c>.</summary>
     public static Div TableRow(Window w, bool selected = false) =>
-        w.Div().Class(selected ? RowBase + " bg-muted" : RowBase);
+        w.Div().Class(selected ? RowSelected : RowBase);
 
     /// <summary>Ô tiêu đề cột.</summary>
     public static Div TableHead(Window w, string text, TableAlign align = TableAlign.Left) =>

@@ -8,10 +8,10 @@ public static partial class Ui
 {
     /// <summary>Hàng breadcrumb, tự xuống dòng khi hẹp.</summary>
     public static Div Breadcrumb(Window w) =>
-        w.Div().Class("flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground");
+        w.Div().Class(ComponentStyles.S.Breadcrumb);
 
     /// <summary>Một mục bọc link + phần phụ (vd. menu thả xuống) đứng sát nhau.</summary>
-    public static Div BreadcrumbItem(Window w) => w.Div().Class("inline-flex items-center gap-1");
+    public static Div BreadcrumbItem(Window w) => w.Div().Class(ComponentStyles.S.BreadcrumbItem);
 
     /// <summary>
     /// Mục bấm được (focus được bằng Tab, Enter kích hoạt); người gọi nối <c>.OnClick(...)</c>. Breadcrumb có số mục thay đổi
@@ -25,7 +25,12 @@ public static partial class Ui
     public static Div BreadcrumbPage(Window w, string text) => w.Div().Class("font-normal text-foreground").Child(text);
 
     /// <summary>Dấu phân cách mặc định: mũi tên phải.</summary>
-    public static Div BreadcrumbSeparator(Window w) => w.Div().Class("flex items-center").Child(Icon.ChevronRight(w));
+    public static Div BreadcrumbSeparator(Window w)
+    {
+        var s = ComponentStyles.S;
+        var icon = Icon.ChevronRight(w);
+        return w.Div().Class(s.BreadcrumbSeparator).Child(s.BreadcrumbSeparatorIcon.Length > 0 ? icon.Class(s.BreadcrumbSeparatorIcon) : icon);
+    }
 
     /// <summary>Dấu "…" thay cho các mục bị ẩn.</summary>
     public static Div BreadcrumbEllipsis(Window w) =>

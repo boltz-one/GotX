@@ -12,34 +12,7 @@ public enum BubbleReactionSide : byte { Top, Bottom }
 public static partial class Ui
 {
     // shadcn tô màu phần nội dung qua selector *:data-[slot=bubble-content] của khung bên ngoài; GotX không có
-    // selector con nên variant được truyền thẳng vào BubbleContent và tra bảng hằng chuỗi (không nối chuỗi mỗi frame).
-    const string BubbleContentBase =
-        "max-w-full min-w-0 overflow-hidden rounded-xl border border-transparent px-3 py-2 text-sm leading-relaxed transition-colors";
-
-    static readonly string[] BubbleContentVariants =
-    [
-        "bg-primary text-primary-foreground",
-        "bg-secondary text-secondary-foreground",
-        "bg-muted text-foreground",
-        // tinted dùng oklch(from var(--primary)...) – GotX không có oklch nên xấp xỉ bằng primary pha mờ
-        "bg-primary/10 text-foreground dark:bg-primary/15",
-        "border-border bg-background text-foreground",
-        "rounded-none bg-transparent px-0 py-0 text-foreground",
-        "bg-destructive/10 text-destructive dark:bg-destructive/20",
-    ];
-
-    static readonly string[] BubbleContentClassTable = BuildBubbleContentClasses();
-
-    static string[] BuildBubbleContentClasses()
-    {
-        var table = new string[BubbleContentVariants.Length * 2];
-        for (int v = 0; v < BubbleContentVariants.Length; v++)
-        {
-            table[v * 2] = $"{BubbleContentBase} {BubbleContentVariants[v]} self-start";
-            table[v * 2 + 1] = $"{BubbleContentBase} {BubbleContentVariants[v]} self-end";
-        }
-        return table;
-    }
+    // selector con nên variant được truyền thẳng vào BubbleContent và tra bảng ghép sẵn của style (BubbleContentTable).
 
     /// <summary>Cột các bong bóng liên tiếp của cùng một người gửi.</summary>
     public static Div BubbleGroup(Window w) => w.Div().Class("flex min-w-0 flex-col gap-2");
@@ -56,7 +29,7 @@ public static partial class Ui
 
     /// <summary>Phần nền màu chứa chữ của bong bóng; <paramref name="variant"/> phải trùng với khung bên ngoài.</summary>
     public static Div BubbleContent(Window w, BubbleVariant variant = BubbleVariant.Default, ChatAlign align = ChatAlign.Start) =>
-        w.Div().Class(BubbleContentClassTable[(int)variant * 2 + (align == ChatAlign.End ? 1 : 0)]);
+        w.Div().Class(ComponentStyles.S.BubbleContentTable[(int)variant * 2 + (align == ChatAlign.End ? 1 : 0)]);
 
     /// <summary>Lối tắt cho trường hợp phổ biến: bong bóng chỉ có một đoạn chữ.</summary>
     public static Div Bubble(Window w, string text, BubbleVariant variant = BubbleVariant.Default, ChatAlign align = ChatAlign.Start) =>

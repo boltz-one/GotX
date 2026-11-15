@@ -60,6 +60,12 @@ public sealed record SidebarNavGroup(string? Label, IReadOnlyList<SidebarNavItem
     /// <summary>Ẩn cả nhóm khi sidebar thu gọn còn icon (<c>group-data-[collapsible=icon]:hidden</c>).</summary>
     public bool HideWhenCollapsed { get; init; }
 
+    /// <summary>
+    /// Nội dung tự vẽ đứng đầu nhóm, trên danh sách nút (SidebarGroupContent <c>flex flex-col gap-2</c>) – vd. hàng
+    /// "Quick Create" + nút hộp thư của dashboard-01.
+    /// </summary>
+    public Func<Window, Div>? Lead { get; init; }
+
     /// <summary>Đẩy nhóm xuống đáy vùng menu (<c>mt-auto</c> của shadcn) – nav phụ của dashboard.</summary>
     public bool PushToBottom { get; init; }
 }

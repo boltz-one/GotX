@@ -1,7 +1,7 @@
 namespace GotX.Components;
 
 /// <summary>Loại dòng trong menu.</summary>
-public enum MenuItemKind : byte { Item, Checkbox, Label, Separator, Submenu }
+public enum MenuItemKind : byte { Item, Checkbox, Label, Separator, Submenu, Custom }
 
 /// <summary>
 /// Một dòng của DropdownMenu / ContextMenu / Menubar. Dùng các hàm tạo tĩnh:
@@ -34,6 +34,9 @@ public sealed class MenuItem
     /// <summary>Các dòng của menu con (chỉ với <see cref="MenuItemKind.Submenu"/>).</summary>
     public IReadOnlyList<MenuItem> Items { get; init; } = [];
 
+    /// <summary>Hàm dựng của dòng tự vẽ (chỉ với <see cref="MenuItemKind.Custom"/>).</summary>
+    public Func<Window, Div>? Content { get; init; }
+
     /// <summary>Key gắn lên dòng (tuỳ chọn) – để tìm dòng trong kiểm tra headless.</summary>
     public string? Key { get; init; }
 
@@ -51,6 +54,9 @@ public sealed class MenuItem
 
     /// <summary>Tiêu đề nhóm (chữ nhỏ, mờ, không bấm được).</summary>
     public static MenuItem Label(string text) => new() { Kind = MenuItemKind.Label, Text = text };
+
+    /// <summary>Dòng tự vẽ, không bấm được (vd. đầu menu tài khoản: avatar + tên + email).</summary>
+    public static MenuItem Custom(Func<Window, Div> content) => new() { Kind = MenuItemKind.Custom, Content = content };
 
     /// <summary>Đường kẻ ngăn nhóm.</summary>
     public static MenuItem Separator() => new() { Kind = MenuItemKind.Separator };

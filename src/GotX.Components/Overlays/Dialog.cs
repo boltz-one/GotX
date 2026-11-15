@@ -11,6 +11,10 @@ namespace GotX.Components;
 /// </summary>
 public sealed class Dialog : View
 {
+    // Bảng ghim lúc tạo nếu được tạo trong ComponentStyles.Use(...); không thì theo style chung của app.
+    readonly ComponentStyleSheet? _pinned = ComponentStyles.Scoped;
+    ComponentStyleSheet _sheet => _pinned ?? ComponentStyles.S;
+
     Overlay? _overlay;
     string? _contentKey, _closeKey;
 
@@ -64,22 +68,22 @@ public sealed class Dialog : View
 
     public override Div Render(Window w)
     {
-        var panel = w.Div().Class(
-            "relative flex flex-col gap-4 w-96 max-w-full rounded-xl bg-popover p-4 text-sm text-popover-foreground " +
-            "ring-1 ring-foreground/10 shadow-lg").TakeFocus(ContentKey);
+        var s = _sheet;
+        using var _ = ComponentStyles.Use(s); // Body/Footer và nút × theo cùng style
+        var panel = w.Div().Class(s.DialogPanel).TakeFocus(ContentKey);
         if (PanelClass.Length > 0) panel.Class(PanelClass);
 
         if (Title.Length > 0 || Description.Length > 0)
         {
-            var header = w.Div().Class("flex flex-col gap-2");
-            if (Title.Length > 0) header.Child(w.Div().Class("text-base font-medium leading-none").Child(Title));
-            if (Description.Length > 0) header.Child(w.Div().Class("text-sm text-muted-foreground").Child(Description));
+            var header = w.Div().Class(s.DialogHeader);
+            if (Title.Length > 0) header.Child(w.Div().Class(s.DialogTitle).Child(Title));
+            if (Description.Length > 0) header.Child(w.Div().Class(s.DialogDescription).Child(Description));
             panel.Child(header);
         }
         if (Body is { } body) panel.Child(body(w));
-        if (Footer is { } footer) panel.Child(w.Div().Class("flex justify-end gap-2").Child(footer(w)));
+        if (Footer is { } footer) panel.Child(w.Div().Class(s.DialogFooter).Child(footer(w)));
         if (ShowCloseButton)
-            panel.Child(OverlayParts.CloseButton(w, CloseKey, "absolute top-2 right-2").OnClick(this, static (d, _) => d.Close()));
+            panel.Child(OverlayParts.CloseButton(w, CloseKey, s.DialogClosePosition).OnClick(this, static (d, _) => d.Close()));
         return panel;
     }
 }

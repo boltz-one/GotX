@@ -11,40 +11,16 @@ public enum ItemMediaVariant : byte { Default, Icon, Image }
 
 public static partial class Ui
 {
-    const string ItemBase = "flex w-full flex-wrap items-center rounded-lg border text-sm transition-colors duration-100";
-
-    static readonly string[] ItemVariantClasses = ["border-transparent", "border-border", "border-transparent bg-muted/50"];
-    static readonly string[] ItemSizeClasses = ["gap-2.5 px-3 py-2.5", "gap-2.5 px-3 py-2.5", "gap-2 px-2.5 py-2"];
-
-    // Ghép sẵn variant × size; group-data-[size=...] của shadcn được thay bằng tham số size ở từng phần con.
-    static readonly string[] ItemClassTable = BuildItemClasses();
-
-    static string[] BuildItemClasses()
-    {
-        var table = new string[ItemVariantClasses.Length * ItemSizeClasses.Length];
-        for (int v = 0; v < ItemVariantClasses.Length; v++)
-            for (int s = 0; s < ItemSizeClasses.Length; s++)
-                table[v * ItemSizeClasses.Length + s] = $"{ItemBase} {ItemVariantClasses[v]} {ItemSizeClasses[s]}";
-        return table;
-    }
-
-    static readonly string[] ItemImageClasses =
-    [
-        "flex shrink-0 items-center justify-center gap-2 size-10 overflow-hidden rounded-sm",
-        "flex shrink-0 items-center justify-center gap-2 size-8 overflow-hidden rounded-sm",
-        "flex shrink-0 items-center justify-center gap-2 size-6 overflow-hidden rounded-sm",
-    ];
-
     /// <summary>
     /// Một dòng nội dung: Media → Content (flex-1) → Actions xếp ngang; Header/Footer chiếm trọn một hàng.
     /// Muốn bấm được thì nối <c>.OnClick(...)</c> và <c>.Class("cursor-pointer hover:bg-muted")</c>.
     /// </summary>
     public static Div Item(Window w, ItemVariant variant = ItemVariant.Default, ItemSize size = ItemSize.Default) =>
-        w.Div().Class(ItemClassTable[(int)variant * ItemSizeClasses.Length + (int)size]);
+        w.Div().Class(ComponentStyles.S.ItemTable[(int)variant * ComponentStyles.S.ItemSizes.Length + (int)size]);
 
     /// <summary>Danh sách item xếp dọc.</summary>
     public static Div ItemGroup(Window w, ItemSize size = ItemSize.Default) =>
-        w.Div().Class(size switch { ItemSize.Sm => "flex w-full flex-col gap-2.5", ItemSize.Xs => "flex w-full flex-col gap-2", _ => "flex w-full flex-col gap-4" });
+        w.Div().Class(ComponentStyles.S.ItemGroup[(int)size]);
 
     /// <summary>Đường kẻ giữa các item trong nhóm.</summary>
     public static Div ItemSeparator(Window w) => Separator(w).Class("my-2");
@@ -55,25 +31,23 @@ public static partial class Ui
     /// </summary>
     public static Div ItemMedia(Window w, ItemMediaVariant variant = ItemMediaVariant.Default, ItemSize size = ItemSize.Default, bool alignTop = false)
     {
-        var media = w.Div().Class(variant == ItemMediaVariant.Image
-            ? ItemImageClasses[(int)size]
-            : "flex shrink-0 items-center justify-center gap-2");
-        return alignTop ? media.Class("self-start translate-y-0.5") : media;
+        var s = ComponentStyles.S;
+        var media = w.Div().Class(variant == ItemMediaVariant.Image ? s.ItemMediaImage[(int)size] : s.ItemMedia);
+        return alignTop ? media.Class(s.ItemMediaTop) : media;
     }
 
     /// <summary>Cột tiêu đề + mô tả, chiếm phần rộng còn lại.</summary>
     public static Div ItemContent(Window w, ItemSize size = ItemSize.Default) =>
-        w.Div().Class(size == ItemSize.Xs ? "flex flex-1 flex-col gap-0" : "flex flex-1 flex-col gap-1");
+        w.Div().Class(ComponentStyles.S.ItemContent[(int)size]);
 
     /// <summary>Tiêu đề (một dòng; GotX chưa có line-clamp nên dùng truncate).</summary>
     public static Div ItemTitle(Window w, string text) =>
-        w.Div().Class("flex items-center gap-2 text-sm leading-snug font-medium").Child(w.Div().Class("truncate").Child(text));
+        w.Div().Class(ComponentStyles.S.ItemTitle).Child(w.Div().Class(ComponentStyles.S.ItemTitleText).Child(text));
 
     /// <summary>Mô tả (chữ tự xuống dòng; không giới hạn 2 dòng vì GotX chưa có line-clamp).</summary>
     public static Div ItemDescription(Window w, string text, ItemSize size = ItemSize.Default) =>
-        w.Div().Class(size == ItemSize.Xs
-            ? "text-left text-xs leading-normal font-normal text-muted-foreground"
-            : "text-left text-sm leading-normal font-normal text-muted-foreground").Child(text);
+        w.Div().Class(ComponentStyles.S.ItemDescription[(int)size]).Child(text);
+
 
     /// <summary>Nhóm nút ở cuối item.</summary>
     public static Div ItemActions(Window w) => w.Div().Class("flex items-center gap-2");

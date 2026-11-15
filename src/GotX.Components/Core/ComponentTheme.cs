@@ -8,6 +8,32 @@ public static class ComponentTheme
 {
     static bool s_installed;
 
+    /// <summary>
+    /// Như <see cref="Install()"/>, và đặt <paramref name="style"/> làm style mặc định của mọi component trong app
+    /// (gọi lại để đổi). Một phần giao diện dùng style khác thì bọc bằng <see cref="ComponentStyles.Use(ComponentStyle)"/>.
+    /// </summary>
+    public static void Install(ComponentStyle style)
+    {
+        Install();
+        ComponentStyles.SetDefault(ComponentStyles.Sheet(style));
+    }
+
+    /// <summary>Style mặc định hiện tại của app.</summary>
+    public static ComponentStyle Style => ComponentStyles.AppDefault.Style;
+
+    /// <summary>
+    /// Đổi style của app lúc đang chạy (vd. khi đổi trang) và vẽ lại mọi view của mọi cửa sổ. Component được tạo trong
+    /// <see cref="ComponentStyles.Use(ComponentStyle)"/> giữ style của phạm vi đó.
+    /// </summary>
+    public static void Use(App app, ComponentStyle style)
+    {
+        Install();
+        var sheet = ComponentStyles.Sheet(style);
+        if (ReferenceEquals(ComponentStyles.AppDefault, sheet)) return;
+        ComponentStyles.SetDefault(sheet);
+        app.InvalidateAllWindows();
+    }
+
     public static void Install()
     {
         if (s_installed) return;

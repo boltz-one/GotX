@@ -15,6 +15,9 @@ public enum AlertDialogSize : byte { Default, Sm }
 public sealed class AlertDialog : View
 {
     readonly PopupSlot _slot = new();
+    // Bảng ghim lúc tạo nếu được tạo trong ComponentStyles.Use(...); không thì theo style chung của app (đổi được lúc chạy).
+    readonly ComponentStyleSheet? _pinned = ComponentStyles.Scoped;
+    ComponentStyleSheet _sheet => _pinned ?? ComponentStyles.S;
     bool _decided;
 
     /// <summary>Hộp thoại vừa mở / vừa đóng.</summary>
@@ -55,7 +58,7 @@ public sealed class AlertDialog : View
         _slot.Open(window, this, new OverlayOptions
         {
             Modal = true, DismissOnOutsideClick = false, DismissOnEscape = true,
-            LayerClass = "flex items-center justify-center p-4",
+            LayerClass = "flex items-center justify-center p-4", BackdropClass = _sheet.ModalBackdrop,
         }, OnSlotChanged);
     }
 
@@ -80,23 +83,21 @@ public sealed class AlertDialog : View
     /// <summary>Vẽ tấm nội dung (được gọi trong lớp overlay).</summary>
     public override Div Render(Window w)
     {
-        bool sm = Size == AlertDialogSize.Sm;
-        var panel = w.Div().Class(sm
-            ? "flex flex-col gap-4 w-80 max-w-full rounded-xl bg-popover p-4 text-popover-foreground ring-1 ring-foreground/10 shadow-lg"
-            : "flex flex-col gap-4 w-96 max-w-full rounded-xl bg-popover p-4 text-popover-foreground ring-1 ring-foreground/10 shadow-lg");
+        var s = _sheet;
+        using var _ = ComponentStyles.Use(s); // nút và Media/Body do người dùng dựng
+        int size = (int)Size;
+        var panel = w.Div().Class(s.AlertDialogPanel[size]);
 
-        var header = w.Div().Class(sm ? "flex flex-col items-center gap-1.5 text-center" : "flex flex-col gap-1.5");
+        var header = w.Div().Class(s.AlertDialogHeader[size]);
         if (Media is { } media)
-            header.Child(w.Div().Class("mb-2 flex size-10 items-center justify-center rounded-md bg-muted").Child(media(w)));
-        if (Title.Length > 0) header.Child(w.Div().Class("text-base font-medium").Child(Title));
-        if (Description.Length > 0) header.Child(w.Div().Class("text-sm text-muted-foreground").Child(Description));
+            header.Child(w.Div().Class(s.AlertDialogMedia).Child(media(w)));
+        if (Title.Length > 0) header.Child(w.Div().Class(s.AlertDialogTitle).Child(Title));
+        if (Description.Length > 0) header.Child(w.Div().Class(s.AlertDialogDescription).Child(Description));
         panel.Child(header);
         if (Body is { } body) panel.Child(body(w));
 
         // Chân: hai nút; bản Sm chia đôi hàng như grid-cols-2 của shadcn.
-        var footer = w.Div().Class(sm
-            ? "-mx-4 -mb-4 grid grid-cols-2 gap-2 rounded-b-xl border-t border-border bg-muted/50 p-4"
-            : "-mx-4 -mb-4 flex justify-end gap-2 rounded-b-xl border-t border-border bg-muted/50 p-4");
+        var footer = w.Div().Class(s.AlertDialogFooter[size]);
         footer.Child(Ui.Button(w, CancelText, ButtonVariant.Outline).Class(FocusRing.Ring).Key(CancelKey).Focusable().AutoFocus()
             .OnClick(this, static (d, _) => d.Decide(false)));
         footer.Child(Ui.Button(w, ActionText, ActionVariant).Class(FocusRing.Ring).Key(ActionKey).Focusable()

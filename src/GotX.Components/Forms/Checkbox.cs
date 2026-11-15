@@ -29,13 +29,11 @@ public sealed class Checkbox : View
 
     public void Toggle() { if (!Disabled) Checked = !Checked; }
 
-    const string BoxOff = "flex size-4 shrink-0 items-center justify-center rounded-[4px] border border-input transition-colors dark:bg-input/30";
-    const string BoxOn = "flex size-4 shrink-0 items-center justify-center rounded-[4px] border border-primary bg-primary text-primary-foreground transition-colors";
-    const string FocusRing = " ring-3 ring-ring/50";
-
-    // [đã chọn * 2 + đang focus bằng phím]. Cả hàng (ô + nhãn) là phần tử focus để bấm nhãn cũng focus như <label>
-    // của HTML, nhưng vòng focus chỉ vẽ quanh ô như shadcn – nên chọn class theo trạng thái focus thay cho focus-visible:.
-    static readonly string[] Boxes = [BoxOff, BoxOff + " border-ring" + FocusRing, BoxOn, BoxOn + FocusRing];
+    // Bảng class [đã chọn * 2 + đang focus bằng phím] của style lúc tạo. Cả hàng (ô + nhãn) là phần tử focus để bấm nhãn
+    // cũng focus như <label> của HTML, nhưng vòng focus chỉ vẽ quanh ô như shadcn – nên chọn class theo trạng thái focus.
+    // Bảng ghim lúc tạo nếu được tạo trong ComponentStyles.Use(...); không thì theo style chung của app (đổi được lúc chạy).
+    readonly ComponentStyleSheet? _pinned = ComponentStyles.Scoped;
+    ComponentStyleSheet _sheet => _pinned ?? ComponentStyles.S;
 
     string? _key;
 
@@ -43,8 +41,8 @@ public sealed class Checkbox : View
     {
         _key ??= "gotx-checkbox-" + Id.Value;
         bool ring = w.FocusVisible && w.IsFocused(_key);
-        var box = w.Div().Class(Boxes[(_checked ? 2 : 0) + (ring ? 1 : 0)]);
-        if (_checked) box.Child(Icon.Check(w).Class("size-3.5"));
+        var box = w.Div().Class(_sheet.CheckboxBox[(_checked ? 2 : 0) + (ring ? 1 : 0)]);
+        if (_checked) box.Child(Icon.Check(w).Class(_sheet.CheckboxIcon));
 
         // Space/Enter đổi trạng thái: Core gọi OnClick của phần tử đang focus.
         var row = w.Div().Class("inline-flex items-center gap-2 cursor-pointer disabled:opacity-50")

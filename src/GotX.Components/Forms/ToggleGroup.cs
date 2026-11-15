@@ -7,6 +7,10 @@ namespace GotX.Components;
 /// </summary>
 public sealed class ToggleGroup : View
 {
+    // Bảng ghim lúc tạo nếu được tạo trong ComponentStyles.Use(...); không thì theo style chung của app.
+    readonly ComponentStyleSheet? _pinned = ComponentStyles.Scoped;
+    ComponentStyleSheet _sheet => _pinned ?? ComponentStyles.S;
+
     IReadOnlyList<string> _items = [];
     bool[] _on = [];
     Indexed<ToggleGroup>[]? _refs;
@@ -85,14 +89,19 @@ public sealed class ToggleGroup : View
         var roving = _roving ??= new RovingFocus("gotx-toggle-group-" + Id.Value);
         if (roving.Sync(w, n, Math.Min(_home, n - 1)) is >= 0 and var at) _home = at;
         var refs = Indexed<ToggleGroup>.Ensure(ref _refs, this, n);
-        var group = w.Div().Class("inline-flex items-center rounded-lg");
+        var sheet = _sheet;
+        var group = w.Div().Class(sheet.ToggleGroup);
         for (int i = 0; i < n; i++)
-            group.Child(w.Div().Class(ToggleStyles.Get(Variant, Size, _on[i], ToggleStyles.Position(i, n)))
+        {
+            var item = w.Div().Class(ToggleStyles.Get(sheet, Variant, Size, _on[i], ToggleStyles.Position(i, n)));
+            if (sheet.ToggleGroupItem.Length > 0) item.Class(sheet.ToggleGroupItem);
+            group.Child(item
                 .Key(roving.Key(i)).Focusable()
                 .OnKey(refs[i], static (r, e) => r.Owner.OnItemKey(r.Index, e))
                 .Disabled(Disabled)
                 .OnClick(refs[i], static (r, _) => r.Owner.Flip(r.Index))
                 .Child(_items[i]));
+        }
         return group;
     }
 }

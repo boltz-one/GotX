@@ -11,30 +11,24 @@ public enum FieldOrientation : byte { Vertical, Horizontal }
 public static partial class Ui
 {
     /// <summary>Nhóm các field có chung chú thích (fieldset).</summary>
-    public static Div FieldSet(Window w) => w.Div().Class("flex flex-col gap-4");
+    public static Div FieldSet(Window w) => w.Div().Class(ComponentStyles.S.FieldSet);
 
     /// <summary>Tiêu đề của <see cref="FieldSet"/>; <paramref name="asLabel"/> = cỡ chữ nhãn thay vì cỡ legend.</summary>
     public static Div FieldLegend(Window w, string text, bool asLabel = false) =>
-        w.Div().Class(asLabel ? "mb-1.5 text-sm font-medium" : "mb-1.5 text-base font-medium").Child(text);
+        w.Div().Class(ComponentStyles.S.FieldLegend[asLabel ? 1 : 0]).Child(text);
 
     /// <summary>Danh sách field xếp dọc.</summary>
-    public static Div FieldGroup(Window w) => w.Div().Class("flex w-full flex-col gap-5");
+    public static Div FieldGroup(Window w) => w.Div().Class(ComponentStyles.S.FieldGroup);
 
     /// <summary>Một field; <paramref name="invalid"/> nhuộm đỏ chữ bên trong như <c>data-[invalid=true]</c>.</summary>
     public static Div Field(Window w, FieldOrientation orientation = FieldOrientation.Vertical, bool invalid = false) =>
-        w.Div().Class((orientation, invalid) switch
-        {
-            (FieldOrientation.Vertical, false) => "flex w-full flex-col gap-2",
-            (FieldOrientation.Vertical, true) => "flex w-full flex-col gap-2 text-destructive",
-            (_, false) => "flex w-full flex-row items-center gap-2",
-            _ => "flex w-full flex-row items-center gap-2 text-destructive",
-        });
+        w.Div().Class(ComponentStyles.S.Field[(orientation == FieldOrientation.Vertical ? 0 : 2) + (invalid ? 1 : 0)]);
 
     /// <summary>Cột chứa nhãn + mô tả khi đứng cạnh control (field ngang).</summary>
-    public static Div FieldContent(Window w) => w.Div().Class("flex flex-1 flex-col gap-1 leading-snug");
+    public static Div FieldContent(Window w) => w.Div().Class(ComponentStyles.S.FieldContent);
 
     /// <summary>Nhãn của field.</summary>
-    public static Div FieldLabel(Window w, string text) => w.Div().Class("flex gap-2 text-sm font-medium leading-snug").Child(text);
+    public static Div FieldLabel(Window w, string text) => w.Div().Class(ComponentStyles.S.FieldLabel).Child(text);
 
     /// <summary>Nhãn gắn với ô nhập của field như <c>htmlFor</c>: bấm nhãn thì ô nhận focus.</summary>
     public static Div FieldLabel(Window w, string text, TextEntry control) =>
@@ -49,11 +43,11 @@ public static partial class Ui
         : "flex w-full flex-col rounded-lg border border-border p-2.5 hover:bg-muted/50");
 
     /// <summary>Tiêu đề field không phải nhãn (vd. trong thẻ chọn).</summary>
-    public static Div FieldTitle(Window w, string text) => w.Div().Class("flex items-center gap-2 text-sm font-medium").Child(text);
+    public static Div FieldTitle(Window w, string text) => w.Div().Class(ComponentStyles.S.FieldTitle).Child(text);
 
     /// <summary>Dòng mô tả dưới nhãn hoặc control.</summary>
     public static Div FieldDescription(Window w, string text) =>
-        w.Div().Class("text-left text-sm leading-normal font-normal text-muted-foreground").Child(text);
+        w.Div().Class(ComponentStyles.S.FieldDescription).Child(text);
 
     /// <summary>Thông báo lỗi của field.</summary>
     public static Div FieldError(Window w, string text) => w.Div().Class("text-sm font-normal text-destructive").Child(text);

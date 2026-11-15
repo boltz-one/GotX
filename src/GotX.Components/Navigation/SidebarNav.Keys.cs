@@ -48,7 +48,7 @@ public sealed partial class SidebarNav
         var rows = new List<Row>();
         var subRow = new List<int>();
         _groupStart = new int[_groups.Count];
-        string prefix = ContentKey;
+        string prefix = KeyPrefix ?? ContentKey;
         for (int g = 0; g < _groups.Count; g++)
         {
             _groupStart[g] = rows.Count;

@@ -7,14 +7,6 @@ namespace GotX.Components;
 /// </summary>
 public sealed partial class MenuPanel : View
 {
-    const string Row = "flex items-center gap-1.5 rounded-md px-1.5 py-1 text-sm whitespace-nowrap ";
-    const string Normal = Row + "cursor-pointer";
-    const string NormalOn = Row + "cursor-pointer bg-accent text-accent-foreground";
-    const string Danger = Row + "cursor-pointer text-destructive";
-    const string DangerOn = Row + "cursor-pointer text-destructive bg-destructive/10 dark:bg-destructive/20";
-    const string Off = Row + "opacity-50";
-    const string Shortcut = "pl-4 text-xs tracking-widest text-muted-foreground";
-    const string ShortcutOn = "pl-4 text-xs tracking-widest text-accent-foreground";
 
     readonly MenuOwner _owner;
     readonly MenuPanel? _parent;
@@ -61,13 +53,16 @@ public sealed partial class MenuPanel : View
     public override Div Render(Window w)
     {
         _window = w;
+        var sheet = _owner.Sheet;
+        using var _ = ComponentStyles.Use(sheet); // icon/nội dung dòng do người dùng dựng
         var items = Items;
         var refs = Indexed<MenuPanel>.Ensure(ref _refs, this, items.Count);
         var list = w.Div().Key(ContentKey)
-            .Class("flex flex-col min-w-32 rounded-lg bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10")
+            .Class(sheet.MenuPanel)
             .Focusable().AutoFocus(_takeFocus)
             .OnKey(this, static (p, e) => p.HandleKey(e))
             .OnHover(this, static (p, inside) => p._pointerInside = inside);
+        if (_parent is null && _owner.MenuClass.Length > 0) list.Class(_owner.MenuClass);
         int subOpen = _slot.IsOpen ? _subIndex : -1;
         for (int i = 0; i < items.Count; i++)
         {
@@ -75,23 +70,26 @@ public sealed partial class MenuPanel : View
             switch (item.Kind)
             {
                 case MenuItemKind.Separator:
-                    list.Child(w.Div().Class("-mx-1 my-1 h-px bg-border"));
+                    list.Child(w.Div().Class(sheet.MenuSeparator));
+                    continue;
+                case MenuItemKind.Custom:
+                    if (item.Content is { } content) list.Child(content(w));
                     continue;
                 case MenuItemKind.Label:
-                    list.Child(w.Div().Class("px-1.5 py-1 text-xs font-medium text-muted-foreground").Child(item.Text));
+                    list.Child(w.Div().Class(sheet.MenuLabel).Child(item.Text));
                     continue;
             }
             // Dòng đang mở menu con giữ nền sáng (data-open:bg-accent) dù con trỏ đã sang panel con.
             bool on = !item.Disabled && (i == _active || i == subOpen);
-            var row = w.Div().Class(item.Disabled ? Off : item.Destructive ? (on ? DangerOn : Danger) : (on ? NormalOn : Normal))
+            var row = w.Div().Class(sheet.MenuRow[item.Disabled ? 4 : (item.Destructive ? 2 : 0) + (on ? 1 : 0)])
                 .Disabled(item.Disabled)
                 .OnClick(refs[i], static (r, _) => r.Owner._owner.Activate(r.Owner, r.Index, keyboard: false))
                 .OnHover(refs[i], static (r, inside) => r.Owner.HoverRow(r.Index, inside));
             if (item.Key is { } key) row.Key(key);
-            if (item.Icon is { } icon) row.Child(icon(w));
+            if (item.Icon is { } icon) row.Child(sheet.MenuIcon.Length > 0 && !item.Destructive ? icon(w).Class(sheet.MenuIcon) : icon(w));
             row.Child(w.Div().Class("flex-1").Child(item.Text));
             if (item.Shortcut.Length > 0)
-                row.Child(w.Div().Class(on && !item.Destructive ? ShortcutOn : Shortcut).Child(item.Shortcut));
+                row.Child(w.Div().Class(sheet.MenuShortcut[on && !item.Destructive ? 1 : 0]).Child(item.Shortcut));
             // Ô dấu tích giữ chỗ cả khi chưa chọn để chữ không nhảy khi bật/tắt.
             if (item.Kind == MenuItemKind.Checkbox)
                 row.Child(item.Checked ? Icon.Check(w) : w.Div().Class("size-4 shrink-0"));

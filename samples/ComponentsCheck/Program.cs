@@ -22,6 +22,7 @@ Group("Overlay", OverlaysChecks.Run);
 Group("Điều hướng & dữ liệu", NavigationChecks.Run);
 Group("Chat", ChatChecks.Run);
 Group("Dữ liệu", DataChecks.Run);
+Group("Style", StyleChecks.Run);
 
 // Ảnh từng trang gallery, sáng và tối. Trang cao hơn cửa sổ thì chụp ở chiều cao lớn để thấy hết.
 (string Name, Func<App, View> Page)[] pages =
