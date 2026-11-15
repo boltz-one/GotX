@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- Đổi thành WinExe khi không cần cửa sổ console để xem log. -->
+    <OutputType>Exe</OutputType>
+    <PublishAot>true</PublishAot>
+    <ServerGarbageCollector>false</ServerGarbageCollector>
+    <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/GotX.Platform.Windows/GotX.Platform.Windows.csproj" />
+  </ItemGroup>
+</Project>

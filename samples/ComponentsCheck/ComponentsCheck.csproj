@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/GotX.Raster/GotX.Raster.csproj" />
+    <ProjectReference Include="../../src/GotX.Components/GotX.Components.csproj" />
+    <Compile Include="../Components/GalleryView.cs;../Components/Demo.cs;../Components/Pages/**/*.cs" LinkBase="Shared" />
+  </ItemGroup>
+</Project>

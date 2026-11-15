@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- Đổi thành WinExe khi không cần cửa sổ console để xem log. -->
+    <OutputType>Exe</OutputType>
+    <PublishAot>true</PublishAot>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/GotX.Platform.Windows/GotX.Platform.Windows.csproj" />
+    <ProjectReference Include="../../src/GotX.Components/GotX.Components.csproj" />
+  </ItemGroup>
+</Project>
