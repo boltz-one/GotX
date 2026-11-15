@@ -1,0 +1,1225 @@
+{
+  "version": 1,
+  "note": "median over repeated fresh-process runs; regenerate with: GotX.Perf bench --update-baseline",
+  "entries": {
+    "_machine": {
+      "calib": 1.286
+    },
+    "demo/click": {
+      "allocMed": 0,
+      "allocTotal": 7400,
+      "drawMed": 0.24,
+      "drawP95": 0.312,
+      "drawTotal": 109.681,
+      "frames": 419,
+      "rasterMed": 0,
+      "rendPerFrame": 3.0811
+    },
+    "demo/cold": {
+      "coldTotal": 421.66,
+      "create": 13.843,
+      "firstFrame": 115.155,
+      "fonts": 12.544
+    },
+    "demo/dark": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.616,
+      "drawP95": 0.871,
+      "drawTotal": 4.034,
+      "frames": 8,
+      "rasterMed": 0,
+      "rendPerFrame": 4.375
+    },
+    "demo/hover": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.245,
+      "drawP95": 0.337,
+      "drawTotal": 22.284,
+      "frames": 85,
+      "rasterMed": 0,
+      "rendPerFrame": 3.1647
+    },
+    "demo/idle": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.242,
+      "drawP95": 0.282,
+      "drawTotal": 15.076,
+      "frames": 60,
+      "rasterMed": 0,
+      "rendPerFrame": 3
+    },
+    "demo/resize": {
+      "allocMed": 0,
+      "allocTotal": 924320,
+      "drawMed": 0.242,
+      "drawP95": 2.417,
+      "drawTotal": 232.243,
+      "frames": 476,
+      "rasterMed": 0,
+      "rendPerFrame": 3.6197
+    },
+    "demo/scroll": {
+      "allocMed": 0,
+      "allocTotal": 168,
+      "drawMed": 0.24,
+      "drawP95": 0.569,
+      "drawTotal": 140.795,
+      "frames": 461,
+      "rasterMed": 0,
+      "rendPerFrame": 3.2039
+    },
+    "demo/type": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.342,
+      "drawP95": 0.342,
+      "drawTotal": 0.616,
+      "frames": 2,
+      "rasterMed": 0,
+      "rendPerFrame": 3
+    },
+    "gallery-chat/click": {
+      "allocMed": 504,
+      "allocTotal": 208008,
+      "drawMed": 0.232,
+      "drawP95": 0.326,
+      "drawTotal": 102.659,
+      "frames": 410,
+      "rasterMed": 0,
+      "rendPerFrame": 4.0829
+    },
+    "gallery-chat/cold": {
+      "coldTotal": 427.656,
+      "create": 22.325,
+      "firstFrame": 125.691,
+      "fonts": 12.324
+    },
+    "gallery-chat/dark": {
+      "allocMed": 768,
+      "allocTotal": 7448,
+      "drawMed": 0.784,
+      "drawP95": 0.91,
+      "drawTotal": 6.333,
+      "frames": 8,
+      "rasterMed": 0,
+      "rendPerFrame": 18
+    },
+    "gallery-chat/hover": {
+      "allocMed": 504,
+      "allocTotal": 42840,
+      "drawMed": 0.24,
+      "drawP95": 0.323,
+      "drawTotal": 21.991,
+      "frames": 85,
+      "rasterMed": 0,
+      "rendPerFrame": 4.1412
+    },
+    "gallery-chat/idle": {
+      "allocMed": 504,
+      "allocTotal": 30240,
+      "drawMed": 0.231,
+      "drawP95": 0.279,
+      "drawTotal": 14.541,
+      "frames": 60,
+      "rasterMed": 0,
+      "rendPerFrame": 4
+    },
+    "gallery-chat/resize": {
+      "allocMed": 504,
+      "allocTotal": 746152,
+      "drawMed": 0.238,
+      "drawP95": 1.66,
+      "drawTotal": 187.393,
+      "frames": 476,
+      "rasterMed": 0,
+      "rendPerFrame": 5.7437
+    },
+    "gallery-chat/scroll": {
+      "allocMed": 504,
+      "allocTotal": 242288,
+      "drawMed": 0.237,
+      "drawP95": 0.555,
+      "drawTotal": 136.162,
+      "frames": 461,
+      "rasterMed": 0,
+      "rendPerFrame": 5.1171
+    },
+    "gallery-chat/type": {
+      "allocMed": 504,
+      "allocTotal": 1008,
+      "drawMed": 0.348,
+      "drawP95": 0.348,
+      "drawTotal": 0.609,
+      "frames": 2,
+      "rasterMed": 0,
+      "rendPerFrame": 4
+    },
+    "gallery-data/click": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.031,
+      "drawP95": 0.051,
+      "drawTotal": 0.112,
+      "frames": 3,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "gallery-data/cold": {
+      "coldTotal": 179.08,
+      "create": 36.938,
+      "firstFrame": 116.271,
+      "fonts": 11.574
+    },
+    "gallery-data/dark": {
+      "allocMed": 472,
+      "allocTotal": 4440,
+      "drawMed": 0.457,
+      "drawP95": 0.543,
+      "drawTotal": 3.743,
+      "frames": 8,
+      "rasterMed": 0,
+      "rendPerFrame": 10.5
+    },
+    "gallery-data/hover": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.029,
+      "drawP95": 0.034,
+      "drawTotal": 2.572,
+      "frames": 85,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "gallery-data/idle": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.028,
+      "drawP95": 0.03,
+      "drawTotal": 1.777,
+      "frames": 60,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "gallery-data/resize": {
+      "allocMed": 472,
+      "allocTotal": 243328,
+      "drawMed": 0.432,
+      "drawP95": 0.984,
+      "drawTotal": 39.078,
+      "frames": 78,
+      "rasterMed": 0,
+      "rendPerFrame": 8.4231
+    },
+    "gallery-data/scroll": {
+      "allocMed": 472,
+      "allocTotal": 35504,
+      "drawMed": 0.362,
+      "drawP95": 0.432,
+      "drawTotal": 34.424,
+      "frames": 86,
+      "rasterMed": 0,
+      "rendPerFrame": 5.4419
+    },
+    "gallery-data/type": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.051,
+      "drawP95": 0.051,
+      "drawTotal": 0.081,
+      "frames": 2,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "gallery-display/click": {
+      "allocMed": 144,
+      "allocTotal": 57744,
+      "drawMed": 0.619,
+      "drawP95": 0.688,
+      "drawTotal": 251.882,
+      "frames": 401,
+      "rasterMed": 0,
+      "rendPerFrame": 2
+    },
+    "gallery-display/cold": {
+      "coldTotal": 629.763,
+      "create": 10.2,
+      "firstFrame": 134.513,
+      "fonts": 11.984
+    },
+    "gallery-display/dark": {
+      "allocMed": 144,
+      "allocTotal": 1152,
+      "drawMed": 0.654,
+      "drawP95": 0.75,
+      "drawTotal": 5.254,
+      "frames": 8,
+      "rasterMed": 0,
+      "rendPerFrame": 2
+    },
+    "gallery-display/hover": {
+      "allocMed": 144,
+      "allocTotal": 12240,
+      "drawMed": 0.604,
+      "drawP95": 0.655,
+      "drawTotal": 52.593,
+      "frames": 85,
+      "rasterMed": 0,
+      "rendPerFrame": 2
+    },
+    "gallery-display/idle": {
+      "allocMed": 144,
+      "allocTotal": 8640,
+      "drawMed": 0.603,
+      "drawP95": 0.667,
+      "drawTotal": 37.182,
+      "frames": 60,
+      "rasterMed": 0,
+      "rendPerFrame": 2
+    },
+    "gallery-display/resize": {
+      "allocMed": 144,
+      "allocTotal": 257992,
+      "drawMed": 0.642,
+      "drawP95": 1.173,
+      "drawTotal": 335.893,
+      "frames": 476,
+      "rasterMed": 0,
+      "rendPerFrame": 2
+    },
+    "gallery-display/scroll": {
+      "allocMed": 144,
+      "allocTotal": 66384,
+      "drawMed": 0.628,
+      "drawP95": 0.714,
+      "drawTotal": 293.273,
+      "frames": 461,
+      "rasterMed": 0,
+      "rendPerFrame": 2
+    },
+    "gallery-display/type": {
+      "allocMed": 144,
+      "allocTotal": 288,
+      "drawMed": 0.772,
+      "drawP95": 0.772,
+      "drawTotal": 1.413,
+      "frames": 2,
+      "rasterMed": 0,
+      "rendPerFrame": 2
+    },
+    "gallery-forms/click": {
+      "allocMed": 64,
+      "allocTotal": 17656,
+      "drawMed": 0.226,
+      "drawP95": 0.294,
+      "drawTotal": 24.986,
+      "frames": 125,
+      "rasterMed": 0,
+      "rendPerFrame": 2.832
+    },
+    "gallery-forms/cold": {
+      "coldTotal": 177.845,
+      "create": 35.891,
+      "firstFrame": 115.54,
+      "fonts": 13.157
+    },
+    "gallery-forms/dark": {
+      "allocMed": 64,
+      "allocTotal": 4112,
+      "drawMed": 0.873,
+      "drawP95": 1.11,
+      "drawTotal": 7.393,
+      "frames": 8,
+      "rasterMed": 0,
+      "rendPerFrame": 42.75
+    },
+    "gallery-forms/hover": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.031,
+      "drawP95": 0.035,
+      "drawTotal": 2.806,
+      "frames": 85,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "gallery-forms/idle": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.031,
+      "drawP95": 0.033,
+      "drawTotal": 1.948,
+      "frames": 60,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "gallery-forms/resize": {
+      "allocMed": 64,
+      "allocTotal": 188992,
+      "drawMed": 1.088,
+      "drawP95": 1.636,
+      "drawTotal": 77.379,
+      "frames": 78,
+      "rasterMed": 0,
+      "rendPerFrame": 40.8462
+    },
+    "gallery-forms/scroll": {
+      "allocMed": 0,
+      "allocTotal": 1448,
+      "drawMed": 0.047,
+      "drawP95": 0.32,
+      "drawTotal": 14.772,
+      "frames": 87,
+      "rasterMed": 0,
+      "rendPerFrame": 2.6552
+    },
+    "gallery-forms/type": {
+      "allocMed": 64,
+      "allocTotal": 2848,
+      "drawMed": 0.246,
+      "drawP95": 0.344,
+      "drawTotal": 10.809,
+      "frames": 42,
+      "rasterMed": 0,
+      "rendPerFrame": 3.9048
+    },
+    "gallery-navigation/click": {
+      "allocMed": 312,
+      "allocTotal": 28880,
+      "drawMed": 0.309,
+      "drawP95": 0.376,
+      "drawTotal": 29.8,
+      "frames": 103,
+      "rasterMed": 0,
+      "rendPerFrame": 2.6214
+    },
+    "gallery-navigation/cold": {
+      "coldTotal": 191.072,
+      "create": 31.305,
+      "firstFrame": 127.446,
+      "fonts": 12.557
+    },
+    "gallery-navigation/dark": {
+      "allocMed": 408,
+      "allocTotal": 5336,
+      "drawMed": 0.648,
+      "drawP95": 0.848,
+      "drawTotal": 5.5,
+      "frames": 8,
+      "rasterMed": 0,
+      "rendPerFrame": 12
+    },
+    "gallery-navigation/hover": {
+      "allocMed": 0,
+      "allocTotal": 11024,
+      "drawMed": 0.047,
+      "drawP95": 0.381,
+      "drawTotal": 14.169,
+      "frames": 85,
+      "rasterMed": 0,
+      "rendPerFrame": 1.2588
+    },
+    "gallery-navigation/idle": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.032,
+      "drawP95": 0.035,
+      "drawTotal": 2.048,
+      "frames": 60,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "gallery-navigation/resize": {
+      "allocMed": 283616,
+      "allocTotal": 22371696,
+      "drawMed": 1.431,
+      "drawP95": 2.656,
+      "drawTotal": 136.178,
+      "frames": 95,
+      "rasterMed": 0,
+      "rendPerFrame": 10.6632
+    },
+    "gallery-navigation/scroll": {
+      "allocMed": 408,
+      "allocTotal": 48768,
+      "drawMed": 0.389,
+      "drawP95": 0.553,
+      "drawTotal": 37.35,
+      "frames": 87,
+      "rasterMed": 0,
+      "rendPerFrame": 5.2299
+    },
+    "gallery-navigation/type": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.057,
+      "drawP95": 0.057,
+      "drawTotal": 0.093,
+      "frames": 2,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "gallery-overlays/click": {
+      "allocMed": 0,
+      "allocTotal": 1233336,
+      "drawMed": 0.139,
+      "drawP95": 3.078,
+      "drawTotal": 61.949,
+      "frames": 102,
+      "rasterMed": 0,
+      "rendPerFrame": 2.4706
+    },
+    "gallery-overlays/cold": {
+      "coldTotal": 157.483,
+      "create": 34.534,
+      "firstFrame": 100.485,
+      "fonts": 11.947
+    },
+    "gallery-overlays/dark": {
+      "allocMed": 0,
+      "allocTotal": 1016,
+      "drawMed": 0.253,
+      "drawP95": 0.385,
+      "drawTotal": 2.239,
+      "frames": 8,
+      "rasterMed": 0,
+      "rendPerFrame": 10
+    },
+    "gallery-overlays/hover": {
+      "allocMed": 0,
+      "allocTotal": 104,
+      "drawMed": 0.025,
+      "drawP95": 0.132,
+      "drawTotal": 8.295,
+      "frames": 85,
+      "rasterMed": 0,
+      "rendPerFrame": 0.5647
+    },
+    "gallery-overlays/idle": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.024,
+      "drawP95": 0.026,
+      "drawTotal": 1.522,
+      "frames": 60,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "gallery-overlays/resize": {
+      "allocMed": 96,
+      "allocTotal": 219512,
+      "drawMed": 0.301,
+      "drawP95": 0.752,
+      "drawTotal": 29.157,
+      "frames": 78,
+      "rasterMed": 0,
+      "rendPerFrame": 9.2436
+    },
+    "gallery-overlays/scroll": {
+      "allocMed": 0,
+      "allocTotal": 1440,
+      "drawMed": 0.04,
+      "drawP95": 0.213,
+      "drawTotal": 6.981,
+      "frames": 81,
+      "rasterMed": 0,
+      "rendPerFrame": 1.7407
+    },
+    "gallery-overlays/type": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.046,
+      "drawP95": 0.046,
+      "drawTotal": 0.071,
+      "frames": 2,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "shadcn-dashboard-01/click": {
+      "allocMed": 0,
+      "allocTotal": 6594256,
+      "drawMed": 0.2,
+      "drawP95": 1.207,
+      "drawTotal": 66.56,
+      "frames": 219,
+      "rasterMed": 0,
+      "rendPerFrame": 4.2694
+    },
+    "shadcn-dashboard-01/cold": {
+      "coldTotal": 234.918,
+      "create": 38.947,
+      "firstFrame": 155.93,
+      "fonts": 11.506
+    },
+    "shadcn-dashboard-01/dark": {
+      "allocMed": 304,
+      "allocTotal": 215344,
+      "drawMed": 0.346,
+      "drawP95": 1.364,
+      "drawTotal": 3.959,
+      "frames": 8,
+      "rasterMed": 0,
+      "rendPerFrame": 6.75
+    },
+    "shadcn-dashboard-01/hover": {
+      "allocMed": 0,
+      "allocTotal": 356056,
+      "drawMed": 0.068,
+      "drawP95": 0.61,
+      "drawTotal": 16.442,
+      "frames": 85,
+      "rasterMed": 0,
+      "rendPerFrame": 1.4353
+    },
+    "shadcn-dashboard-01/idle": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.036,
+      "drawP95": 0.038,
+      "drawTotal": 2.267,
+      "frames": 60,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "shadcn-dashboard-01/resize": {
+      "allocMed": 494584,
+      "allocTotal": 82238608,
+      "drawMed": 3.867,
+      "drawP95": 7.691,
+      "drawTotal": 410.639,
+      "frames": 112,
+      "rasterMed": 0,
+      "rendPerFrame": 7.0804
+    },
+    "shadcn-dashboard-01/scroll": {
+      "allocMed": 1096,
+      "allocTotal": 97584,
+      "drawMed": 1.264,
+      "drawP95": 1.411,
+      "drawTotal": 79.32,
+      "frames": 74,
+      "rasterMed": 0,
+      "rendPerFrame": 43.9459
+    },
+    "shadcn-dashboard-01/type": {
+      "allocMed": 1096,
+      "allocTotal": 47144,
+      "drawMed": 1.113,
+      "drawP95": 1.252,
+      "drawTotal": 47.513,
+      "frames": 42,
+      "rasterMed": 0,
+      "rendPerFrame": 39.0476
+    },
+    "shadcn-home/click": {
+      "allocMed": 0,
+      "allocTotal": 9820208,
+      "drawMed": 0.04,
+      "drawP95": 1.358,
+      "drawTotal": 206.27,
+      "frames": 209,
+      "rasterMed": 0,
+      "rendPerFrame": 8.5263
+    },
+    "shadcn-home/cold": {
+      "coldTotal": 276.308,
+      "create": 9.336,
+      "firstFrame": 240.675,
+      "fonts": 12.167
+    },
+    "shadcn-home/dark": {
+      "allocMed": 1872,
+      "allocTotal": 188584,
+      "drawMed": 1.29,
+      "drawP95": 2.589,
+      "drawTotal": 6.859,
+      "frames": 8,
+      "rasterMed": 0,
+      "rendPerFrame": 22.875
+    },
+    "shadcn-home/hover": {
+      "allocMed": 0,
+      "allocTotal": 1504,
+      "drawMed": 0.038,
+      "drawP95": 0.505,
+      "drawTotal": 12.995,
+      "frames": 85,
+      "rasterMed": 0,
+      "rendPerFrame": 1.2941
+    },
+    "shadcn-home/idle": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.037,
+      "drawP95": 0.044,
+      "drawTotal": 2.378,
+      "frames": 60,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "shadcn-home/resize": {
+      "allocMed": 838656,
+      "allocTotal": 257562248,
+      "drawMed": 9.222,
+      "drawP95": 15.472,
+      "drawTotal": 988.363,
+      "frames": 112,
+      "rasterMed": 0,
+      "rendPerFrame": 54.2589
+    },
+    "shadcn-home/scroll": {
+      "allocMed": 56,
+      "allocTotal": 4592,
+      "drawMed": 1.037,
+      "drawP95": 1.175,
+      "drawTotal": 72.257,
+      "frames": 82,
+      "rasterMed": 0,
+      "rendPerFrame": 25.6707
+    },
+    "shadcn-home/type": {
+      "allocMed": 56,
+      "allocTotal": 13952,
+      "drawMed": 0.503,
+      "drawP95": 0.602,
+      "drawTotal": 21.428,
+      "frames": 42,
+      "rasterMed": 0,
+      "rendPerFrame": 8.3095
+    },
+    "shadcn-login-03/click": {
+      "allocMed": 0,
+      "allocTotal": 29288,
+      "drawMed": 0.096,
+      "drawP95": 0.144,
+      "drawTotal": 9.833,
+      "frames": 102,
+      "rasterMed": 0,
+      "rendPerFrame": 2.5098
+    },
+    "shadcn-login-03/cold": {
+      "coldTotal": 138.299,
+      "create": 24.667,
+      "firstFrame": 90.883,
+      "fonts": 12.035
+    },
+    "shadcn-login-03/dark": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.137,
+      "drawP95": 0.171,
+      "drawTotal": 1.168,
+      "frames": 8,
+      "rasterMed": 0,
+      "rendPerFrame": 6
+    },
+    "shadcn-login-03/hover": {
+      "allocMed": 0,
+      "allocTotal": 104,
+      "drawMed": 0.018,
+      "drawP95": 0.096,
+      "drawTotal": 6.56,
+      "frames": 85,
+      "rasterMed": 0,
+      "rendPerFrame": 0.3059
+    },
+    "shadcn-login-03/idle": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.018,
+      "drawP95": 0.02,
+      "drawTotal": 1.141,
+      "frames": 60,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "shadcn-login-03/resize": {
+      "allocMed": 0,
+      "allocTotal": 13392,
+      "drawMed": 0.135,
+      "drawP95": 0.173,
+      "drawTotal": 14.043,
+      "frames": 112,
+      "rasterMed": 0,
+      "rendPerFrame": 4.9821
+    },
+    "shadcn-login-03/scroll": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.018,
+      "drawP95": 0.022,
+      "drawTotal": 1.178,
+      "frames": 63,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "shadcn-login-03/type": {
+      "allocMed": 0,
+      "allocTotal": 2224,
+      "drawMed": 0.126,
+      "drawP95": 0.18,
+      "drawTotal": 5.676,
+      "frames": 42,
+      "rasterMed": 0,
+      "rendPerFrame": 3.9048
+    },
+    "shadcn-login-04/click": {
+      "allocMed": 0,
+      "allocTotal": 30376,
+      "drawMed": 0.02,
+      "drawP95": 0.154,
+      "drawTotal": 6.674,
+      "frames": 93,
+      "rasterMed": 0,
+      "rendPerFrame": 1.914
+    },
+    "shadcn-login-04/cold": {
+      "coldTotal": 250.555,
+      "create": 24.766,
+      "firstFrame": 204.196,
+      "fonts": 11.436
+    },
+    "shadcn-login-04/dark": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.136,
+      "drawP95": 0.171,
+      "drawTotal": 1.125,
+      "frames": 8,
+      "rasterMed": 0,
+      "rendPerFrame": 6
+    },
+    "shadcn-login-04/hover": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.018,
+      "drawP95": 0.022,
+      "drawTotal": 5.546,
+      "frames": 85,
+      "rasterMed": 0,
+      "rendPerFrame": 0.0471
+    },
+    "shadcn-login-04/idle": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.017,
+      "drawP95": 0.019,
+      "drawTotal": 1.103,
+      "frames": 60,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "shadcn-login-04/resize": {
+      "allocMed": 0,
+      "allocTotal": 13992,
+      "drawMed": 0.136,
+      "drawP95": 0.19,
+      "drawTotal": 15.131,
+      "frames": 112,
+      "rasterMed": 0,
+      "rendPerFrame": 4.9107
+    },
+    "shadcn-login-04/scroll": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.017,
+      "drawP95": 0.018,
+      "drawTotal": 1.13,
+      "frames": 63,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "shadcn-login-04/type": {
+      "allocMed": 0,
+      "allocTotal": 2592,
+      "drawMed": 0.124,
+      "drawP95": 0.179,
+      "drawTotal": 5.663,
+      "frames": 42,
+      "rasterMed": 0,
+      "rendPerFrame": 3.9048
+    },
+    "shadcn-sidebar-03/click": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.027,
+      "drawP95": 0.194,
+      "drawTotal": 19.784,
+      "frames": 219,
+      "rasterMed": 0,
+      "rendPerFrame": 1.3288
+    },
+    "shadcn-sidebar-03/cold": {
+      "coldTotal": 143.088,
+      "create": 25.838,
+      "firstFrame": 93,
+      "fonts": 12.148
+    },
+    "shadcn-sidebar-03/dark": {
+      "allocMed": 0,
+      "allocTotal": 104,
+      "drawMed": 0.081,
+      "drawP95": 0.437,
+      "drawTotal": 1.126,
+      "frames": 8,
+      "rasterMed": 0,
+      "rendPerFrame": 2.5
+    },
+    "shadcn-sidebar-03/hover": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.021,
+      "drawP95": 0.165,
+      "drawTotal": 6.939,
+      "frames": 85,
+      "rasterMed": 0,
+      "rendPerFrame": 0.4471
+    },
+    "shadcn-sidebar-03/idle": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.02,
+      "drawP95": 0.023,
+      "drawTotal": 1.318,
+      "frames": 60,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "shadcn-sidebar-03/resize": {
+      "allocMed": 0,
+      "allocTotal": 38360,
+      "drawMed": 0.079,
+      "drawP95": 0.19,
+      "drawTotal": 10.633,
+      "frames": 112,
+      "rasterMed": 0,
+      "rendPerFrame": 1.9107
+    },
+    "shadcn-sidebar-03/scroll": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.02,
+      "drawP95": 0.025,
+      "drawTotal": 1.337,
+      "frames": 63,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "shadcn-sidebar-03/type": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.033,
+      "drawP95": 0.033,
+      "drawTotal": 0.054,
+      "frames": 2,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "shadcn-sidebar-07/click": {
+      "allocMed": 0,
+      "allocTotal": 241088,
+      "drawMed": 0.126,
+      "drawP95": 0.187,
+      "drawTotal": 31.418,
+      "frames": 184,
+      "rasterMed": 0,
+      "rendPerFrame": 2.0761
+    },
+    "shadcn-sidebar-07/cold": {
+      "coldTotal": 146.826,
+      "create": 25.344,
+      "firstFrame": 97.283,
+      "fonts": 12.093
+    },
+    "shadcn-sidebar-07/dark": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.069,
+      "drawP95": 0.156,
+      "drawTotal": 0.694,
+      "frames": 8,
+      "rasterMed": 0,
+      "rendPerFrame": 3
+    },
+    "shadcn-sidebar-07/hover": {
+      "allocMed": 0,
+      "allocTotal": 104,
+      "drawMed": 0.122,
+      "drawP95": 0.16,
+      "drawTotal": 10.851,
+      "frames": 85,
+      "rasterMed": 0,
+      "rendPerFrame": 1.8353
+    },
+    "shadcn-sidebar-07/idle": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.018,
+      "drawP95": 0.02,
+      "drawTotal": 1.122,
+      "frames": 60,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "shadcn-sidebar-07/resize": {
+      "allocMed": 0,
+      "allocTotal": 36800,
+      "drawMed": 0.068,
+      "drawP95": 0.138,
+      "drawTotal": 8.932,
+      "frames": 112,
+      "rasterMed": 0,
+      "rendPerFrame": 2.1607
+    },
+    "shadcn-sidebar-07/scroll": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.018,
+      "drawP95": 0.021,
+      "drawTotal": 1.22,
+      "frames": 63,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "shadcn-sidebar-07/type": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.028,
+      "drawP95": 0.028,
+      "drawTotal": 0.047,
+      "frames": 2,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "shadcn-signup-03/click": {
+      "allocMed": 0,
+      "allocTotal": 30544,
+      "drawMed": 0.11,
+      "drawP95": 0.168,
+      "drawTotal": 9.136,
+      "frames": 93,
+      "rasterMed": 0,
+      "rendPerFrame": 3.3118
+    },
+    "shadcn-signup-03/cold": {
+      "coldTotal": 138.446,
+      "create": 25.342,
+      "firstFrame": 90.094,
+      "fonts": 12.369
+    },
+    "shadcn-signup-03/dark": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.167,
+      "drawP95": 0.204,
+      "drawTotal": 1.392,
+      "frames": 8,
+      "rasterMed": 0,
+      "rendPerFrame": 10
+    },
+    "shadcn-signup-03/hover": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.018,
+      "drawP95": 0.02,
+      "drawTotal": 1.593,
+      "frames": 85,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "shadcn-signup-03/idle": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.018,
+      "drawP95": 0.019,
+      "drawTotal": 1.134,
+      "frames": 60,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "shadcn-signup-03/resize": {
+      "allocMed": 0,
+      "allocTotal": 13392,
+      "drawMed": 0.175,
+      "drawP95": 0.214,
+      "drawTotal": 17.822,
+      "frames": 112,
+      "rasterMed": 0,
+      "rendPerFrame": 8.3036
+    },
+    "shadcn-signup-03/scroll": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.018,
+      "drawP95": 0.018,
+      "drawTotal": 1.196,
+      "frames": 63,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "shadcn-signup-03/type": {
+      "allocMed": 0,
+      "allocTotal": 2592,
+      "drawMed": 0.121,
+      "drawP95": 0.173,
+      "drawTotal": 9.104,
+      "frames": 42,
+      "rasterMed": 0,
+      "rendPerFrame": 3.9048
+    },
+    "shadcn-signup-04/click": {
+      "allocMed": 0,
+      "allocTotal": 29456,
+      "drawMed": 0.02,
+      "drawP95": 0.167,
+      "drawTotal": 7.147,
+      "frames": 93,
+      "rasterMed": 0,
+      "rendPerFrame": 2.3656
+    },
+    "shadcn-signup-04/cold": {
+      "coldTotal": 255.35,
+      "create": 25.314,
+      "firstFrame": 203.967,
+      "fonts": 12.017
+    },
+    "shadcn-signup-04/dark": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.156,
+      "drawP95": 0.2,
+      "drawTotal": 1.329,
+      "frames": 8,
+      "rasterMed": 0,
+      "rendPerFrame": 8
+    },
+    "shadcn-signup-04/hover": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.018,
+      "drawP95": 0.019,
+      "drawTotal": 1.61,
+      "frames": 85,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "shadcn-signup-04/idle": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.018,
+      "drawP95": 0.019,
+      "drawTotal": 1.113,
+      "frames": 60,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "shadcn-signup-04/resize": {
+      "allocMed": 0,
+      "allocTotal": 13992,
+      "drawMed": 0.162,
+      "drawP95": 0.212,
+      "drawTotal": 17.776,
+      "frames": 112,
+      "rasterMed": 0,
+      "rendPerFrame": 6.5357
+    },
+    "shadcn-signup-04/scroll": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 0.018,
+      "drawP95": 0.02,
+      "drawTotal": 1.178,
+      "frames": 63,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "shadcn-signup-04/type": {
+      "allocMed": 0,
+      "allocTotal": 2592,
+      "drawMed": 0.128,
+      "drawP95": 0.187,
+      "drawTotal": 9.501,
+      "frames": 42,
+      "rasterMed": 0,
+      "rendPerFrame": 3.9048
+    },
+    "stress/click": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 1.285,
+      "drawP95": 1.297,
+      "drawTotal": 3.812,
+      "frames": 3,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "stress/cold": {
+      "coldTotal": 170.888,
+      "create": 9.653,
+      "firstFrame": 130.916,
+      "fonts": 11.375
+    },
+    "stress/dark": {
+      "allocMed": 0,
+      "allocTotal": 1616,
+      "drawMed": 1.99,
+      "drawP95": 3.927,
+      "drawTotal": 19.182,
+      "frames": 8,
+      "rasterMed": 0,
+      "rendPerFrame": 2.75
+    },
+    "stress/hover": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 1.28,
+      "drawP95": 1.423,
+      "drawTotal": 110.37,
+      "frames": 85,
+      "rasterMed": 0,
+      "rendPerFrame": 0.0235
+    },
+    "stress/idle": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 1.343,
+      "drawP95": 1.699,
+      "drawTotal": 83.159,
+      "frames": 60,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    },
+    "stress/resize": {
+      "allocMed": 808,
+      "allocTotal": 781584,
+      "drawMed": 6.089,
+      "drawP95": 16.248,
+      "drawTotal": 429.299,
+      "frames": 78,
+      "rasterMed": 0,
+      "rendPerFrame": 3.7821
+    },
+    "stress/scroll": {
+      "allocMed": 808,
+      "allocTotal": 14394608,
+      "drawMed": 3.766,
+      "drawP95": 4.948,
+      "drawTotal": 309.014,
+      "frames": 87,
+      "rasterMed": 0,
+      "rendPerFrame": 3.4138
+    },
+    "stress/type": {
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 1.429,
+      "drawP95": 1.429,
+      "drawTotal": 2.832,
+      "frames": 2,
+      "rasterMed": 0,
+      "rendPerFrame": 0
+    }
+  }
+}

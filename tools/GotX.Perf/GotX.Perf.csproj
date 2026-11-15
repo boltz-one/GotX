@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Perf log reader + scripted benchmark runner. Not shipped: reads logs, drives headless windows, references samples read-only. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsAotCompatible>false</IsAotCompatible>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/GotX.Core/GotX.Core.csproj" />
+    <ProjectReference Include="../../src/GotX.Raster/GotX.Raster.csproj" />
+    <ProjectReference Include="../../src/GotX.Components/GotX.Components.csproj" />
+    <ProjectReference Include="../../samples/Shadcn/Shadcn.csproj" />
+    <!-- Both sample galleries define a global GalleryView: the Hello demo lives behind an extern alias. -->
+    <ProjectReference Include="../../samples/Headless/Headless.csproj" Aliases="HeadlessSample" />
+    <ProjectReference Include="../../samples/ComponentsCheck/ComponentsCheck.csproj" />
+    <!-- Only built (so `real gallery` finds Components.exe); aliased so its duplicate page types do not clash. -->
+    <ProjectReference Include="../../samples/Components/Components.csproj" Aliases="ComponentsSample" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="perf-baseline.json" CopyToOutputDirectory="PreserveNewest" Condition="Exists('perf-baseline.json')" />
+  </ItemGroup>
+</Project>
