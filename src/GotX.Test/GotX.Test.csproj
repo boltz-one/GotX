@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Khung test/debug giao diện cho GotX: harness headless, truy vấn cây, lint bố cục, so ảnh, đo hiệu năng. Không có PackageReference nào. -->
+  <ItemGroup>
+    <ProjectReference Include="../GotX.Core/GotX.Core.csproj" />
+    <ProjectReference Include="../GotX.Raster/GotX.Raster.csproj" />
+  </ItemGroup>
+</Project>
