@@ -3,7 +3,7 @@ namespace GotX;
 public enum Display : byte { Block, Flex, Grid, None }
 public enum FlexDirection : byte { Row, Column }
 public enum Justify : byte { Start, Center, End, SpaceBetween, SpaceAround, SpaceEvenly }
-public enum Align : byte { Stretch, Start, Center, End }
+public enum Align : byte { Stretch, Start, Center, End, Baseline }
 public enum Overflow : byte { Visible, Hidden }
 public enum Position : byte { Static, Relative, Absolute }
 public enum CursorKind : byte { Default, Pointer, Text }
@@ -36,6 +36,8 @@ public enum TextWrapStyle : byte { Auto, Balance, Pretty }
 
 /// <summary>Cách ảnh / path lấp hộp của nó (object-contain, object-cover, object-fill).</summary>
 public enum ObjectFit : byte { Contain, Cover, Fill }
+/// <summary>background-clip: nền (màu và gradient) bị cắt theo hộp viền / hộp đệm / hộp nội dung.</summary>
+public enum BgClip : byte { Border, Padding, Content }
 
 /// <summary>Các bậc bóng đổ của Tailwind v4 (giá trị nằm trong <see cref="Theme"/>).</summary>
 public enum ShadowPreset : byte { None, TwoXs, Xs, Sm, Md, Lg, Xl, TwoXl, Custom }
@@ -148,6 +150,10 @@ public struct Style
 
     // Ảnh / path
     public ObjectFit ObjectFit;
+    public BgClip BgClip;
+    /// <summary>Bề rộng shrink-to-fit trong luồng block / cột flex: w-fit (ShrinkWrap) và inline-flex / inline-block / inline-grid (InlineLevel) không bị kéo giãn theo cha.</summary>
+    public bool ShrinkWrap, InlineLevel;
+    public readonly bool FitsContent => ShrinkWrap || InlineLevel;
 
     /// <summary>Mặc định giống CSS: flex-shrink 1, align stretch, opacity 1.</summary>
     public static readonly Style Default = new()

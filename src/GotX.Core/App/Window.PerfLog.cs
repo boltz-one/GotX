@@ -56,10 +56,11 @@ public sealed partial class Window
         if (_rvCount < MaxRenderNames) { _rvName[_rvCount] = v.GetType().Name; _rvTicks[_rvCount++] = ticks; }
     }
 
-    void NoteDirty(int id, DirtyCause cause)
+    void NoteDirty(int id, DirtyCause cause, bool first)
     {
+        _causeMask |= 1 << (int)cause; // mọi nguyên nhân đều được ghi, kể cả khi view đã bẩn vì nguyên nhân khác
+        if (!first) return;
         _dirtyViews++;
-        _causeMask |= 1 << (int)cause;
         if (_dirtyNameCount >= MaxDirtyNames) return;
         string name = App.Find(id)?.GetType().Name ?? "?";
         for (int i = 0; i < _dirtyNameCount; i++) if ((object)_dirtyName[i] == name) return;
@@ -188,7 +189,7 @@ public sealed partial class Window
     /// Platform gọi sau khi renderer vẽ xong frame vừa rồi: ghi thời gian raster CPU / nộp GPU / Present của frame đó
     /// (<c>{"t":"present","n":…}</c>, người đọc ghép theo <c>n</c>).
     /// </summary>
-    public void LogPresent(double totalMs, double buildMs = 0, double submitMs = 0, double presentMs = 0, double gpuMs = 0, long uploadBytes = 0)
+    public void LogPresent(double totalMs, double buildMs = 0, double submitMs = 0, double presentMs = 0, double gpuMs = 0, long uploadBytes = 0, double instMs = 0, double mapMs = 0)
     {
         if (_log is not { } log || !_lastFrameLogged) return;
         log.Begin("present");
@@ -198,6 +199,8 @@ public sealed partial class Window
         if (submitMs > 0) log.Dbl("submit", submitMs);
         if (presentMs > 0) log.Dbl("flip", presentMs);
         if (gpuMs > 0) log.Dbl("gpu", gpuMs);
+        if (instMs > 0) log.Dbl("inst", instMs);
+        if (mapMs > 0) log.Dbl("map", mapMs);
         if (uploadBytes > 0) log.Int("upBytes", uploadBytes);
         log.End();
     }

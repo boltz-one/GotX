@@ -87,7 +87,7 @@ public sealed partial class Window
             Anchor = n.Anchor, Layout = lb, Screen = PaintedBounds(lb, xf), Clip = clip, ContentSize = n.ContentSize,
             Clickable = n.Click is not null && !n.Disabled, Focusable = n.Focusable && !n.Disabled, Disabled = n.Disabled,
             Scrollable = s.ScrollX || s.ScrollY, Transformed = !xf.IsSimple,
-            Display = s.Display, Position = s.Position, Overflow = s.Overflow,
+            Display = s.Display, AlignItems = s.AlignItems, AlignSelf = s.AlignSelf, Position = s.Position, Overflow = s.Overflow,
             Background = s.Background, Color = ts.Color, Border = s.BorderBox, Padding = pad, Radius = s.CornerRadii,
             FontSize = ts.FontSize, LineHeight = ts.LineHeight, Weight = ts.Weight, Opacity = ts.Opacity,
             NoWrap = ts.NoWrap, Ellipsis = ts.Ellipsis, TextStyle = ts,

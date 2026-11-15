@@ -11,6 +11,12 @@ public static partial class SoftwareRenderer
     public static void Render(Scene scene, Canvas canvas)
     {
         canvas.Clear(scene.ClearColor);
+        RenderPrimitives(scene, canvas);
+    }
+
+    /// <summary>Vẽ các primitive lên canvas hiện có (không xoá nền) – để đo từng primitive.</summary>
+    public static void RenderPrimitives(Scene scene, Canvas canvas)
+    {
         foreach (ref readonly var p in scene.Primitives)
         {
             var clip = Shape.Of(scene, p.ClipShape);
@@ -71,6 +77,8 @@ public static partial class SoftwareRenderer
         readonly Frame _f;
         readonly float _hw, _hh;
         readonly Corners _c;
+        // Hộp thẳng trục nằm chắc chắn trong hình (cách mép > bán kính góc lớn nhất + 1 px): ở đó độ phủ là đúng 1, khỏi tính SDF.
+        readonly float _sx0, _sy0, _sx1, _sy1;
 
         Shape(in ClipShape s)
         {
@@ -78,12 +86,26 @@ public static partial class SoftwareRenderer
             _f = new Frame(s.Rect, s.Transform);
             _hw = s.Rect.Width / 2; _hh = s.Rect.Height / 2;
             _c = ClampCorners(s.Corners, MathF.Min(_hw, _hh));
+            if (!_f.T)
+            {
+                float inset = MathF.Max(MathF.Max(_c.TopLeft, _c.TopRight), MathF.Max(_c.BottomRight, _c.BottomLeft)) + 1;
+                _sx0 = _f.Cx - _hw + inset; _sx1 = _f.Cx + _hw - inset; _sy0 = _f.Cy - _hh + inset; _sy1 = _f.Cy + _hh - inset;
+            }
+            else { _sx0 = _sy0 = float.PositiveInfinity; _sx1 = _sy1 = float.NegativeInfinity; }
+        }
+
+        /// <summary>Khoảng x (tâm pixel) chắc chắn phủ đủ trên hàng có tâm py; rỗng nếu không có.</summary>
+        public bool SolidRow(float py, out float x0, out float x1)
+        {
+            x0 = _sx0; x1 = _sx1;
+            return py >= _sy0 && py <= _sy1 && x0 <= x1;
         }
 
         public static Shape Of(Scene scene, int index) => index == 0 ? default : new Shape(scene.Shape(index));
 
         public float Coverage(float px, float py)
         {
+            if (px >= _sx0 && px <= _sx1 && py >= _sy0 && py <= _sy1) return 1f;
             _f.Local(px, py, out float lx, out float ly);
             return Math.Clamp(0.5f - RoundedBox(lx, ly, _hw, _hh, PickRadius(_c, lx, ly)), 0, 1);
         }

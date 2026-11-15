@@ -36,7 +36,7 @@ internal enum Prop : byte
     FontFamily, Italic, Decoration, TextCase, Tracking, ObjectFit,
     Gradient, GradFrom, GradVia, GradTo, GradPos, LineClamp, TextWrap, Aspect, GridLine, GridFlow,
     NumericSpacing, UnderlineOffset, DecorationColor, DecorationThickness,
-    ScrollbarMode, ScrollbarWidth, ScrollbarColor,
+    ScrollbarMode, ScrollbarWidth, ScrollbarColor, BgClip, ShrinkWrap, InlineLevel,
 }
 
 /// <summary>Một lệnh gán thuộc tính đã biên dịch từ một class (kèm điều kiện variant).</summary>
@@ -74,25 +74,39 @@ public sealed class ClassList
     public bool IsGroup { get; }
     public IReadOnlyList<string> Unknown { get; }
     internal bool HasState => States != StateVariant.None;
+    internal bool HasImportant { get; }
 
     internal ClassList(UtilityOp[] ops, bool group, string[] unknown)
     {
         Ops = ops; IsGroup = group; Unknown = unknown;
-        foreach (var o in ops) States |= o.State;
+        foreach (var o in ops) { States |= o.State; HasImportant |= o.Important; }
     }
 
     /// <summary>Áp các class không có variant trạng thái (lúc dựng cây).</summary>
     internal void ApplyBase(ref Style s, in VariantContext ctx)
     {
-        for (int pass = 0; pass < 2; pass++)
-            foreach (ref readonly var o in Ops.AsSpan())
-                if (o.State == StateVariant.None && o.Important == (pass == 1) && o.Matches(ctx))
-                    Tailwind.Apply(ref s, o, ctx);
+        // Điều kiện variant tính một lần (không chia lại viewport/rem cho từng lệnh); lệnh "!" áp ở lượt sau chỉ khi có.
+        float w = ctx.ViewportWidth / ctx.Rem;
+        bool dark = ctx.Dark;
+        var ops = Ops;
+        for (int i = 0; i < ops.Length; i++)
+        {
+            ref readonly var o = ref ops[i];
+            if (o.State == StateVariant.None && !o.Important && (dark || !o.Dark) && w >= o.MinRem && w < o.MaxRem) Tailwind.Apply(ref s, o, ctx);
+        }
+        if (!HasImportant) return;
+        for (int i = 0; i < ops.Length; i++)
+        {
+            ref readonly var o = ref ops[i];
+            if (o.State == StateVariant.None && o.Important && (dark || !o.Dark) && w >= o.MinRem && w < o.MaxRem) Tailwind.Apply(ref s, o, ctx);
+        }
     }
 
     /// <summary>Áp class có variant trạng thái đang bật (lúc vẽ). Class "!important" ở base vẫn thắng.</summary>
     internal void ApplyState(ref Style s, StateVariant active, in VariantContext ctx)
     {
+        // Không có variant trạng thái thì chẳng có gì để áp (lệnh "!" của base đã áp lúc dựng cây).
+        if (States == StateVariant.None) return;
         foreach (ref readonly var o in Ops.AsSpan())
             if (o.State != StateVariant.None && !o.Important && (o.State & ~active) == 0 && o.Matches(ctx))
                 Tailwind.Apply(ref s, o, ctx);

@@ -102,8 +102,26 @@ public sealed partial class Font
     uint U32(int o) => BinaryPrimitives.ReadUInt32BigEndian(_d.AsSpan(o));
     float F2Dot14(int o) => I16(o) / 16384f;
 
+    // Tra cmap bằng tìm nhị phân mỗi ký tự là chi phí chính của đo/ngắt dòng/vẽ chữ: nhớ theo trang 256 codepoint của BMP.
+    readonly ushort[]?[] _glyphPages = new ushort[]?[256];
+    ushort[]? _advances;
+
     /// <summary>Codepoint → glyph id (0 = .notdef).</summary>
     public ushort GlyphIndex(int cp)
+    {
+        if ((uint)cp >= 0x10000) return LookupGlyph(cp);
+        var page = _glyphPages[cp >> 8] ??= BuildGlyphPage(cp & ~0xFF);
+        return page[cp & 0xFF];
+    }
+
+    ushort[] BuildGlyphPage(int first)
+    {
+        var page = new ushort[256];
+        for (int i = 0; i < 256; i++) page[i] = LookupGlyph(first + i);
+        return page;
+    }
+
+    ushort LookupGlyph(int cp)
     {
         if (_cmapFormat == 12)
         {
@@ -136,8 +154,19 @@ public sealed partial class Font
         return glyph == 0 ? (ushort)0 : (ushort)((glyph + delta) & 0xFFFF);
     }
 
-    public int AdvanceWidth(ushort glyph) =>
-        U16(_hmtx + 4 * Math.Min(glyph, _numHMetrics - 1));
+    /// <summary>Độ rộng tiến (font units) của glyph; bảng được đọc ra mảng một lần.</summary>
+    public int AdvanceWidth(ushort glyph)
+    {
+        var adv = _advances ??= LoadAdvances();
+        return adv[glyph < adv.Length ? glyph : adv.Length - 1];
+    }
+
+    ushort[] LoadAdvances()
+    {
+        var a = new ushort[Math.Max(1, (int)_numHMetrics)];
+        for (int i = 0; i < a.Length; i++) a[i] = U16(_hmtx + 4 * i);
+        return a;
+    }
 
     (int start, int end) GlyphRange(ushort g)
     {

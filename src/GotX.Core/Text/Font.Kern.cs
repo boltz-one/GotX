@@ -10,6 +10,8 @@ public sealed partial class Font
     int[]? _pairLookups;   // offset tuyệt đối của các subtable PairPos (đã gỡ Extension)
     int _kernTable = -1;   // offset bảng "kern" cũ (format 0), -1 = chưa tìm, 0 = không có
     readonly Dictionary<uint, short> _kernCache = new();
+    readonly uint[] _fastKeys = new uint[4096]; // 0 = trống (key luôn khác 0 vì left, right ≠ 0)
+    readonly short[] _fastVals = new short[4096];
 
     /// <summary>Có dữ liệu kerning hay không (để bỏ qua hẳn việc tra cặp khi không cần).</summary>
     public bool HasKerning
@@ -22,14 +24,18 @@ public sealed partial class Font
     {
         if (left == 0 || right == 0) return 0;
         uint key = (uint)left << 16 | right;
-        if (_kernCache.TryGetValue(key, out short cached)) return cached;
+        // Bộ nhớ trực tiếp (băm nhân) đặt trước từ điển: đa số cặp trong một frame trúng ở đây, không tốn băm của Dictionary.
+        int slot = (int)((key * 2654435761u) >> 20);
+        if (_fastKeys[slot] == key) return _fastVals[slot];
+        if (_kernCache.TryGetValue(key, out short cached)) { _fastKeys[slot] = key; _fastVals[slot] = cached; return cached; }
         EnsureKerning();
         int value = 0;
         foreach (int sub in _pairLookups!)
             if (PairPos(sub, left, right, out value)) break;
         if (value == 0 && _pairLookups.Length == 0 && _kernTable > 0) value = LegacyKern(left, right);
-        if (_kernCache.Count > 65536) _kernCache.Clear();
+        if (_kernCache.Count > 65536) { _kernCache.Clear(); Array.Clear(_fastKeys); }
         _kernCache[key] = (short)value;
+        _fastKeys[slot] = key; _fastVals[slot] = (short)value;
         return value;
     }
 

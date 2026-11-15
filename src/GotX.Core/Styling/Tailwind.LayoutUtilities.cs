@@ -10,11 +10,11 @@ public static partial class Tailwind
     {
         void Emit(Prop p, byte e = 0, float f = 0, Length l = default, Rgba c = default) => AddOp(ops, t, p, e, f, l, c);
 
-        if (Prefix(u, "items-", out var v)) return Enum<Align>(v, "stretch:Stretch start:Start center:Center end:End baseline:Start", x => Emit(Prop.Items, x));
+        if (Prefix(u, "items-", out var v)) return Enum<Align>(v, "stretch:Stretch start:Start center:Center end:End baseline:Baseline", x => Emit(Prop.Items, x));
         if (Prefix(u, "self-", out v))
         {
             if (v == "auto") { Emit(Prop.Self, 255); return true; }
-            return Enum<Align>(v, "stretch:Stretch start:Start center:Center end:End", x => Emit(Prop.Self, x));
+            return Enum<Align>(v, "stretch:Stretch start:Start center:Center end:End baseline:Baseline", x => Emit(Prop.Self, x));
         }
         if (Prefix(u, "justify-", out v))
             return Enum<Justify>(v, "start:Start normal:Start center:Center end:End between:SpaceBetween around:SpaceAround evenly:SpaceEvenly", x => Emit(Prop.Justify, x));
@@ -80,6 +80,7 @@ public static partial class Tailwind
         if (Prefix(u, "max-h-", out v)) return v == "none" ? Done(() => Emit(Prop.MaxH, l: Length.Auto)) : SizeOp(v, neg, Prop.MaxH, ScreenH, Emit);
         if (Prefix(u, "size-", out v)) return SizeOp(v, neg, Prop.Width, 0, Emit) && SizeOp(v, neg, Prop.Height, 0, Emit);
         if (Prefix(u, "basis-", out v)) return SizeOp(v, neg, Prop.Basis, 0, Emit);
+        if (u == "w-fit") return !neg && Done(() => { Emit(Prop.Width, l: Length.Auto); Emit(Prop.ShrinkWrap, 1); });
         if (Prefix(u, "w-", out v)) return SizeOp(v, neg, Prop.Width, ScreenW, Emit);
         if (Prefix(u, "h-", out v)) return SizeOp(v, neg, Prop.Height, ScreenH, Emit);
 

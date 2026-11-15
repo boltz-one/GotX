@@ -17,10 +17,25 @@ public sealed partial class TextSystem
 
         // Cùng chuỗi, font, cỡ chữ và độ rộng thì kết quả ngắt dòng không đổi: tra cache trước.
         // (Một node chữ được wrap ít nhất hai lần mỗi lần view render: lúc đo và lúc vẽ.)
+        // Tầng 1: khoá theo THAM CHIẾU chuỗi (chuỗi tĩnh / giữ trong entity là cùng một đối tượng qua các frame) – không băm nội dung.
+        // Tầng 2 (từ điển) băm cả chuỗi nên đắt với đoạn dài; chỉ dùng khi tầng 1 trượt (chuỗi mới dựng mỗi lần render).
+        uint h = (uint)System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(text) * 2654435761u;
+        h ^= (uint)font.Id * 40503u ^ BitConverter.SingleToUInt32Bits(style.FontSize) * 2246822519u ^ BitConverter.SingleToUInt32Bits(maxWidth) * 3266489917u
+            ^ BitConverter.SingleToUInt32Bits(style.Tracking) * 668265263u ^ (style.TabularNums ? 0x9E3779B9u : 0);
+        int slot = (int)(h >> 22); // 1024 ô
+        ref var fast = ref _wrapFast[slot];
+        if (ReferenceEquals(fast.Text, text) && fast.Font == font.Id && fast.FontSize == style.FontSize && fast.MaxWidth == maxWidth
+            && fast.Tracking == style.Tracking && fast.Tnum == style.TabularNums && fast.Gen == _wrapGen)
+        {
+            for (int c = 0; c < fast.Count; c++) lines.Add(_wrapLines[fast.Start + c]);
+            PerfCounters.WrapHit++;
+            return;
+        }
         var key = new WrapKey(text, font.Id, style.FontSize, maxWidth, style.Tracking, style.TabularNums);
         if (_wrapIndex.TryGetValue(key, out var hit))
         {
             for (int c = 0; c < hit.Count; c++) lines.Add(_wrapLines[hit.Start + c]);
+            fast = new WrapFast(text, font.Id, style.FontSize, maxWidth, style.Tracking, style.TabularNums, hit.Start, hit.Count, _wrapGen);
             PerfCounters.WrapHit++;
             return;
         }
@@ -31,14 +46,19 @@ public sealed partial class TextSystem
         if (MaxCachedWraps <= 0) return;
         if (_wrapIndex.Count >= MaxCachedWraps || _wrapChars > MaxCachedWrapChars)
         {
-            _wrapIndex.Clear(); _wrapLines.Clear(); _wrapChars = 0;
+            _wrapIndex.Clear(); _wrapLines.Clear(); _wrapChars = 0; _wrapGen++;
         }
         _wrapIndex[key] = (_wrapLines.Count, lines.Count);
+        fast = new WrapFast(text, font.Id, style.FontSize, maxWidth, style.Tracking, style.TabularNums, _wrapLines.Count, lines.Count, _wrapGen);
         _wrapLines.AddRange(lines);
         _wrapChars += text.Length;
     }
 
     readonly record struct WrapKey(string Text, int Font, float FontSize, float MaxWidth, float Tracking, bool Tnum);
+
+    readonly record struct WrapFast(string? Text, int Font, float FontSize, float MaxWidth, float Tracking, bool Tnum, int Start, int Count, int Gen);
+    readonly WrapFast[] _wrapFast = new WrapFast[1024];
+    int _wrapGen = 1; // đổi khi _wrapLines bị xoá: ô tầng 1 cũ trỏ vào chỉ số không còn hiệu lực
 
     // Kết quả wrap nằm liền nhau trong một danh sách chung, nên thêm mục mới không cấp phát mảng riêng.
     readonly Dictionary<WrapKey, (int Start, int Count)> _wrapIndex = new();

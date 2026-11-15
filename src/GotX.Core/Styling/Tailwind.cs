@@ -21,10 +21,24 @@ public static partial class Tailwind
     /// </summary>
     public static int MaxCachedClassLists { get; set; } = 4096;
 
+    // Tầng 1: khoá theo tham chiếu chuỗi. Class thường là literal/const nên cùng một đối tượng qua các frame → không băm cả chuỗi
+    // (ConcurrentDictionary băm toàn bộ chuỗi mỗi lần). Chuỗi nội suy mới dựng mỗi lần thì rơi xuống từ điển như cũ.
+    static readonly (string? Key, ClassList? Value)[] s_fast = new (string?, ClassList?)[4096];
+
     public static ClassList Get(string classes)
     {
+        int slot = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(classes) & 4095;
+        ref var f = ref s_fast[slot];
+        if (ReferenceEquals(f.Key, classes) && f.Value is { } hit) return hit;
+        var list = GetSlow(classes);
+        f = (classes, list);
+        return list;
+    }
+
+    static ClassList GetSlow(string classes)
+    {
         if (s_cache.TryGetValue(classes, out var cached)) return cached;
-        if (s_cache.Count >= MaxCachedClassLists) s_cache.Clear();
+        if (s_cache.Count >= MaxCachedClassLists) { s_cache.Clear(); Array.Clear(s_fast); }
         long t0 = System.Diagnostics.Stopwatch.GetTimestamp();
         var parsed = s_cache.GetOrAdd(classes, static c => Parse(c));
         PerfCounters.ClassMiss++;

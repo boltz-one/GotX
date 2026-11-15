@@ -8,6 +8,9 @@ static class FeatureClassChecks
         var wide = Checker.Wide;
         Theme.SetColor("fx-background", Rgba.White, Rgba.Black);
 
+        c.Check("bg-clip-border / padding / content (mặc định border)", Checker.R("bg-clip-padding").BgClip == BgClip.Padding && Checker.R("bg-clip-content").BgClip == BgClip.Content
+            && Checker.R("bg-clip-padding bg-clip-border").BgClip == BgClip.Border && Checker.R("p-2").BgClip == BgClip.Border);
+
         // ---- Gradient ----
         var g1 = Checker.R("bg-linear-to-r from-blue-500 to-red-500/50").Gradient;
         c.Check("bg-linear-to-r from-* to-*/50", g1.Kind == GradientKind.Linear && g1.Angle == 90 && g1.Oklab && g1.CornerX == 0

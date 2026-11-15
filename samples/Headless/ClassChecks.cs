@@ -19,7 +19,7 @@ static class ClassChecks
         c.Check("h-screen", Checker.R("h-screen").Height == Length.Px(700));
         c.Check("gap-x-3", Checker.R("gap-x-3").ColumnGap == Length.Rems(0.75f) && Checker.R("gap-x-3").RowGap.IsAuto);
         c.Check("inset-x-0", Checker.R("inset-x-0").Inset.Left == Length.Px(0) && Checker.R("inset-x-0").Inset.Top.IsAuto);
-        c.Check("bg-blue-500/50", Checker.R("bg-blue-500/50").Background is var b1 && Checker.Near(b1.A, 0.5f) && Checker.Near(b1.R, 0x3b / 255f));
+        c.Check("bg-blue-500/50", Checker.R("bg-blue-500/50").Background is var b1 && Checker.Near(b1.A, 0.5f) && Checker.Near(b1.R, Theme.Colors["blue-500"].R));
         c.Check("bg-[#ff000080]", Checker.Near(Checker.R("bg-[#ff000080]").Background.A, 0.5f));
         c.Check("bg-[rgb(255,0,0)]", Checker.Near(Checker.R("bg-[rgb(255,0,0)]").Background.R, 1));
         c.Check("text-sm/6", Checker.R("text-sm/6") is var t1 && t1.FontSizeValue == Length.Rems(0.875f) && t1.LineHeightValue == Length.Rems(1.5f));

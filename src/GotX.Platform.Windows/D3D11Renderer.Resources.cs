@@ -96,6 +96,7 @@ internal sealed unsafe partial class D3D11Renderer
                 it.Uv = new Vector4(gx * inv, gy * inv, p.Bounds.Width * inv, p.Bounds.Height * inv);
             }
             else if (p.Kind == PrimitiveKind.Image) BuildImage(p, ref it);
+            else if (p.HasExclusion) it.Uv = new Vector4(p.Source.X, p.Source.Y, p.Source.Width, p.Source.Height);
             else it.Uv = default;
         }
     }

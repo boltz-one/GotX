@@ -157,6 +157,14 @@ internal sealed unsafe partial class D3D11Renderer
             {
                 float sigma = it.misc.z * 0.5;
                 float a = sigma > 0 ? 0.5 * (1 - erf_(d / (sigma * 1.41421356))) : saturate(0.5 - d);
+                if (it.extra.z > 0)
+                {
+                    // vùng loại trừ (hộp viền của phần tử): uv = x,y,w,h trên màn hình; widths = bán kính góc; cùng ma trận với bóng
+                    float2 ehs = it.uv.zw * 0.5;
+                    float2 el = mul2(inv2(it.xform), i.device - (it.uv.xy + ehs));
+                    float4 ecr = min(it.widths, max(min(ehs.x, ehs.y), 0));
+                    a *= 1 - saturate(0.5 - sdf(el, ehs, pick(ecr, el)));
+                }
                 a *= it.color.a * clipCov;
                 return float4(it.color.rgb * a, a);
             }
@@ -185,7 +193,8 @@ internal sealed unsafe partial class D3D11Renderer
                 int side = sideOf(lp, hs, w);
                 float amount = style == 0 ? band : pattern(style, side, lp, hs, w, band);
                 float4 sc = side == 0 ? it.bt : (side == 1 ? it.br : (side == 2 ? it.bb : it.bl));
-                col = lerp(col, premul(sc), amount);
+                // viền đặc: lerp như cũ; viền trong suốt / mờ vẽ đè lên nền (CSS: nền nằm dưới viền)
+                col = sc.a >= 1 ? lerp(col, premul(sc), amount) : premul(sc) * amount + col * (1 - sc.a * amount);
             }
             return col * cov;
         }

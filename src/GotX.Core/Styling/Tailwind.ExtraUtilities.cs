@@ -20,6 +20,9 @@ public static partial class Tailwind
             case "text-nowrap": Emit(Prop.NoWrap, 1); return !neg;
             case "text-balance": Emit(Prop.NoWrap, 0); Emit(Prop.TextWrap, (byte)TextWrapStyle.Balance); return !neg;
             case "text-pretty": Emit(Prop.NoWrap, 0); Emit(Prop.TextWrap, (byte)TextWrapStyle.Pretty); return !neg;
+            case "bg-clip-border": Emit(Prop.BgClip, (byte)BgClip.Border); return !neg;
+            case "bg-clip-padding": Emit(Prop.BgClip, (byte)BgClip.Padding); return !neg;
+            case "bg-clip-content": Emit(Prop.BgClip, (byte)BgClip.Content); return !neg;
             case "tabular-nums": Emit(Prop.NumericSpacing, 1); return !neg;
             case "proportional-nums": case "normal-nums": Emit(Prop.NumericSpacing, 0); return !neg;
             case "aspect-auto": Emit(Prop.Aspect, f: 0); return !neg;

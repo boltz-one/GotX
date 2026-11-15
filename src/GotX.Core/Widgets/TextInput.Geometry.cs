@@ -11,7 +11,7 @@ public sealed partial class TextInput
         p = Xf.Inverse(p);
         int line = Math.Clamp((int)((p.Y - Content.Y) / Style.LineHeight), 0, Lines.Count - 1);
         var l = Lines[line];
-        MoveTo(TextSys.IndexAtX(_text, l.Start, LineEnd(line), p.X - Content.X, Style), extend);
+        MoveTo(TextSys.IndexAtX(_text, l.Start, LineEnd(line), p.X - Content.X - LineOffset(line), Style), extend);
     }
 
     // ---------- Hình học dòng (theo Lines của lần vẽ trước) ----------
@@ -36,6 +36,17 @@ public sealed partial class TextInput
         bool softWrap = i + 1 < Lines.Count && Lines[i + 1].Start == l.End;
         return softWrap && l.End > l.Start ? l.End - 1 : l.End;
     }
+
+    /// <summary>Độ lệch ngang của dòng trong hộp nội dung do text-right / text-center (0 với text-left).</summary>
+    internal float LineOffset(int line)
+    {
+        if (line < 0 || line >= Lines.Count || Style.Align == TextAlign.Left) return 0;
+        float free = MathF.Max(0, Content.Width - Lines[line].Width);
+        return Style.Align == TextAlign.Center ? free / 2 : free;
+    }
+
+    /// <summary>Vị trí x của pos tính từ mép trái hộp nội dung (đã gồm độ lệch căn lề) – để di chuyển lên/xuống giữ cột.</summary>
+    internal float ContentXAt(int pos) => XAt(pos) + LineOffset(LineOf(pos));
 
     internal float XAt(int pos)
     {

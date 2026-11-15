@@ -1,7 +1,8 @@
 namespace GotX;
 
 /// <summary>Một track của grid: <c>1fr</c>, <c>200px</c>, <c>auto</c>.</summary>
-public readonly record struct GridTrack(TrackKind Kind, float Fr, Length Size);
+/// <summary>MinAuto: track fr tường minh (<c>1fr</c> = minmax(auto, 1fr)) không hẹp hơn min-content của phần tử trong nó; grid-cols-N và minmax(0,1fr) thì không.</summary>
+public readonly record struct GridTrack(TrackKind Kind, float Fr, Length Size, bool MinAuto = false);
 
 /// <summary>Mẫu cột/hàng của grid (grid-cols-3 = repeat(3, minmax(0, 1fr))). Bất biến, được cache.</summary>
 public sealed class GridTemplate
@@ -33,7 +34,9 @@ public sealed class GridTemplate
             string p = parts[i];
             if (p == "auto") tracks[i] = new GridTrack(TrackKind.Auto, 0, default);
             else if (p.EndsWith("fr") && float.TryParse(p[..^2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float fr))
-                tracks[i] = new GridTrack(TrackKind.Fr, fr, default);
+                tracks[i] = new GridTrack(TrackKind.Fr, fr, default, MinAuto: true);
+            else if (p.StartsWith("minmax(0,") && p.EndsWith("fr)") && float.TryParse(p[9..^3], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float mfr))
+                tracks[i] = new GridTrack(TrackKind.Fr, mfr, default);
             else if (Tailwind.TryLengthValue(p, out var l) && l.Kind is LengthKind.Px or LengthKind.Rems)
                 tracks[i] = new GridTrack(TrackKind.Fixed, 0, l);
             else return false;

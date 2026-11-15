@@ -27,7 +27,9 @@ public static partial class UiLint
                 {
                     var a = flow[i]; var b = flow[j];
                     if (ctx.On("overlap")) Overlap(ctx, parent, a, b);
-                    if (ctx.On("misaligned") && LintContext.Shown(a) && LintContext.Shown(b) && Misaligned(a.Screen, b.Screen, ctx.Options.AlignMax, out float d, out string what))
+                    // hàng căn baseline: các hộp khác chiều cao lệch đỉnh/đáy là chủ ý (chỉ dòng chữ đầu thẳng hàng)
+                    bool baseline = parent.Display == Display.Flex && (a.AlignSelf ?? parent.AlignItems) == Align.Baseline && (b.AlignSelf ?? parent.AlignItems) == Align.Baseline;
+                    if (!baseline && ctx.On("misaligned") && LintContext.Shown(a) && LintContext.Shown(b) && Misaligned(a.Screen, b.Screen, ctx.Options.AlignMax, out float d, out string what))
                         pairs.Add((a, b, d, what));
                 }
             ReportMisaligned(ctx, pairs);

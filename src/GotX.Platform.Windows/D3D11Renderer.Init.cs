@@ -21,6 +21,8 @@ internal sealed unsafe partial class D3D11Renderer
 
     void Init(nint hwnd, int width, int height)
     {
+        long tInit = System.Diagnostics.Stopwatch.GetTimestamp();
+        static double Ms(long since) => (System.Diagnostics.Stopwatch.GetTimestamp() - since) * 1000.0 / System.Diagnostics.Stopwatch.Frequency;
         _width = Math.Max(1, width); _height = Math.Max(1, height);
         var sd = new DXGI_SWAP_CHAIN_DESC
         {
@@ -33,13 +35,20 @@ internal sealed unsafe partial class D3D11Renderer
         int hr = D3D11CreateDeviceAndSwapChain(null, DRIVER_HARDWARE, 0, CREATE_BGRA_SUPPORT, null, 0,
             D3D11_SDK_VERSION, &sd, &swap, &dev, &fl, &ctx);
         if (hr < 0) // không có GPU phù hợp → WARP (rasterizer phần mềm của Windows)
+        {
+            IsWarp = true;
             hr = D3D11CreateDeviceAndSwapChain(null, DRIVER_WARP, 0, CREATE_BGRA_SUPPORT, null, 0,
                 D3D11_SDK_VERSION, &sd, &swap, &dev, &fl, &ctx);
+        }
         Check(hr, "D3D11CreateDeviceAndSwapChain");
         _swap = swap; _device = dev; _ctx = ctx;
 
+        PerfLog.Shared?.Startup("d3d-device", Ms(tInit));
+        long tShader = System.Diagnostics.Stopwatch.GetTimestamp();
         CreateTarget();
         CompileShaders();
+        PerfLog.Shared?.Startup("d3d-shaders", Ms(tShader));
+        long tRest = System.Diagnostics.Stopwatch.GetTimestamp();
 
         var blend = new BLEND_DESC();
         blend.RenderTarget0 = new RENDER_TARGET_BLEND_DESC
@@ -71,6 +80,7 @@ internal sealed unsafe partial class D3D11Renderer
         EnsureInstanceCapacity(1024);
         EnsureShapeCapacity(16);
         InitGpuTimer();
+        PerfLog.Shared?.Startup("d3d-resources", Ms(tRest));
     }
 
     void CreateTarget()

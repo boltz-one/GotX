@@ -113,7 +113,9 @@ internal sealed partial class LayoutEngine
 
     Size MeasureInput(Widgets.TextInput input, in TextStyle ts, float maxWidth)
     {
-        _text.Wrap(input.DisplayText, ts, maxWidth, _lines);
+        // ô rỗng: chiều cao theo placeholder (nó xuống dòng cùng bề rộng như chữ thật)
+        string shown = input.Multiline && input.DisplayText.Length == 0 && input.Placeholder.Length > 0 ? input.Placeholder : input.DisplayText;
+        _text.Wrap(shown, ts, maxWidth, _lines);
         float w = float.IsNaN(maxWidth) ? 160 : maxWidth;
         return new Size(w, Math.Max(1, _lines.Count) * ts.LineHeight);
     }
@@ -127,8 +129,10 @@ internal sealed partial class LayoutEngine
         float gap = flex ? Spec(row ? s.ColumnGap : s.RowGap, row ? innerW : innerH) ?? 0 : 0;
         bool wrap = flex && row && s.FlexWrap && !float.IsNaN(innerW);
         float crossGap = wrap ? Spec(s.RowGap, innerH) ?? 0 : 0;
+        if (wrap && Environment.GetEnvironmentVariable("GOTX_NO_WRAPROW") is null) return MeasureWrapRow(id, ts, innerW, innerH, gap, crossGap);
         float main = 0, cross = 0, lineMain = 0, lineCross = 0;
         int inLine = 0, lines = 0;
+        float maxAsc = 0, maxDesc = 0; // align baseline: phần trên / dưới đường cơ sở lớn nhất
         for (int c = _t[id].FirstChild; c >= 0; c = _t[c].NextSibling)
         {
             ref readonly var cs = ref _t[c].Style;
@@ -137,6 +141,11 @@ internal sealed partial class LayoutEngine
             var sz = Measure(c, ts, innerW, row ? innerH : float.NaN);
             float oMain = row ? sz.Width + m.Horizontal : sz.Height + m.Vertical;
             float oCross = row ? sz.Height + m.Vertical : sz.Width + m.Horizontal;
+            if (row && flex && (cs.AlignSelf ?? s.AlignItems) == Align.Baseline)
+            {
+                float asc = m.Top + FirstBaseline(c, ts);
+                maxAsc = MathF.Max(maxAsc, asc); maxDesc = MathF.Max(maxDesc, oCross - asc);
+            }
             if (wrap && inLine > 0 && lineMain + gap + oMain > innerW)
             {
                 main = MathF.Max(main, lineMain); cross += lineCross + (lines > 0 ? crossGap : 0);
@@ -146,9 +155,10 @@ internal sealed partial class LayoutEngine
             lineCross = MathF.Max(lineCross, oCross);
             inLine++;
         }
+        lineCross = MathF.Max(lineCross, maxAsc + maxDesc);
         if (inLine > 0) { main = MathF.Max(main, lineMain); cross += lineCross + (lines > 0 ? crossGap : 0); }
         if (flex && row && !wrap && inLine > 1 && !float.IsNaN(innerW) && !s.ScrollX
-            && RowCrossAfterFlex(id, ts, innerW, innerH, gap) is var flexed && !float.IsNaN(flexed)) cross = flexed;
+            && RowCrossAfterFlex(id, ts, innerW, innerH, gap) is var flexed && !float.IsNaN(flexed)) cross = MathF.Max(flexed, maxAsc + maxDesc);
         return row ? new Size(main, cross) : new Size(cross, main);
     }
 
@@ -156,7 +166,7 @@ internal sealed partial class LayoutEngine
     float RowBasis(int c, in TextStyle ts, float innerW, float innerH)
     {
         ref readonly var cs = ref _t[c].Style;
-        return Spec(cs.FlexBasis, innerW) ?? Spec(cs.Width, innerW) ?? Measure(c, ts, innerW, innerH).Width;
+        return Spec(cs.FlexBasis, innerW) ?? Spec(cs.Width, innerW) ?? MathF.Max(Measure(c, ts, innerW, innerH).Width, CanProbe(c) ? Measure(c, ts, float.NaN, innerH).Width : 0); // basis auto = max-content (khi chữ bị xuống dòng ở chỗ còn lại)
     }
 
     /// <summary>

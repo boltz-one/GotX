@@ -29,8 +29,9 @@ internal sealed unsafe partial class D3D11Renderer : IDisposable
     D3D11Renderer() { }
 
     /// <summary>Thời gian CPU của Render gần nhất (ms): dựng instance + tải atlas + map buffer / ghi lệnh vẽ / Present (chờ vsync). UploadBytes = byte atlas+ảnh tải lên.</summary>
-    public double BuildMs, SubmitMs, PresentMs;
+    public double BuildMs, SubmitMs, PresentMs, InstMs, MapMs;
     public long UploadBytes;
+    public bool IsWarp;
 
     public void Render(Scene scene, int width, int height)
     {
@@ -58,6 +59,7 @@ internal sealed unsafe partial class D3D11Renderer : IDisposable
             if (!_atlasWrapped) break;
         }
 
+        long tInst = System.Diagnostics.Stopwatch.GetTimestamp();
         if (prims.Length > 0)
         {
             MAPPED_SUBRESOURCE m;
@@ -139,6 +141,7 @@ internal sealed unsafe partial class D3D11Renderer : IDisposable
         Present(_swap, 1, 0); // chờ vsync
         long tPresented = System.Diagnostics.Stopwatch.GetTimestamp();
         double toMs = 1000.0 / System.Diagnostics.Stopwatch.Frequency;
+        InstMs = (tInst - tBegin) * toMs; MapMs = (tBuilt - tInst) * toMs;
         BuildMs = (tBuilt - tBegin) * toMs; SubmitMs = (tSubmitted - tBuilt) * toMs; PresentMs = (tPresented - tSubmitted) * toMs;
     }
 

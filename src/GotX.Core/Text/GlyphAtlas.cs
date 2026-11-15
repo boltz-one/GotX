@@ -26,11 +26,27 @@ public sealed class GlyphAtlas
     /// </summary>
     public void Reset()
     {
+        _faces.Clear();
         _index.Clear();
         _paths.Clear();
         _masks.Clear();
         _bytes = 0;
         Generation++;
+    }
+
+    readonly Dictionary<long, GlyphFace> _faces = new();
+
+    /// <summary>
+    /// Bảng glyph → chỉ số atlas cho một (font, cỡ chữ): một lượt vẽ chữ lấy mặt chữ một lần rồi tra bằng chỉ số mảng,
+    /// không băm khoá ba trường cho từng glyph. Hết hiệu lực sau <see cref="Reset"/> (chỉ gọi giữa hai frame).
+    /// </summary>
+    public GlyphFace Face(Font font, float sizePx)
+    {
+        int sizeQ = (int)MathF.Round(sizePx * 4);
+        long key = ((long)font.Id << 32) | (uint)sizeQ;
+        if (_faces.TryGetValue(key, out var face)) return face;
+        if (_faces.Count > 256) _faces.Clear();
+        return _faces[key] = new GlyphFace(this, font, sizePx);
     }
 
     public int Get(Font font, ushort glyph, float sizePx)
@@ -81,5 +97,41 @@ public sealed class GlyphAtlas
         mask.Width = w; mask.Height = h; mask.Left = left; mask.Top = top;
         mask.Alpha = _raster.ToAlpha();
         return mask;
+    }
+}
+
+/// <summary>Bảng tra glyph → atlas của một (font, cỡ chữ), xem <see cref="GlyphAtlas.Face"/>.</summary>
+public sealed class GlyphFace
+{
+    readonly GlyphAtlas _atlas;
+    readonly Font _font;
+    readonly float _size;
+    int[] _index = new int[512];
+
+    internal GlyphFace(GlyphAtlas atlas, Font font, float size)
+    {
+        _atlas = atlas; _font = font; _size = size;
+        _index.AsSpan().Fill(-1);
+    }
+
+    /// <summary>Chỉ số atlas của glyph (raster nếu chưa có).</summary>
+    public int Get(ushort glyph)
+    {
+        var index = _index;
+        if (glyph < index.Length && index[glyph] >= 0) return index[glyph];
+        return Slow(glyph);
+    }
+
+    int Slow(ushort glyph)
+    {
+        int i = _atlas.Get(_font, glyph, _size);
+        if (glyph >= _index.Length)
+        {
+            int old = _index.Length;
+            Array.Resize(ref _index, Math.Max(glyph + 1, old * 2));
+            _index.AsSpan(old).Fill(-1);
+        }
+        _index[glyph] = i;
+        return i;
     }
 }

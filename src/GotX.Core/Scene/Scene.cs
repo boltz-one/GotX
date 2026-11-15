@@ -32,6 +32,9 @@ public struct Primitive
     public int ClipShape;
     /// <summary>Quad: gradient phủ lên màu nền (background-image trên background-color): 0 = không, n = Scene.Gradients[n - 1].</summary>
     public int Gradient;
+    // Shadow dùng lại các trường của quad cho vùng LOẠI TRỪ (CSS: box-shadow ngoài chỉ vẽ ngoài hộp viền của phần tử): Gradient = 1 khi có,
+    // Source = hộp viền (device px, trước biến đổi, cùng Transform với bóng), BorderWidths = bán kính góc (Top=TL, Right=TR, Bottom=BR, Left=BL).
+    public readonly bool HasExclusion => Kind == PrimitiveKind.Shadow && Gradient == 1;
     public readonly bool HasBorder =>
         BorderWidths.Top > 0 || BorderWidths.Right > 0 || BorderWidths.Bottom > 0 || BorderWidths.Left > 0;
 }
@@ -95,6 +98,9 @@ public sealed class Scene
 
     public void Clear() { _count = 0; _shapeCount = 0; _gradientCount = 0; }
 
+    /// <summary>Bỏ primitive nhưng giữ vùng cắt / gradient (công cụ đo từng primitive một).</summary>
+    public void ClearPrimitives() => _count = 0;
+
     /// <summary>Chép đoạn [start, end) từ scene khác (phát lại view đã cache).</summary>
     public void AddRange(Scene src, int start, int end)
     {
@@ -112,6 +118,7 @@ public sealed class Scene
         {
             ref var p = ref _items[i];
             p.Bounds = p.Bounds.Offset(dx, dy);
+            if (p.HasExclusion) p.Source = p.Source.Offset(dx, dy);
             if (p.Clip != outerClip) p.Clip = p.Clip.Offset(dx, dy).Intersect(outerClip);
         }
     }

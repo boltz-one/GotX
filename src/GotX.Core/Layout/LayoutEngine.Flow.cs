@@ -41,6 +41,7 @@ internal sealed partial class LayoutEngine
                 float mCross = row ? m.Vertical : m.Horizontal;
                 float? specMain = Spec(row ? cs.Width : cs.Height, mainAvail);
                 float? specCross = Spec(row ? cs.Height : cs.Width, crossAvail);
+                if (!row && specCross is null && (cs.ShrinkWrap || (cs.InlineLevel && !flex)) && a == Align.Stretch) a = Align.Start; // w-fit (mọi nơi) / inline-* (chỉ trong luồng block: con flex được blockify) → shrink-to-fit
                 float? basis = Spec(cs.FlexBasis, mainAvail) ?? specMain;
 
                 // Cột: con kéo giãn được đo với đúng độ rộng nó sẽ nhận (chữ xuống dòng chính xác).
@@ -50,9 +51,29 @@ internal sealed partial class LayoutEngine
                 if (basis is null || specCross is null)
                     measured = Measure(c, ts, measureW, row ? content.Height : float.NaN);
 
+                // Cột, con KHÔNG kéo giãn theo trục ngang (items-start/center/end, self-*): CSS cho bề rộng fit-content = max(min-content, min(max-content, còn lại)).
+                // Chữ xuống dòng thì box nhận cả bề rộng còn lại (không co lại theo dòng rộng nhất); chiều cao đo lại đúng ở bề rộng đó.
+                float fitW = float.NaN;
+                if (!row && specCross is null && a != Align.Stretch && !float.IsNaN(crossAvail))
+                {
+                    float availW = MathF.Max(0, crossAvail - mCross);
+                    float maxContent = CanProbe(c) ? Measure(c, ts, float.NaN, float.NaN).Width : 0;
+                    // Chỉ khi max-content vượt chỗ còn lại (chữ sẽ xuống dòng / hàng sẽ tràn): còn vừa thì giữ phép đo ở bề rộng còn lại như trước
+                    // (đo max-content bằng NaN không biết phần tử w-full bên trong nên nhỏ hơn thực tế ở vài khối lồng nhau).
+                    if (maxContent > availW)
+                    {
+                        fitW = availW; // (CSS: max(min-content, availW); MinContent của ta ước lượng cao hơn Chrome ở khối lồng nhau nên bám theo vùng chứa)
+                        if (basis is null) measured = Measure(c, ts, fitW, float.NaN);
+                    }
+                }
+
+                // Hàng flex: flex-basis auto = max-content (chữ KHÔNG xuống dòng), rồi co theo shrink – không phải bề rộng đã xuống dòng ở chỗ còn lại.
+                // Chỉ nâng basis khi max-content LỚN HƠN phép đo ở chỗ còn lại (chữ đã bị xuống dòng); nhỏ hơn thì giữ như cũ (khối chứa flex-1 phình ra khi đo hữu hạn).
+                float natural = row && flex && basis is null && !float.IsNaN(mainAvail) && CanProbe(c) ? Measure(c, ts, float.NaN, content.Height).Width : float.NaN;
                 ids[i] = c;
-                main[i] = basis ?? (row ? measured.Width : measured.Height);
+                main[i] = basis ?? (row ? (float.IsNaN(natural) || natural <= measured.Width ? measured.Width : natural) : measured.Height);
                 cross[i] = specCross is { } sc ? Clamp(sc, row ? cs.MinHeight : cs.MinWidth, row ? cs.MaxHeight : cs.MaxWidth, crossAvail)
+                    : !float.IsNaN(fitW) ? Clamp(fitW, cs.MinWidth, cs.MaxWidth, crossAvail)
                     : row ? measured.Height : measured.Width;
                 i++;
             }
@@ -95,12 +116,18 @@ internal sealed partial class LayoutEngine
                     finally { ArrayPool<float>.Shared.Return(before); }
                 }
                 // kích thước cross của dòng: một dòng = cả vùng chứa; nhiều dòng = phần tử cao nhất
-                float lineCross = crossAvail;
-                if (wrap)
-                {
-                    lineCross = 0;
+                // align-items / align-self: baseline (hàng ngang): dòng chữ đầu tiên của các phần tử baseline thẳng hàng; dòng cao thêm phần lệch.
+                float maxAsc = 0;
+                if (row)
                     for (int k = start; k < end; k++)
-                        lineCross = MathF.Max(lineCross, cross[k] + MarginCross(ids[k], row, content.Width));
+                        if ((flex ? _t[ids[k]].Style.AlignSelf ?? align : align) == Align.Baseline)
+                            maxAsc = MathF.Max(maxAsc, _t[ids[k]].Style.Margin.Resolve(content.Width, _rem).Top + FirstBaseline(ids[k], ts));
+                float lineCross = crossAvail;
+                if (wrap || maxAsc > 0)
+                {
+                    if (wrap) lineCross = 0;
+                    for (int k = start; k < end; k++)
+                        lineCross = MathF.Max(lineCross, BaselineShift(ids[k], row, flex, align, maxAsc, content.Width, ts) + cross[k] + MarginCross(ids[k], row, content.Width));
                 }
 
                 // justify-content
@@ -126,6 +153,7 @@ internal sealed partial class LayoutEngine
                     var a = flex ? cs.AlignSelf ?? align : align;
                     var m = cs.Margin.Resolve(content.Width, _rem);
                     float mCross = row ? m.Vertical : m.Horizontal;
+                    if (!row && Spec(cs.Width, crossAvail) is null && (cs.ShrinkWrap || (cs.InlineLevel && !flex)) && a == Align.Stretch) a = Align.Start;
                     bool stretch = a == Align.Stretch && Spec(row ? cs.Height : cs.Width, crossAvail) is null;
                     float crossSize = MathF.Max(0, stretch
                         ? Clamp(lineCross - mCross, row ? cs.MinHeight : cs.MinWidth, row ? cs.MaxHeight : cs.MaxWidth, crossAvail)
@@ -135,6 +163,7 @@ internal sealed partial class LayoutEngine
                     {
                         Align.Center => crossFree / 2,
                         Align.End => crossFree,
+                        Align.Baseline => BaselineShift(c, row, flex, align, maxAsc, content.Width, ts),
                         _ => 0,
                     };
                     cursor += row ? m.Left : m.Top;

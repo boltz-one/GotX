@@ -45,9 +45,12 @@ public sealed partial class Window
     {
         float k = xf.S * _scale;
         var bounds = Place(lb.Offset(sh.OffsetX, sh.OffsetY).Inflate(sh.Spread), xf, out Mat2 rot);
+        var box = Place(lb, xf, out _);
+        var own = corners.Scale(k);
         Add(new Primitive
         {
             Kind = PrimitiveKind.Shadow,
+            Gradient = 1, Source = box, BorderWidths = new Edges(own.TopLeft, own.TopRight, own.BottomRight, own.BottomLeft),
             Bounds = bounds,
             Transform = rot,
             Corners = Grow(corners, sh.Spread).Scale(k),

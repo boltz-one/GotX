@@ -65,8 +65,36 @@ internal sealed partial class LayoutEngine
             {
                 float autoSum = 0;
                 for (int t = 0; t < nc; t++) if (Track(cols, t).Kind == TrackKind.Auto) autoSum += colSize[t];
-                float unit = MathF.Max(0, innerW - colGap * (nc - 1) - fixedSum - autoSum) / frSum;
-                for (int t = 0; t < nc; t++) if (Track(cols, t).Kind == TrackKind.Fr) colSize[t] = Track(cols, t).Fr * unit;
+                // Cột fr tường minh có min = min-content của phần tử chiếm 1 cột (CSS: 1fr = minmax(auto, 1fr)). Thuật toán "find the size of an fr":
+                // track nào Fr·unit < min thì đóng băng ở min, trừ khỏi phần dư rồi tính lại unit cho các track còn lại.
+                var frMin = ArrayPool<float>.Shared.Rent(64);
+                var frozen = ArrayPool<bool>.Shared.Rent(64);
+                try
+                {
+                    Array.Clear(frMin, 0, 64); Array.Clear(frozen, 0, 64);
+                    for (int k = 0; k < count; k++)
+                    {
+                        int t = place[k * 4 + 1];
+                        if (place[k * 4 + 2] != 1 || t >= nc || Track(cols, t) is not { Kind: TrackKind.Fr, MinAuto: true }) continue;
+                        frMin[t] = MathF.Max(frMin[t], MinContent(ids[k], ts) + MarginMain(ids[k], true, innerW));
+                    }
+                    float avail = MathF.Max(0, innerW - colGap * (nc - 1) - fixedSum - autoSum), free = frSum, unit = 0;
+                    for (int guard = 0; guard <= nc; guard++)
+                    {
+                        unit = free > 0 ? avail / free : 0;
+                        bool again = false;
+                        for (int t = 0; t < nc; t++)
+                        {
+                            var tr = Track(cols, t);
+                            if (tr.Kind != TrackKind.Fr || frozen[t] || tr.Fr * unit >= frMin[t]) continue;
+                            frozen[t] = true; avail -= frMin[t]; free -= tr.Fr; again = true;
+                        }
+                        if (!again) break;
+                    }
+                    for (int t = 0; t < nc; t++)
+                        if (Track(cols, t).Kind == TrackKind.Fr) colSize[t] = frozen[t] ? frMin[t] : Track(cols, t).Fr * unit;
+                }
+                finally { ArrayPool<float>.Shared.Return(frMin); ArrayPool<bool>.Shared.Return(frozen); }
             }
 
             // ---- Chiều cao hàng ----

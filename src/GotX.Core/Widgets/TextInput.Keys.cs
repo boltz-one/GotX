@@ -37,9 +37,9 @@ public sealed partial class TextInput
                 int line = LineOf(Caret), target = line + (key == Key.Up ? -1 : 1);
                 if (target < 0) { MoveTo(0, shift); return true; }
                 if (target >= Lines.Count) { MoveTo(_text.Length, shift); return true; }
-                float x = XAt(Caret);
+                float x = ContentXAt(Caret);
                 var l = Lines[target];
-                MoveTo(TextSys.IndexAtX(_text, l.Start, LineEnd(target), x, Style), shift);
+                MoveTo(TextSys.IndexAtX(_text, l.Start, LineEnd(target), x - LineOffset(target), Style), shift);
                 return true;
             }
             case Key.A when ctrl:

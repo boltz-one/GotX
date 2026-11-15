@@ -93,6 +93,7 @@ public sealed partial class Window
         float baseline = MathF.Round(o.Y * _scale + (ts.LineHeight * xf.S * _scale - (ascent + descent)) / 2 + ascent);
         float dx = o.X * _scale;
         var atlas = Text.Atlas;
+        var face = atlas.Face(font, px);
         bool kern = font.HasKerning;
         ushort prev = 0;
 
@@ -104,7 +105,7 @@ public sealed partial class Window
             ushort g = font.Glyph(r.Value, ts.TabularNums);
             if (kern) dx += font.Kern(prev, g) * k;
             prev = g;
-            int gi = atlas.Get(font, g, px);
+            int gi = face.Get(g);
             var mask = atlas[gi];
             if (mask.Width > 0)
             {
@@ -130,6 +131,7 @@ public sealed partial class Window
         float baseline = y + ((ts.LineHeight * unit - (ascent + descent)) / 2 + ascent) / unit;
         float pen = x;
         var atlas = Text.Atlas;
+        var face = atlas.Face(font, px);
         bool kern = font.HasKerning;
         ushort prev = 0;
         for (int i = start; i < end;)
@@ -140,7 +142,7 @@ public sealed partial class Window
             ushort g = font.Glyph(r.Value, ts.TabularNums);
             if (kern) pen += font.Kern(prev, g) * k / unit;
             prev = g;
-            int gi = atlas.Get(font, g, px);
+            int gi = face.Get(g);
             var mask = atlas[gi];
             if (mask.Width > 0)
             {

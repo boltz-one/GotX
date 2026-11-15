@@ -67,6 +67,11 @@ public sealed partial class Window
 
         // Nền + viền: màu riêng từng cạnh, mặc định currentColor
         bool hasBorder = bw.Top > 0 || bw.Right > 0 || bw.Bottom > 0 || bw.Left > 0;
+        if (s.BgClip != BgClip.Border && (s.Background.A > 0 || s.Gradient.Kind != GradientKind.None))
+        {
+            PaintClippedFill(s, ts, lb, bw, op, deviceClip, nodeXf);
+            return;
+        }
         int gradient = AddGradientFill(s, lb, op);
         if (s.Background.A <= 0 && !hasBorder && gradient == 0) return;
         var baseBorder = s.BorderColorValue ?? ts.Color;
@@ -87,6 +92,47 @@ public sealed partial class Window
             Gradient = gradient,
             Clip = deviceClip,
         });
+    }
+
+    /// <summary>
+    /// background-clip: padding / content. Nền (màu + gradient) là một quad riêng thu vào hộp đệm / hộp nội dung, bán kính góc = bán kính ngoài
+    /// trừ độ dày viền (và padding với content), kẹp ≥ 0 như CSS; viền vẫn vẽ ở hộp viền bằng quad chỉ có viền nên thấy được phần nằm sau phần tử.
+    /// </summary>
+    void PaintClippedFill(in Style s, in TextStyle ts, Bounds lb, Edges bw, float op, Bounds deviceClip, Xf nodeXf)
+    {
+        var cr = s.CornerRadii;
+        var box = new Bounds(lb.X + bw.Left, lb.Y + bw.Top, MathF.Max(0, lb.Width - bw.Horizontal), MathF.Max(0, lb.Height - bw.Vertical));
+        var inner = new Corners(
+            MathF.Max(0, cr.TopLeft - MathF.Max(bw.Left, bw.Top)), MathF.Max(0, cr.TopRight - MathF.Max(bw.Right, bw.Top)),
+            MathF.Max(0, cr.BottomRight - MathF.Max(bw.Right, bw.Bottom)), MathF.Max(0, cr.BottomLeft - MathF.Max(bw.Left, bw.Bottom)));
+        if (s.BgClip == BgClip.Content)
+        {
+            var pad = s.Padding.Resolve(lb.Width, RemSize);
+            box = new Bounds(box.X + pad.Left, box.Y + pad.Top, MathF.Max(0, box.Width - pad.Horizontal), MathF.Max(0, box.Height - pad.Vertical));
+            inner = new Corners(
+                MathF.Max(0, inner.TopLeft - MathF.Max(pad.Left, pad.Top)), MathF.Max(0, inner.TopRight - MathF.Max(pad.Right, pad.Top)),
+                MathF.Max(0, inner.BottomRight - MathF.Max(pad.Right, pad.Bottom)), MathF.Max(0, inner.BottomLeft - MathF.Max(pad.Left, pad.Bottom)));
+        }
+        float k = nodeXf.S * _scale;
+        int gradient = AddGradientFill(s, box, op);
+        if ((s.Background.A > 0 || gradient != 0) && !box.IsEmpty)
+            Add(new Primitive
+            {
+                Kind = PrimitiveKind.Quad, Bounds = Place(box, nodeXf, out Mat2 rot), Transform = rot, Corners = inner.Scale(k),
+                Color = Fade(s.Background, op), Gradient = gradient, Clip = deviceClip,
+            });
+        if (bw.Top > 0 || bw.Right > 0 || bw.Bottom > 0 || bw.Left > 0)
+        {
+            var baseBorder = s.BorderColorValue ?? ts.Color;
+            Add(new Primitive
+            {
+                Kind = PrimitiveKind.Quad, Bounds = Place(lb, nodeXf, out Mat2 brot), Transform = brot, Corners = s.CornerRadii.Scale(k),
+                BorderWidths = new Edges(bw.Top * k, bw.Right * k, bw.Bottom * k, bw.Left * k),
+                BorderTop = Fade(s.BorderTopColor ?? baseBorder, op), BorderRight = Fade(s.BorderRightColor ?? baseBorder, op),
+                BorderBottom = Fade(s.BorderBottomColor ?? baseBorder, op), BorderLeft = Fade(s.BorderLeftColor ?? baseBorder, op),
+                BorderStyle = s.BorderStyle, Clip = deviceClip,
+            });
+        }
     }
 
     /// <summary>Vành rộng <paramref name="width"/> có mép ngoài cách border box <paramref name="grow"/>, bo theo góc của phần tử.</summary>

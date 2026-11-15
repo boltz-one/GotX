@@ -16,6 +16,8 @@ internal sealed unsafe partial class Win32Window : IPlatformWindow, IFrameTiming
     public double PresentMs { get; private set; }
     public double GpuMs => _gpu?.GpuMs ?? 0;
     public long UploadBytes { get; private set; }
+    public double InstMs { get; private set; }
+    public double MapMs { get; private set; }
 
     static readonly Dictionary<nint, Win32Window> s_windows = new();
     static nint s_className;
@@ -54,6 +56,7 @@ internal sealed unsafe partial class Win32Window : IPlatformWindow, IFrameTiming
             RECT c;
             GetClientRect(_hwnd, &c);
             _gpu = D3D11Renderer.TryCreate(_hwnd, c.right, c.bottom);
+            PerfLog.Shared?.Mark("renderer", _gpu is null ? "software" : _gpu.IsWarp ? "d3d11-warp" : "d3d11-hardware");
         }
         ShowWindow(_hwnd, SW_SHOW);
     }
@@ -109,7 +112,7 @@ internal sealed unsafe partial class Win32Window : IPlatformWindow, IFrameTiming
         if (_gpu is not null)
         {
             _gpu.Render(scene, r.right, r.bottom);
-            BuildMs = _gpu.BuildMs; SubmitMs = _gpu.SubmitMs; PresentMs = _gpu.PresentMs; UploadBytes = _gpu.UploadBytes;
+            InstMs = _gpu.InstMs; MapMs = _gpu.MapMs; BuildMs = _gpu.BuildMs; SubmitMs = _gpu.SubmitMs; PresentMs = _gpu.PresentMs; UploadBytes = _gpu.UploadBytes;
             return;
         }
         long t0 = System.Diagnostics.Stopwatch.GetTimestamp();

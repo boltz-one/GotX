@@ -30,6 +30,9 @@ public sealed class UiNode
     public Size ContentSize;
     public bool Clickable, Focusable, Focused, Scrollable, Disabled, Transformed, Hovered;
     public Display Display;
+    /// <summary>align-items của chính nó và align-self của nó trong cha (để công cụ lint biết hàng baseline).</summary>
+    public Align AlignItems;
+    public Align? AlignSelf;
     public Position Position;
     public Rgba Background, Color;
     public Edges Border, Padding;

@@ -35,8 +35,11 @@ public static partial class Tailwind
 
         switch (u)
         {
-            case "flex": case "inline-flex": Emit(Prop.Display, (byte)Display.Flex); return true;
-            case "block": case "inline-block": case "inline": Emit(Prop.Display, (byte)Display.Block); return true;
+            case "flex": Emit(Prop.Display, (byte)Display.Flex); Emit(Prop.InlineLevel, 0); return true;
+            case "inline-flex": Emit(Prop.Display, (byte)Display.Flex); Emit(Prop.InlineLevel, 1); return true;
+            case "block": Emit(Prop.Display, (byte)Display.Block); Emit(Prop.InlineLevel, 0); return true;
+            case "inline-block": Emit(Prop.Display, (byte)Display.Block); Emit(Prop.InlineLevel, 1); return true;
+            case "inline": Emit(Prop.Display, (byte)Display.Block); return true;
             case "hidden": Emit(Prop.Display, (byte)Display.None); return true;
             case "flex-row": Emit(Prop.Direction, (byte)FlexDirection.Row); return true;
             case "flex-col": Emit(Prop.Direction, (byte)FlexDirection.Column); return true;
@@ -61,7 +64,8 @@ public static partial class Tailwind
                 Emit(Prop.Overflow, (byte)Overflow.Hidden); Emit(Prop.Scroll, 2); return true;
             case "flex-wrap": Emit(Prop.Wrap, 1); return true;
             case "flex-nowrap": Emit(Prop.Wrap, 0); return true;
-            case "grid": case "inline-grid": Emit(Prop.Display, (byte)Display.Grid); return true;
+            case "grid": Emit(Prop.Display, (byte)Display.Grid); Emit(Prop.InlineLevel, 0); return true;
+            case "inline-grid": Emit(Prop.Display, (byte)Display.Grid); Emit(Prop.InlineLevel, 1); return true;
             case "col-span-full": Emit(Prop.ColSpan, f: -1); return true;
             case "row-span-full": Emit(Prop.RowSpan, f: -1); return true;
             case "transition": case "transition-all": Emit(Prop.Transition, (byte)TransitionProps.All); return true;

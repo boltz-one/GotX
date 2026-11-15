@@ -17,7 +17,8 @@ public sealed partial class TextSystem
         {
             if (!File.Exists(path)) return false;
             _fonts.Add(new Font(File.ReadAllBytes(path), _fonts.Count, weight) { Family = family, Italic = italic });
-            _wrapIndex.Clear(); _wrapLines.Clear(); _wrapChars = 0; _styledWidth.Clear(); // font cho một kiểu chữ có thể đã đổi
+            Array.Clear(_fontCache);
+            _wrapIndex.Clear(); _wrapLines.Clear(); _wrapChars = 0; _wrapGen++; _styledWidth.Clear(); // font cho một kiểu chữ có thể đã đổi
             return true;
         }
         catch (NotSupportedException) { return false; }
@@ -36,7 +37,20 @@ public sealed partial class TextSystem
     public Font FontFor(in TextStyle style) => FontFor(style.Family, style.Weight, style.Italic);
 
     /// <summary>Font khớp nhất: ưu tiên đúng họ, rồi đúng kiểu nghiêng, rồi độ đậm gần nhất.</summary>
+    // FontFor chạy cho mỗi lần đo/ngắt dòng/vẽ một node chữ: nhớ kết quả theo (họ, độ đậm 100..900, nghiêng) thay vì chấm điểm mọi font.
+    readonly Font?[] _fontCache = new Font?[2 * 10 * 2];
+
     public Font FontFor(FontFamily family, FontWeight weight, bool italic)
+    {
+        int w = (int)weight / 100;
+        int slot = w is >= 0 and < 10 && (int)family < 2 ? ((int)family * 10 + w) * 2 + (italic ? 1 : 0) : -1;
+        if (slot >= 0 && _fontCache[slot] is { } cached) return cached;
+        var found = PickFont(family, weight, italic);
+        if (slot >= 0 && (int)weight % 100 == 0) _fontCache[slot] = found;
+        return found;
+    }
+
+    Font PickFont(FontFamily family, FontWeight weight, bool italic)
     {
         if (_fonts.Count == 0) throw new InvalidOperationException("Chưa nạp font nào.");
         Font best = _fonts[0];

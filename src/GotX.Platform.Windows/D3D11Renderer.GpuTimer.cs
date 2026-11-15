@@ -21,16 +21,18 @@ internal sealed unsafe partial class D3D11Renderer
         {
             for (int i = 0; i < GpuRing; i++)
             {
-                var d = new QUERY_DESC { Query = 4 /*TIMESTAMP_DISJOINT*/ };
-                var t = new QUERY_DESC { Query = 3 /*TIMESTAMP*/ };
+                var d = new QUERY_DESC { Query = 3 /*TIMESTAMP_DISJOINT*/ };
+                var t = new QUERY_DESC { Query = 2 /*TIMESTAMP*/ };
                 void* q;
                 if (CreateQuery(_device, &d, &q) < 0) return; _qDisjoint[i] = q;
                 if (CreateQuery(_device, &t, &q) < 0) return; _qBegin[i] = q;
                 if (CreateQuery(_device, &t, &q) < 0) return; _qEnd[i] = q;
             }
             _gpuTimer = true;
+            PerfLog.Shared?.Mark("gpu-timer", "ok");
         }
         catch (Exception) { _gpuTimer = false; }
+        if (!_gpuTimer) PerfLog.Shared?.Mark("gpu-timer", "unavailable");
     }
 
     void GpuBegin()

@@ -53,7 +53,7 @@ public sealed partial class Window
         if (!_cache.ContainsKey(id)) return; // không phải view đang hiển thị
         if (request && Trace is not null && !_dirty.Contains(id))
             Emit(TraceKind.ViewDirty, App.Find(id)?.GetType().Name ?? "?", viewId: id);
-        if (Log is not null && !_dirty.Contains(id)) NoteDirty(id, cause);
+        if (Log is not null) NoteDirty(id, cause, first: !_dirty.Contains(id));
         for (int v = id; v > 0 && _dirty.Add(v);)
             v = _cache.TryGetValue(v, out var c) ? c.ParentView : -1;
         if (request) RequestFrame();

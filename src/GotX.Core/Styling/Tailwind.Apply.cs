@@ -124,6 +124,9 @@ public static partial class Tailwind
                 if (o.E == 1) s.TrackingPxValue = o.F; else { s.TrackingValue = o.F; s.TrackingPxValue = null; }
                 break;
             case Prop.ObjectFit: s.ObjectFit = (ObjectFit)o.E; break;
+            case Prop.BgClip: s.BgClip = (BgClip)o.E; break;
+            case Prop.ShrinkWrap: s.ShrinkWrap = o.E != 0; break;
+            case Prop.InlineLevel: s.InlineLevel = o.E != 0; break;
             case Prop.ScrollbarMode: s.ScrollbarMode = (ScrollbarMode)o.E; break;
             case Prop.ScrollbarWidth: s.ScrollbarWidth = o.F; break;
             case Prop.ScrollbarColor: s.ScrollbarColor = Col(o, ctx); break;

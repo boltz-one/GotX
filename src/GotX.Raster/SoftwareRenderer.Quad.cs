@@ -34,24 +34,32 @@ public static partial class SoftwareRenderer
         var grad = hasGrad ? new GradientSampler(scene.Gradient(p.Gradient), hw, hh) : default;
 
         // Vùng chắc chắn nằm trong: tô nhanh không cần SDF (chỉ khi không biến đổi, không cắt hình, màu đặc)
-        bool canFast = !f.T && !clip.On && !hasGrad;
+        bool canFast = !f.T && !hasGrad;
         float maxR = MathF.Max(MathF.Max(corners.TopLeft, corners.TopRight), MathF.Max(corners.BottomRight, corners.BottomLeft));
         float maxB = MathF.Max(MathF.Max(bt, bb), MathF.Max(bl, br));
         float inset = MathF.Max(maxR, maxB) + 1;
         int fastX0 = (int)MathF.Ceiling(b.X + inset), fastX1 = (int)MathF.Floor(b.Right - inset);
 
+        using var run = new BlendRun();
         var px = c.Pixels;
         for (int y = r.Y0; y < r.Y1; y++)
         {
             int row = y * c.Width;
             float py = y + 0.5f;
             bool rowFast = canFast && MathF.Abs(py - f.Cy) <= hh - inset;
+            int rx0 = fastX0, rx1 = fastX1;
+            if (rowFast && clip.On)
+            {
+                // Dưới vùng cắt theo hình: chỉ tô nhanh phần nằm chắc chắn trong hình (độ phủ đúng 1).
+                if (clip.SolidRow(py, out float cx0, out float cx1)) { rx0 = Math.Max(rx0, (int)MathF.Ceiling(cx0 - 0.5f)); rx1 = Math.Min(rx1, (int)MathF.Floor(cx1 - 0.5f) + 1); }
+                else rowFast = false;
+            }
             for (int x = r.X0; x < r.X1; x++)
             {
-                if (rowFast && x >= fastX0 && x < fastX1)
+                if (rowFast && x >= rx0 && x < rx1)
                 {
                     if (opaque) px[row + x] = solid;
-                    else Blend(ref px[row + x], bgR, bgG, bgB, bg.A);
+                    else run.Blend(ref px[row + x], bgR, bgG, bgB, bg.A);
                     continue;
                 }
                 float pxx = x + 0.5f;
@@ -78,7 +86,13 @@ public static partial class SoftwareRenderer
                     {
                         var side = SideColor(p, lx, ly, hw, hh, bt, br, bb, bl);
                         float sr = side.R * side.A, sg = side.G * side.A, sb = side.B * side.A;
-                        cr += (sr - cr) * amount; cg += (sg - cg) * amount; cb += (sb - cb) * amount; ca += (side.A - ca) * amount;
+                        if (side.A >= 1) { cr += (sr - cr) * amount; cg += (sg - cg) * amount; cb += (sb - cb) * amount; ca += (side.A - ca) * amount; }
+                        else
+                        {
+                            // viền trong suốt / mờ vẽ ĐÈ LÊN nền (CSS: nền nằm dưới viền), không thay thế nền
+                            float k = 1 - side.A * amount;
+                            cr = sr * amount + cr * k; cg = sg * amount + cg * k; cb = sb * amount + cb * k; ca = side.A * amount + ca * k;
+                        }
                     }
                 }
                 Blend(ref px[row + x], cr * cov, cg * cov, cb * cov, ca * cov);

@@ -65,6 +65,9 @@ public interface IFrameTimings
     /// <summary>GPU: thời gian thực thi trên GPU của frame trước (timestamp query), 0 nếu không đo được.</summary>
     double GpuMs { get; }
     long UploadBytes { get; }
+    /// <summary>GPU: dựng instance (CPU) và Map+sao chép buffer – hai nửa của <see cref="BuildMs"/>.</summary>
+    double InstMs { get; }
+    double MapMs { get; }
 }
 
 /// <summary>Nối platform với Window: frame → Draw → renderer; input → dispatch → effect → vẽ lại.</summary>
@@ -105,7 +108,7 @@ public static class Application
             if (window.Log is not null)
             {
                 double ms = (System.Diagnostics.Stopwatch.GetTimestamp() - t0) * 1000.0 / System.Diagnostics.Stopwatch.Frequency;
-                if (pw is IFrameTimings ft) window.LogPresent(ms, ft.BuildMs, ft.SubmitMs, ft.PresentMs, ft.GpuMs, ft.UploadBytes);
+                if (pw is IFrameTimings ft) window.LogPresent(ms, ft.BuildMs, ft.SubmitMs, ft.PresentMs, ft.GpuMs, ft.UploadBytes, ft.InstMs, ft.MapMs);
                 else window.LogPresent(ms);
             }
             if (window.WantsAnimationFrame) pw.RequestAnimationFrame();
