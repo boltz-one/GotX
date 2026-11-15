@@ -8,6 +8,7 @@ public sealed partial class Window
     void PaintInput(TextInput t, Bounds b, in TextStyle ts, Bounds deviceClip, Xf xf)
     {
         string d = t.DisplayText;
+        b = t.FitViewport(b, d, Text, ts); // ô một dòng dài hơn khung: cuộn ngang giữ con trỏ trong tầm nhìn
         t.Content = b; t.Style = ts; t.TextSys = Text; t.Xf = xf;
         Text.Wrap(d, ts, b.Width, t.Lines);
         float lh = ts.LineHeight;
@@ -72,6 +73,6 @@ public sealed partial class Window
         float cx = b.X + Off(line) + Text.MeasureRange(d, cl.Start, Math.Clamp(caret, cl.Start, d.Length), ts);
         float cy = b.Y + line * lh;
         t.CaretRect = xf.ApplyAabb(new Bounds(cx, cy, 1, lh));
-        if (focused) AddRect(new Bounds(cx, cy + lh * 0.15f, 1.5f, lh * 0.7f), textColor, deviceClip, xf);
+        if (focused && t.CaretVisible) AddRect(new Bounds(cx, cy + lh * 0.15f, 1.5f, lh * 0.7f), textColor, deviceClip, xf);
     }
 }

@@ -4,7 +4,7 @@ namespace GotX;
 
 public enum MouseButton : byte { Left, Right, Middle }
 public enum InputKind : byte { MouseMove, MouseDown, MouseUp, MouseLeave, Scroll, KeyDown, TextInput, ImeCompose }
-public enum Key : byte { None, Backspace, Delete, Left, Right, Up, Down, Home, End, Enter, Tab, Escape, A, C, V, X, Space, PageUp, PageDown }
+public enum Key : byte { None, Backspace, Delete, Left, Right, Up, Down, Home, End, Enter, Tab, Escape, A, C, V, X, Space, PageUp, PageDown, Y, Z }
 
 [Flags]
 public enum Modifiers : byte { None = 0, Shift = 1, Control = 2, Alt = 4 }

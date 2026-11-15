@@ -21,7 +21,7 @@ internal static unsafe partial class Win32
     public const long ISC_SHOWUICOMPOSITIONWINDOW = 0x80000000L;
     public const int VK_BACK = 0x08, VK_TAB = 0x09, VK_RETURN = 0x0D, VK_SHIFT = 0x10, VK_CONTROL = 0x11, VK_MENU = 0x12,
         VK_ESCAPE = 0x1B, VK_END = 0x23, VK_HOME = 0x24, VK_LEFT = 0x25, VK_UP = 0x26, VK_RIGHT = 0x27,
-        VK_DOWN = 0x28, VK_DELETE = 0x2E, VK_A = 0x41, VK_C = 0x43, VK_V = 0x56, VK_X = 0x58;
+        VK_DOWN = 0x28, VK_DELETE = 0x2E, VK_A = 0x41, VK_C = 0x43, VK_V = 0x56, VK_X = 0x58, VK_Y = 0x59, VK_Z = 0x5A;
     public const uint CF_UNICODETEXT = 13, GMEM_MOVEABLE = 0x0002;
     public const uint WS_OVERLAPPEDWINDOW = 0x00CF0000, CS_HREDRAW = 0x2, CS_VREDRAW = 0x1;
     public const int CW_USEDEFAULT = unchecked((int)0x80000000), SW_SHOW = 5, IDC_ARROW = 32512;

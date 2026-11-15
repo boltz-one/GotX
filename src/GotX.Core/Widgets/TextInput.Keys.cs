@@ -10,12 +10,24 @@ public sealed partial class TextInput
         switch (key)
         {
             case Key.Backspace:
+            {
+                var kind = HasSelection ? EditKind.Other : EditKind.Backspace;
                 if (!HasSelection && Caret > 0) Anchor = PrevBoundary(Caret);
-                if (HasSelection) ReplaceSelection("");
+                if (HasSelection) ReplaceSelection("", kind);
                 return true;
+            }
             case Key.Delete:
+            {
+                var kind = HasSelection ? EditKind.Other : EditKind.Delete;
                 if (!HasSelection && Caret < _text.Length) Anchor = NextBoundary(Caret);
-                if (HasSelection) ReplaceSelection("");
+                if (HasSelection) ReplaceSelection("", kind);
+                return true;
+            }
+            case Key.Z when ctrl:
+                if (shift) Redo(); else Undo();
+                return true;
+            case Key.Y when ctrl:
+                Redo();
                 return true;
             case Key.Left:
                 MoveTo(!shift && HasSelection ? SelStart : PrevBoundary(Caret), shift);

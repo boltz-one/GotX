@@ -23,7 +23,9 @@ public sealed partial class TextInput : View
         get => _text;
         set
         {
-            _text = Vietnamese.Compose(value ?? "");
+            string next = Vietnamese.Compose(value ?? "");
+            if (next != _text) ClearHistory();
+            _text = next;
             Caret = Anchor = _text.Length;
             Composition = "";
             OnChanged();
@@ -52,7 +54,6 @@ public sealed partial class TextInput : View
     int SelEnd => Math.Max(Caret, Anchor);
 
     // ---- Ảnh chụp layout ở lần vẽ gần nhất (Window ghi vào) ----
-    internal Window? FocusedIn;
     internal readonly List<TextLine> Lines = new();
     internal Bounds Content;
     internal TextStyle Style;
@@ -89,10 +90,12 @@ public sealed partial class TextInput : View
 
     // ---------- Chỉnh sửa ----------
 
-    public void Insert(string s)
+    public void Insert(string s) => Insert(s, HasSelection || s.Contains('\n') ? EditKind.Other : EditKind.Typing);
+
+    void Insert(string s, EditKind kind)
     {
         if (s.Length == 0) return;
-        ReplaceSelection(s);
+        ReplaceSelection(s, kind);
     }
 
     public void SetComposition(string s)
@@ -100,6 +103,7 @@ public sealed partial class TextInput : View
         if (s.Length > 0 && HasSelection) ReplaceSelection("");
         Composition = s;
         _displayCache = null;
+        ResetBlink();
         Notify();
     }
 
@@ -122,13 +126,18 @@ public sealed partial class TextInput : View
     /// <summary>Chèn văn bản từ clipboard tại con trỏ, thay vùng chọn nếu có (Ctrl+V).</summary>
     public void Paste()
     {
-        if (App?.Clipboard.GetText() is { Length: > 0 } text) Insert(text);
+        if (App?.Clipboard.GetText() is not { Length: > 0 } text) return;
+        if (!Multiline) text = text.TrimEnd('\r', '\n'); // một dòng: bỏ xuống dòng cuối, xuống dòng giữa thành khoảng trắng
+        Insert(text, EditKind.Other);
     }
 
-    void ReplaceSelection(string s)
+    void ReplaceSelection(string s, EditKind kind = EditKind.Other)
     {
         s = s.Replace("\r", "");
         if (!Multiline) s = s.Replace('\n', ' ');
+        if (s.Length == 0 && !HasSelection) return;
+        Record(kind);
+        _mode = 0;
         int a = SelStart, b = SelEnd;
         string next = string.Concat(_text.AsSpan(0, a), s, _text.AsSpan(b));
         int caret = a + s.Length;
@@ -138,20 +147,23 @@ public sealed partial class TextInput : View
         _text = composed;
         Caret = Anchor = Math.Clamp(caret, 0, _text.Length);
         Composition = "";
+        _lastKind = kind; _lastCaret = Caret;
         OnChanged();
     }
 
     void OnChanged()
     {
         _displayCache = null;
+        ResetBlink();
         Notify();
         Emit(new TextChanged(_text));
     }
 
-    void Moved() { _displayCache = null; Notify(); }
+    void Moved() { _displayCache = null; _lastKind = EditKind.None; ResetBlink(); Notify(); }
 
     void MoveTo(int pos, bool extend)
     {
+        _mode = 0;
         Caret = Math.Clamp(pos, 0, _text.Length);
         if (!extend) Anchor = Caret;
         Moved();

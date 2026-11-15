@@ -157,7 +157,7 @@ internal sealed unsafe partial class Win32Window
         VK_BACK => Key.Backspace, VK_DELETE => Key.Delete, VK_LEFT => Key.Left, VK_RIGHT => Key.Right,
         VK_UP => Key.Up, VK_DOWN => Key.Down, VK_HOME => Key.Home, VK_END => Key.End,
         VK_RETURN => Key.Enter, VK_TAB => Key.Tab, VK_ESCAPE => Key.Escape,
-        VK_A => Key.A, VK_C => Key.C, VK_V => Key.V, VK_X => Key.X,
+        VK_A => Key.A, VK_C => Key.C, VK_V => Key.V, VK_X => Key.X, VK_Y => Key.Y, VK_Z => Key.Z,
         0x20 => Key.Space, 0x21 => Key.PageUp, 0x22 => Key.PageDown, // VK_SPACE, VK_PRIOR, VK_NEXT
         _ => Key.None,
     };

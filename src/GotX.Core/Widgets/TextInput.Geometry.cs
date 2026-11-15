@@ -4,16 +4,6 @@ namespace GotX.Widgets;
 
 public sealed partial class TextInput
 {
-    /// <summary>Đặt con trỏ theo vị trí chuột (logical px). extend = giữ anchor để chọn.</summary>
-    public void SetCaretFromPoint(Point p, bool extend)
-    {
-        if (TextSys is null || Lines.Count == 0 || Composition.Length > 0) return;
-        p = Xf.Inverse(p);
-        int line = Math.Clamp((int)((p.Y - Content.Y) / Style.LineHeight), 0, Lines.Count - 1);
-        var l = Lines[line];
-        MoveTo(TextSys.IndexAtX(_text, l.Start, LineEnd(line), p.X - Content.X - LineOffset(line), Style), extend);
-    }
-
     // ---------- Hình học dòng (theo Lines của lần vẽ trước) ----------
 
     /// <summary>Dòng chứa vị trí pos. Tại điểm ngắt mềm, con trỏ thuộc dòng sau.</summary>

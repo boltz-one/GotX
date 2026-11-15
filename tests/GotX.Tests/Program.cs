@@ -22,6 +22,7 @@ ShadowExclusionTests.Register(suite);
 GridFrMinTests.Register(suite);
 FitContentTests.Register(suite);
 TextInputAlignTests.Register(suite);
+TextInputEditTests.Register(suite);
 StrokeCoverageTests.Register(suite);
 FlexWrapMeasureTests.Register(suite);
 BaselineAlignTests.Register(suite);
