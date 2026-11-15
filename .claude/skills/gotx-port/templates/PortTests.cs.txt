@@ -1,0 +1,70 @@
+// Test skeleton for a ported view (GotX.Test). Rename, fill the behaviour asserts, then register in tests/GotX.Tests/Program.cs:
+//     PortedViewTests.Register(suite);
+// Lint runs at 2 widths x light/dark (unknown classes, overflow, clipping, contrast, tiny hit targets...). Fix the UI, do not suppress rules.
+using GotX;
+using GotX.Test;
+using Ported;
+
+static class PortedViewTests
+{
+    static readonly Size Wide = new(1440, 900), Narrow = new(640, 900);
+
+    static PortedView Open(UiTest t, Size size, bool dark = false)
+    {
+        var view = t.Open(new PortedView(), size, dark: dark);
+        t.Settle();
+        return view;
+    }
+
+    public static void Register(TestSuite suite)
+    {
+        // Lint at every width x theme; Warning and above fail the test.
+        suite.Add("ported/lint", t =>
+        {
+            var report = UiDoctor.Run(app => app.New(new PortedView()), new DoctorOptions
+            {
+                Sizes = [Wide, Narrow], Dark = [false, true], Scales = [1], OutDir = t.Options.OutDir, Name = "ported",
+            });
+            foreach (var issue in report.Issues)
+                if (issue.Severity >= Severity.Warning) t.FailIssue(issue);
+        });
+
+        // Real behaviour: state after an action, text, focus. TODO mirror what the source UI does.
+        suite.Add("ported/behaviour", t =>
+        {
+            var view = Open(t, Wide);
+            t.Assert.Text("status", "Not saved yet");
+            // TextEntry: click the key set on w.View(entry), then Type; read the value from the entity (view.NameText => _name.Text).
+            t.Click("name");
+            t.Type("Acme");
+            t.Assert.Equal(view.NameText, "Acme", "typed text reached the Input entity");
+            t.Click("deploy");
+            t.Assert.Text("status", "Saved");
+            t.Click("cancel");
+            t.Assert.Text("status", "Not saved yet");
+            t.Window.FocusKey("deploy");
+            t.Frames();
+            t.Assert.Focused("deploy");
+            t.Assert.NoLint();
+        });
+
+        // Layout facts from the source design (TODO replace with the measured values: browser layout map / screenshot).
+        suite.Add("ported/layout", t =>
+        {
+            Open(t, Wide);
+            t.Assert.Size("card", 360, t.Box("card").Height);
+            t.Assert.Inside("card", "page");
+        });
+
+        // Baseline images: the first run creates __snapshots__/<name>.png (open it and check it before committing);
+        // later runs report the differing regions and which element contains each. Fonts are system fonts: regenerate per machine.
+        suite.Add("ported/snapshot", t =>
+        {
+            foreach (var (name, size, dark) in new[] { ("wide-light", Wide, false), ("wide-dark", Wide, true), ("narrow-light", Narrow, false) })
+            {
+                Open(t, size, dark);
+                t.Snapshot("ported-" + name);
+            }
+        });
+    }
+}

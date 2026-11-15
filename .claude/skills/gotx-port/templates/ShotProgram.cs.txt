@@ -1,0 +1,177 @@
+// Headless screenshot + test runner for a ported view (no window, CPU renderer, virtual clock).
+//   dotnet run --project <this project> -- <out-dir> [--view <Type>] [--width 1440] [--height 900] [--theme light|dark|both]
+//        [--full] [--fonts <dir>] [--name shot]
+//   dotnet run --project <this project> -- test [--filter x] [--out dir] [--update-snapshots]     (GotX.Test suite from Hooks.RegisterTests)
+// Writes <out-dir>/<name>-<width>-<theme>.png and .tree.json (TreeDump.ToJson: node rects for `node compare-layout.mjs ref.json x.tree.json`).
+// --view: short or full name of a View subclass in this assembly with a parameterless constructor (default: Hooks.DefaultView).
+// --full grows the window to the content height (like document.scrollHeight). --fonts: folder of *.ttf (Regular/Medium/SemiBold/Bold,
+// *Mono*) registered before the system fonts, e.g. the font the web page used; default = Segoe UI (Windows) / DejaVu (Linux).
+// Segoe UI Semibold is registered for Medium too: Chrome on Windows draws font-medium with it.
+// Unknown Tailwind classes are listed on stderr (exit code 1). Edit the Hooks class below for your project.
+using System.Reflection;
+using GotX;
+using GotX.Components;
+using GotX.Raster;
+using GotX.Test;
+using GotX.Text;
+
+if (args.Length > 0 && args[0] == "test")
+{
+    Hooks.InstallTheme();
+    string dir = Directory.GetCurrentDirectory(); // not CallerFilePath: that would point into the template folder
+    var suite = new TestSuite { ProjectDir = dir, SnapshotDir = Path.Combine(dir, "__snapshots__"), BaselinePath = Path.Combine(dir, "lint-baseline.txt") };
+    Hooks.RegisterTests(suite);
+    return suite.Run(args[1..]);
+}
+try { return Shooter.Run(ShotOptions.Parse(args)); }
+catch (ArgumentException e) { Console.Error.WriteLine(e.Message); return 2; }
+
+// ================= hooks: edit for your project =================
+static class Hooks
+{
+    /// <summary>Colour tokens (bg-background, text-foreground...). Replace with your own Theme.SetColor(..) calls if you do not use GotX.Components.</summary>
+    public static void InstallTheme() => ComponentTheme.Install();
+
+    /// <summary>Return your view for --view when reflection is not enough (constructor arguments, entities); null = use reflection.</summary>
+    public static View? Create(App app, string viewName) => null;
+
+    /// <summary>View used when --view is not given.</summary>
+    public const string DefaultView = "Ported.PortedView";
+
+    /// <summary>Tests that `test` runs. Define PORTTESTS (or just uncomment) once PortTests.cs is part of this project.</summary>
+    public static void RegisterTests(TestSuite suite)
+    {
+#if PORTTESTS
+        PortedViewTests.Register(suite);
+#endif
+    }
+}
+
+// ================= machinery =================
+sealed record ShotOptions(string OutDir, string View, int Width, int Height, string Theme, bool Full, string? FontDir, string Name)
+{
+    public static ShotOptions Parse(string[] args)
+    {
+        var rest = new List<string>(args);
+        string? Opt(string n) { int i = rest.IndexOf(n); if (i < 0 || i + 1 >= rest.Count) return null; string v = rest[i + 1]; rest.RemoveRange(i, 2); return v; }
+        int width = int.Parse(Opt("--width") ?? "1440"), height = int.Parse(Opt("--height") ?? "900");
+        string view = Opt("--view") ?? Hooks.DefaultView, theme = Opt("--theme") ?? "both", name = Opt("--name") ?? "shot";
+        string? fonts = Opt("--fonts");
+        bool full = rest.Remove("--full");
+        string outDir = Path.GetFullPath(rest.FirstOrDefault(a => !a.StartsWith("--")) ?? "shots"); // after the options: the one remaining argument
+        return new ShotOptions(outDir, view, width, height, theme, full, fonts, name);
+    }
+}
+
+static class Shooter
+{
+    public static int Run(ShotOptions o)
+    {
+        Directory.CreateDirectory(o.OutDir);
+        Hooks.InstallTheme();
+        var unknown = new HashSet<string>();
+        Tailwind.OnUnknownClass = (classes, token) => unknown.Add(token);
+        var text = Fonts.Load(o.FontDir);
+        bool[] themes = o.Theme switch { "light" => [false], "dark" => [true], _ => [false, true] };
+        foreach (bool dark in themes) Shoot(o, text, dark);
+        if (unknown.Count > 0) Console.Error.WriteLine("UNKNOWN CLASSES: " + string.Join(' ', unknown.Order()));
+        return unknown.Count == 0 ? 0 : 1;
+    }
+
+    static void Shoot(ShotOptions o, TextSystem text, bool dark)
+    {
+        double now = 1000;
+        var app = new App { Clock = () => now };
+        var window = new Window(app, text) { Clock = () => now, DarkMode = dark };
+        window.Root = app.New(new ShotHost(CreateView(app, o.View), o.Full));
+        var size = new Size(o.Width, o.Height);
+
+        void Frame() { now += 0.016; app.RunTimers(); window.Draw(size, 1); app.Flush(); }
+        void Settle()
+        {
+            app.Flush();
+            for (int i = 0; i < 600; i++)
+            {
+                if (i >= 2 && !window.FramePending && !window.WantsAnimationFrame) return;
+                Frame();
+            }
+            Console.Error.WriteLine("warning: view did not settle in 600 frames (endless animation?)");
+        }
+
+        Settle();
+        if (o.Full)
+        {
+            var probe = window.Inspect(size, 1);
+            var root = probe.Find("shot-root") ?? throw new InvalidOperationException("shot-root not found");
+            float bottom = 0;
+            foreach (int c in root.Children) bottom = MathF.Max(bottom, probe.Nodes[c].Layout.Bottom - root.Layout.Y);
+            size = new Size(o.Width, MathF.Max(o.Height, MathF.Ceiling(bottom)));
+            Settle();
+        }
+        var snapshot = window.Inspect(size, 1);
+        var canvas = new Canvas();
+        canvas.Resize((int)snapshot.Viewport.Width, (int)snapshot.Viewport.Height);
+        SoftwareRenderer.Render(snapshot.Scene, canvas);
+        string stem = Path.Combine(o.OutDir, $"{o.Name}-{o.Width}-{(dark ? "dark" : "light")}");
+        PngWriter.Write(stem + ".png", canvas);
+        File.WriteAllText(stem + ".tree.json", TreeDump.ToJson(new UiTree(snapshot)));
+        Console.WriteLine($"{stem}.png  {canvas.Width}x{canvas.Height}");
+    }
+
+    static View CreateView(App app, string name)
+    {
+        if (Hooks.Create(app, name) is { } custom) return app.New(custom);
+        var type = AppDomain.CurrentDomain.GetAssemblies().SelectMany(SafeTypes)
+            .FirstOrDefault(t => typeof(View).IsAssignableFrom(t) && !t.IsAbstract && (t.FullName == name || t.Name == name))
+            ?? throw new ArgumentException($"--view {name}: no concrete View subclass with that name in the loaded assemblies");
+        var view = (View?)Activator.CreateInstance(type) ?? throw new ArgumentException($"--view {name}: needs a parameterless constructor (or return it from Hooks.Create)");
+        return app.New(view);
+    }
+
+    static IEnumerable<Type> SafeTypes(Assembly a)
+    {
+        try { return a.GetTypes(); } catch (ReflectionTypeLoadException e) { return e.Types.OfType<Type>(); }
+    }
+}
+
+/// <summary>Hosts the view like a browser page: fills the viewport (full-bleed layouts), or flows at its content height with --full.</summary>
+sealed class ShotHost(View page, bool flow) : View
+{
+    public override Div Render(Window w) =>
+        w.Div().Key("shot-root").Class(flow ? "w-full bg-background text-foreground" : "size-full bg-background text-foreground")
+            .Child(w.View(page).Class(flow ? "w-full" : "size-full"));
+}
+
+static class Fonts
+{
+    public static TextSystem Load(string? dir)
+    {
+        var text = new TextSystem();
+        if (dir is not null)
+            foreach (string file in Directory.EnumerateFiles(dir, "*.ttf").Order())
+            {
+                string n = Path.GetFileNameWithoutExtension(file);
+                var weight = n.Contains("Semi", StringComparison.OrdinalIgnoreCase) ? FontWeight.Semibold : n.Contains("Bold", StringComparison.OrdinalIgnoreCase) ? FontWeight.Bold
+                    : n.Contains("Medium", StringComparison.OrdinalIgnoreCase) ? FontWeight.Medium : FontWeight.Normal;
+                text.TryAddFont(file, weight, n.Contains("Mono", StringComparison.OrdinalIgnoreCase) ? FontFamily.Mono : FontFamily.Sans, n.Contains("Italic", StringComparison.OrdinalIgnoreCase));
+            }
+        string win = Environment.GetFolderPath(Environment.SpecialFolder.Fonts);
+        const string dejavu = "/usr/share/fonts/truetype/dejavu/";
+        if (text.TryAddFont(Path.Combine(win, "segoeui.ttf"), FontWeight.Normal))
+        {
+            text.TryAddFont(Path.Combine(win, "seguisb.ttf"), FontWeight.Semibold);
+            text.TryAddFont(Path.Combine(win, "seguisb.ttf"), FontWeight.Medium); // Chrome on Windows draws font-medium with Segoe UI Semibold
+            text.TryAddFont(Path.Combine(win, "segoeuib.ttf"), FontWeight.Bold);
+            text.TryAddFont(Path.Combine(win, "segoeuii.ttf"), FontWeight.Normal, FontFamily.Sans, italic: true);
+            text.TryAddFont(Path.Combine(win, "consola.ttf"), FontWeight.Normal, FontFamily.Mono);
+            text.TryAddFont(Path.Combine(win, "consolab.ttf"), FontWeight.Bold, FontFamily.Mono);
+        }
+        else if (text.TryAddFont(dejavu + "DejaVuSans.ttf", FontWeight.Normal))
+        {
+            text.TryAddFont(dejavu + "DejaVuSans-Bold.ttf", FontWeight.Bold);
+            text.TryAddFont(dejavu + "DejaVuSansMono.ttf", FontWeight.Normal, FontFamily.Mono);
+        }
+        if (!text.HasFonts) throw new InvalidOperationException("No TrueType font found (pass --fonts <dir>).");
+        return text;
+    }
+}

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Porting aids for the gotx-port skill: Tailwind audit, HTML/GPUI to GotX translation hints, image diff. Not shipped; no packages. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsAotCompatible>false</IsAotCompatible>
+    <RootNamespace>GotX.Port</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/GotX.Core/GotX.Core.csproj" />
+    <ProjectReference Include="../../src/GotX.Raster/GotX.Raster.csproj" />
+    <ProjectReference Include="../../src/GotX.Test/GotX.Test.csproj" />
+    <ProjectReference Include="../../src/GotX.Components/GotX.Components.csproj" />
+  </ItemGroup>
+</Project>

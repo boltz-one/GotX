@@ -29,7 +29,7 @@ View.Render → ElementTree (arena Node, handle Div) → Tailwind ClassList (Uti
 | Chữ, font, atlas | `Text/` |
 | Path, ảnh | `Media/` |
 | Effect, hẹn giờ | `App/App.cs`, `App.Timers.cs`, `Entity.cs` |
-| Móc chẩn đoán | `Diagnostics/`, `Window.Diagnostics.cs` |
+| Móc chẩn đoán, nhật ký hiệu năng | `Diagnostics/` (`PerfLog`, `PerfCounters`), `Window.Diagnostics.cs`, `Window.PerfLog.cs` |
 
 ## Bất biến phải giữ
 

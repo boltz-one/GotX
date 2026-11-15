@@ -1,0 +1,57 @@
+// Template for a view ported to GotX. Rename Ported/PortedView, fill every TODO, delete this header.
+// Rules baked in: static handlers (no captured lambdas), keys on anything tests/focus/scroll must find,
+// class sets as constants (never built per frame), VectorPath created once, theme tokens instead of hard-coded colours.
+using GotX;
+using GotX.Components;
+
+namespace Ported;
+
+/// <summary>TODO one line: what this view is and where it was ported from (file / URL / GPUI type).</summary>
+public sealed class PortedView : View
+{
+    // ---- state: plain fields, Notify() after every change ----
+    bool _saved;
+
+    // ---- assets: static readonly, never created inside Render ----
+    static readonly VectorPath CheckIcon = VectorPath.Icon("M20 6 9 17l-5-5");
+
+    // ---- class sets: constants; semantic tokens (bg-card, text-muted-foreground, border-border...) follow dark mode ----
+    const string Page = "flex size-full items-center justify-center bg-background p-6 text-foreground";
+    const string Card = "flex w-[360px] flex-col gap-4 rounded-xl border border-border bg-card p-6 text-card-foreground shadow-sm";
+    const string Title = "text-lg font-semibold leading-none";
+    const string Muted = "text-sm text-muted-foreground";
+    const string Actions = "flex justify-end gap-2";
+    // Input/Textarea box override: a Func<bool invalid, string>. Return CONSTANT strings (the component compares by reference), so no per-frame concat.
+    const string NameBox = "flex h-9 w-full flex-col justify-center rounded-md border border-input bg-background px-3 text-sm shadow-xs";
+    const string NameBoxInvalid = "flex h-9 w-full flex-col justify-center rounded-md border border-destructive bg-background px-3 text-sm shadow-xs";
+    const string Status = "flex items-center gap-2 text-sm text-muted-foreground";
+
+    // Entities (Input, Checkbox, Select...): create in OnCreated with App.New, embed with w.View(_field).
+    Input _name = null!;
+
+    /// <summary>Text typed into the name field (tests read state through the entity, not by scraping the tree).</summary>
+    public string NameText => _name.Text;
+
+    protected override void OnCreated() =>
+        _name = App.New(new Input { Placeholder = "Project name", BoxClassOverride = static invalid => invalid ? NameBoxInvalid : NameBox });
+
+    public override Div Render(Window w) =>
+        w.Div().Key("page").Class(Page)
+            .Child(w.Div().Key("card").Class(Card)
+                .Child(w.Div().Class(Title).Child("Create project"))     // TODO text from the source
+                .Child(w.Div().Class(Muted).Child("Deploy your new project in one click."))
+                // Key goes on the w.View(..) wrapper: tests click/type through it (t.Click("name"); t.Type("..")) and the lint path names it.
+                .Child(w.View(_name).Key("name"))
+                // TODO body: fields, lists, nested components
+                .Child(w.Div().Class(Actions)
+                    .Child(Ui.Button(w, "Cancel", ButtonVariant.Outline).Key("cancel").OnClick(this, static (v, _) => v.Cancel()))
+                    .Child(Ui.Button(w, "Deploy").Key("deploy").OnClick(this, static (v, _) => v.Save())))
+                // Conditions pick classes/children in C# (no data-[state=..], aria-*, peer-* variants).
+                .Child(w.Div().Key("status").Class(Status)
+                    .Child(w.Path(CheckIcon).Class(_saved ? "size-4 text-primary" : "size-4 text-muted-foreground"))
+                    .Child(_saved ? "Saved" : "Not saved yet")));
+
+    void Save() { _saved = true; Notify(); }
+
+    void Cancel() { _saved = false; Notify(); }
+}

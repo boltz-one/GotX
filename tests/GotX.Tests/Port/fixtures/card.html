@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head><title>Card</title><style>.x{color:red}</style></head>
+<body>
+<main id="root" class="mx-auto flex max-w-md flex-col gap-4 p-6 hover:bg-muted dark:bg-card">
+  <!-- header -->
+  <header data-slot="card-header" class="flex items-center justify-between">
+    <h2 class="text-lg font-semibold">Create&nbsp;project &amp; deploy</h2>
+    <a href="/docs" class="z-10 text-sm underline">Docs</a>
+  </header>
+  <p class="text-sm text-muted-foreground">Deploy your <strong>new</strong> project in one click.</p>
+  <form class="flex flex-col gap-2">
+    <label for="name" class="text-sm font-medium">Name</label>
+    <input id="name" type="text" placeholder="My project" class="h-9 w-full rounded-md border border-input px-3 text-sm">
+    <input type="checkbox" checked>
+    <select disabled><option>One</option><option>Two</option></select>
+  </form>
+  <img src="logo.png" alt="Logo" class="size-8 rounded-full">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="size-4"><path d="M20 6 9 17l-5-5"/><circle cx="12" cy="12" r="3"/></svg>
+  <ul class="space-y-1"><li>First</li><li>Second</li></ul>
+  <div class="flex justify-end gap-2">
+    <button class="rounded-md border px-4 py-2 text-sm">Cancel</button>
+    <button class="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground" disabled>Deploy</button>
+  </div>
+</main>
+<script>console.log("x")</script>
+</body>
+</html>
