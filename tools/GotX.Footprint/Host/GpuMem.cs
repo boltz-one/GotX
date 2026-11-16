@@ -16,7 +16,7 @@ static unsafe class GpuMem
         if (!s_tried) { s_tried = true; Init(); }
         if (s_adapter is null) return (-1, -1);
         var vt = *(void***)s_adapter;
-        var query = (delegate* unmanaged[Stdcall]<void*, uint, int, ulong*, int>)vt[17];
+        var query = (delegate* unmanaged[Stdcall]<void*, uint, int, ulong*, int>)vt[14]; // IDXGIAdapter3::QueryVideoMemoryInfo (IUnknown 3 + IDXGIObject 4 + Adapter 3 + Adapter1 1 + Adapter2 1 + 2 teardown-event methods)
         ulong* info = stackalloc ulong[4]; // Budget, CurrentUsage, AvailableForReservation, CurrentReservation
         long local = query(s_adapter, 0, 0, info) >= 0 ? (long)info[1] : -1;
         long shared = query(s_adapter, 0, 1, info) >= 0 ? (long)info[1] : -1;

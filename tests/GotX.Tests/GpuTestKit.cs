@@ -7,7 +7,9 @@ using GotX.Text;
 static class GpuKit
 {
     /// <summary>Tạo renderer WARP offscreen; null nếu máy không tạo nổi thiết bị D3D11 (test phải ghi chú rõ rồi bỏ qua).</summary>
-    public static D3D11Renderer? TryRenderer(int w, int h) => D3D11Renderer.TryCreateOffscreen(w, h, warp: true);
+    /// <summary>GOTX_GPU_TEST_HW=1 chạy trên adapter phần cứng thật thay vì WARP (parity có dung sai kênh ≤ 3).</summary>
+    public static D3D11Renderer? TryRenderer(int w, int h) =>
+        D3D11Renderer.TryCreateOffscreen(w, h, warp: Environment.GetEnvironmentVariable("GOTX_GPU_TEST_HW") != "1");
 
     public static Canvas Gpu(D3D11Renderer r, Scene s, int w, int h)
     {

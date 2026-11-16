@@ -86,7 +86,7 @@ không khác biệt đo được, đã bỏ).
 
 Chưa làm (đã đo là còn đáng kể): giữ cây element qua frame để đổi kích thước không phải `Render` lại mọi view (đổi kích thước ~9 ms/frame trên trang chủ shadcn); phát lại view có `overflow-hidden` bị cắt ở mép khung cuộn thay vì render lại; thu nhỏ `Primitive` (200 byte) để giảm chi phí sao chép khi phát lại trang lớn; chạy đoạn thẳng của bóng đổ theo dải trong renderer CPU.
 
-Giới hạn khi đo GPU: máy chạy thử không có GPU thật (Microsoft Basic Display Adapter), nên `gpu` ~13–18 ms/frame ở 1440×900 là thời gian của bộ raster phần mềm của driver (quad ≈ 8 ms, bóng ≈ 5 ms,
+Giới hạn khi đo GPU (số bên dưới đo trên máy cũ; GPU thật xem §6.5): máy chạy thử không có GPU thật (Microsoft Basic Display Adapter), nên `gpu` ~13–18 ms/frame ở 1440×900 là thời gian của bộ raster phần mềm của driver (quad ≈ 8 ms, bóng ≈ 5 ms,
 glyph < 1 ms); số này chỉ hữu ích để so sánh tương đối, không đại diện cho GPU rời/tích hợp.
 
 ## 5. GPU: độ bền, parity, bộ đếm, vùng hỏng
@@ -192,10 +192,14 @@ Working set không đổi đáng kể (home 79 MB, hello 46 MB).
 - `GOTX_PARITY_FULL=1` có hiệu lực (80 s Release so với 10 s mặc định: ~4900 so với ~150 frame so pixel của damage; partial 90 × 2 seed so với 20 × 1 seed mỗi trang); bản Debug ~17 phút.
 - `gallery-overlays/click` drawP95 3.1 → 0.2 ms: chi phí một lần của tiến trình (lần mở đầu của mỗi loại overlay 4-20 ms: JIT + biên dịch class + raster glyph; lần mở thứ hai < 1 ms, đo bằng cách nhấp hai lượt). Bench nay mở mọi overlay một lượt trên cửa sổ bỏ đi trước khi đo `click` (`ChildRun.WarmClick`); cold vẫn đo khởi động. `Tailwind.Combine` dùng hai thế hệ như cache class (`ClassCombineCacheTests`).
 
-### 6.5 Rủi ro chưa kiểm chứng trên cửa sổ D3D11 thật (máy chỉ có WARP)
+### 6.5 Kiểm chứng trên GPU thật (Intel Arc iGPU, Core Ultra 9 285H, driver 32.0.101.6452, 2026-11-16)
 
-- Vùng hỏng bật mặc định cho D3D11: đích giữ lại + `CopyResource` sang back buffer flip-model và scissor chỉ được test pixel-exact trên WARP offscreen (`gpu/damage`), chưa trên swap chain / driver thật. Mất thiết bị đặt lại về Full qua `Damage.Invalidate()`. Thoát hiểm: `GOTX_DAMAGE=0`.
-- Frame không có gì đổi giờ trả scene cũ và renderer bỏ qua Present: hành vi chờ vsync / DWM với cửa sổ không Present chưa quan sát được trên máy thật.
+- Test GPU chạy trên adapter phần cứng bằng `GOTX_GPU_TEST_HW=1 dotnet run -c Release --project tests/GotX.Tests -- --filter gpu`: 32/32 đạt (parity CPU↔GPU 16 cảnh, `gpu/damage` pixel-exact, device-loss, leak 200 chu kỳ, atlas, 0 B/frame managed). Parity lệch tối đa Δ13 (trừ `translucent-borders`: 2 pixel Δ74, tổng ≥ 99.99 % trong dung sai).
+- Cửa sổ thật (`GotX.Perf real`, swap chain flip-model, `renderer=d3d11-hardware`): vùng hỏng bật/tắt (`GOTX_DAMAGE=0`) đều cho ảnh `PrintWindow` sạch, không thấy vùng cũ/artifact. Chưa so từng pixel vì vị trí cuộn phụ thuộc thời điểm input của harness.
+- Frame không đổi bỏ qua Present: `GotX.Footprint run --renderer d3d11` home / hello rảnh 10 s = 0 frame / 0 present, CPU 0.01 %; sau input cửa sổ vẽ lại bình thường (input 19 frame / 20 present). Không thấy treo vsync / DWM.
+- `gpu` (timestamp query) median 1.3-5 ms ở 1440×900 (WARP trước đó 13-18 ms). Chưa đo: GPU rời, nhiều adapter (hybrid), HDR / nhiều màn hình DPI khác nhau.
+- `gpu-loss` (stress) và `bench --gpu` vẫn ép WARP (`warp: true`); mất thiết bị thật chỉ được tiêm qua seam `InjectHr`.
+- Thoát hiểm vùng hỏng: `GOTX_DAMAGE=0`.
 - Khung một phần sửa scene tại chỗ: mã giữ tham chiếu `Scene` của frame trước qua Draw kế tiếp sẽ thấy nó đổi (trong repo chỉ có `SceneDamage` / renderer dùng, cả hai không giữ).
 
 ## 7. Vòng tối ưu raster CPU + bộ nhớ (đo bằng `tools/GotX.Stress`)
