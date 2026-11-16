@@ -26,7 +26,7 @@ View.Render → ElementTree (arena Node, handle Div) → Tailwind ClassList (Uti
 | Overlay, cuộn | `Window.Overlays.cs`, `Overlay/`, `Window.Scroll.cs` |
 | Layout | `Layout/LayoutEngine*.cs` |
 | Class Tailwind | `Styling/` (skill `gotx-tailwind`) |
-| Chữ, font, atlas | `Text/` |
+| Chữ, font, atlas | `Text/` (`Shape` là đường duy nhất: fallback font, ccmp/liga, dấu GPOS, bidi; xem docs/system-architecture.md §8.5. Chưa hỗ trợ: ghép chữ Ả Rập init/medi/fina, isolate/embedding bidi, OTF/CFF, TTC) |
 | Path, ảnh | `Media/` |
 | Effect, hẹn giờ | `App/App.cs`, `App.Timers.cs`, `Entity.cs` |
 | Móc chẩn đoán, nhật ký hiệu năng | `Diagnostics/` (`PerfLog`, `PerfCounters`), `Window.Diagnostics.cs`, `Window.PerfLog.cs` |

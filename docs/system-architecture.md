@@ -223,7 +223,7 @@ Bubble: đi theo KeyParent tối đa 256 bước, gọi OnKey của từng mục
 
 ### 8.1 Font
 
-- `TextSystem.TryAddFont(path, weight, family, italic)`: nạp TrueType. `Font` (`Text/Font.cs`) tự parse `head`, `hhea`, `maxp`, `hmtx`, `cmap` (ưu tiên format 12, sau đó format 4), `loca`, `glyf` (kể cả glyph ghép). **Chưa có**: OTF/CFF, TTC, GPOS/GSUB, kerning.
+- `TextSystem.TryAddFont(path, weight, family, italic)`: đăng ký TrueType (chỉ `Font.Probe` đọc bảng thư mục; file nạp LAZY khi `FontFor` chọn tới, `ResidentFontCount`). `Font` (`Text/Font.cs`) tự parse `head`, `hhea`, `maxp`, `hmtx`, `cmap` (ưu tiên format 12, sau đó format 4), `loca`, `glyf` (kể cả glyph ghép). Kerning (GPOS/kern), GSUB (tnum, ccmp, liga, clig) và GPOS mark/mkmk: xem 8.5. **Chưa có**: OTF/CFF, TTC.
 - `FontFor(family, weight, italic)` chấm điểm: `|Δweight| + 100 000` nếu sai họ `+ 10 000` nếu sai nghiêng. Không có font nghiêng thật thì `PaintRun` nghiêng giả bằng phép trượt `-0,2`.
 - Windows (`RegisterDefaultFonts`): Segoe UI (thường, semibold, bold, nghiêng, bold nghiêng), Consolas (thường, bold, nghiêng). Thiếu Segoe thì dùng Arial.
 
@@ -236,6 +236,17 @@ Bubble: đi theo KeyParent tối đa 256 bước, gọi OnKey của từng mục
 ### 8.3 Wrap và đo
 
 `TextSystem.Wrap` (`Text/TextSystem.Wrap.cs`): ngắt tại khoảng trắng, từ quá dài ngắt theo ký tự, `\n` ngắt cứng; `Width` không tính khoảng trắng cuối. Cache `WrapKey(text, fontId, size, maxWidth, tracking)`: tối đa 4096 kết quả hoặc 1 MB ký tự, chạm ngưỡng thì xoá hết. `ApplyCase` có cache riêng (2048 mục). `ellipsis` dùng `FitIndex`.
+
+### 8.5 Định hình chữ (shaping), font dự phòng, ngắt dòng, bidi
+
+`TextSystem.Shape(text, start, end, style, visual)` (`Text/TextSystem.Shape.cs`) là đường duy nhất cho đo, ngắt dòng, vẽ và hit-test; kết quả là `ShapedGlyph[]` dùng chung (không cấp phát khi ổn định, chỉ hợp lệ tới lần Shape sau). Mỗi glyph có `Font` riêng, `Pre` (kerning), `Advance`, `XOff/YOff` (dấu), `Cluster..ClusterEnd` (UTF-16) và `Level` bidi.
+
+- **Font dự phòng**: `TryAddFallbackFont(path)` (Core chỉ nhận font đã đăng ký; platform tự nạp font hệ thống). Chọn theo từng codepoint khi font chính cmap = 0: dự phòng đầu tiên có glyph; không có thì vẽ `.notdef` (ô vuông) của font chính. Chuỗi theo thứ tự đăng ký, không phân biệt đậm/nghiêng. Id font dự phòng ≥ `FallbackIdBase` (4096) nên khoá atlas riêng. Kerning chỉ giữa hai glyph cùng font; đường gốc / chiều cao dòng theo font chính. Cache: trang 256 codepoint (≤ 128 trang = 32 KB, quá thì xoá); font dự phòng chỉ nạp khi có ký tự thiếu glyph.
+- **GSUB**: tnum, `ccmp` + `liga`/`clig` (lookup 1, 2, 4, kể cả Extension). Có letter-spacing thì tắt liga/clig (như CSS). Chưa có lookup ngữ cảnh (5/6), cờ bỏ qua dấu, `calt`, `rlig`. Ligature gộp nhiều ký tự thành một cụm: `MeasureRange` chia theo tỉ lệ ký tự khi caret rơi giữa cụm, `CaretX`/`IndexAtX` cũng vậy.
+- **Dấu kết hợp**: dấu tiếng Việt tổ hợp (NFD) được ghép thành ký tự dựng sẵn nếu font có glyph (như HarfBuzz; `Vietnamese.ComposeRun`), nếu không thì GPOS mark-to-base / mark-to-mark (`Font.GposMark.cs`), advance dấu = 0. Chưa có mark-to-ligature.
+- **Ngắt dòng** (`LineBreak.cs`, UAX#14 rút gọn): Latin chỉ ngắt ở khoảng trắng (không ngắt sau gạch nối, giữ nguyên snapshot); chữ biểu ý CJK/kana/full-width ngắt giữa các chữ, không ngắt trước dấu đóng/dấu câu (、。）」ー, kana nhỏ) hay sau dấu mở. Hangul theo khoảng trắng.
+- **Bidi** (`Bidi.cs`, UAX#9 rút gọn): đoạn LTR một cấp nhúng, W1–W7, N1–N2, I1–I2, L2 theo nhóm (chữ + dấu), phản chiếu ngoặc. `Shape(visual: true)` trả glyph theo thứ tự hiển thị; `CaretX` / `IndexAtX` là toạ độ hiển thị ↔ vị trí logic. `MeasureRange` là bề rộng (không phụ thuộc thứ tự). **Chưa có**: ký tự điều khiển hướng tường minh (LRE/RLE/isolate), cặp ngoặc N0, đoạn RTL, **ghép chữ Ả Rập (init/medi/fina, lam-alef)**: chữ Ả Rập hiện hiện dạng isolated và sai nối nét.
+- `TextInput` cần dùng `CaretX` thay `MeasureRange(lineStart, caret)` cho vị trí caret/vùng chọn để đúng với chữ RTL (với ligature thì `MeasureRange` đã đúng).
 
 ### 8.4 TextInput và IME
 

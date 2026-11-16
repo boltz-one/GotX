@@ -33,6 +33,9 @@ TimerTests.Register(suite);
 VectorTests.Register(suite);
 ImageTests.Register(suite);
 TextStyleTests.Register(suite);
+TextShapingTests.Register(suite);
+TextLayoutTests.Register(suite);
+TextLatinParityTests.Register(suite);
 DiagnosticsTests.Register(suite);
 StateAndScrollTests.Register(suite);
 RegressionTests.Register(suite);
@@ -40,6 +43,9 @@ TailwindFeatureTests.Register(suite);
 VirtualListTests.Register(suite);
 VirtualListVariableTests.Register(suite);
 VirtualDataTableTests.Register(suite);
+SemanticsTests.Register(suite);
+SemanticsCostTests.Register(suite);
+SemanticsUiaTests.Register(suite);
 
 // 3. Các trang gallery của GotX.Components: lint (so với lint-baseline.txt) và hiệu năng.
 GalleryTests.Register(suite);
@@ -54,6 +60,12 @@ PerfLogTests.Register(suite);
 PerfCacheTests.Register(suite);
 PerfRasterTests.Register(suite);
 PerfBudgetTests.Register(suite);
+
+// 5b. GPU: parity CPU↔D3D11 (WARP), mất thiết bị, rò rỉ, bộ đếm, vùng hỏng (docs/performance.md §5).
+GpuParityTests.Register(suite);
+GpuRobustnessTests.Register(suite);
+GpuCountersTests.Register(suite);
+GpuDamageTests.Register(suite);
 
 // 5. tools/GotX.Port (công cụ cho skill gotx-port): trích class, gợi ý class chưa hỗ trợ, html/gpui → GotX, diff ảnh.
 PortToolTests.Register(suite);

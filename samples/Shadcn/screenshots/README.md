@@ -25,24 +25,24 @@ them (horizontal overlap) or from the matched box enclosing them, whichever edge
 
 | Page | Viewport | Theme | Size ref → GotX | Pixel diff (tol 0 / 24) | Texts matched | Boxes matched | ≤2 px | Median Δ | P90 Δ | Max Δ | Text med / P90 | Box med / P90 | Residual med / P90 (n) | Jumps | Images |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| home | 1440×900 | light | 1440×1829 → 1440×1829 | 10.25 % / 3.26 % | 124/131 | 69/80 | 192/193 | 0.2 | 0.8 | 2.9 | 0.2 / 0.8 | 0.2 / 0.8 | 0 / 0.9 (154) | 1 | [ref](reference/home-1440-light.png) · [gotx](gotx/home-1440-light.png) · [diff](diff/home-1440-light.png) · [compare](compare/home-1440-light.png) |
-| home | 1440×900 | dark | 1440×1829 → 1440×1829 | 15.85 % / 3.45 % | 124/131 | 69/80 | 192/193 | 0.2 | 0.8 | 2.9 | 0.2 / 0.8 | 0.2 / 0.8 | 0 / 0.9 (154) | 1 | [ref](reference/home-1440-dark.png) · [gotx](gotx/home-1440-dark.png) · [diff](diff/home-1440-dark.png) · [compare](compare/home-1440-dark.png) |
-| home | 1024×900 | light | 1024×1765 → 1024×1765 | 11.90 % / 3.61 % | 96/101 | 57/64 | 153/153 | 0.3 | 0.9 | 1.9 | 0.3 / 0.7 | 0.7 / 0.9 | 0.3 / 0.9 (119) | 0 | [ref](reference/home-1024-light.png) · [gotx](gotx/home-1024-light.png) · [diff](diff/home-1024-light.png) · [compare](compare/home-1024-light.png) |
-| home | 1024×900 | dark | 1024×1765 → 1024×1765 | 18.19 % / 3.79 % | 96/101 | 57/64 | 153/153 | 0.3 | 0.9 | 1.9 | 0.3 / 0.7 | 0.7 / 0.9 | 0.3 / 0.9 (119) | 0 | [ref](reference/home-1024-dark.png) · [gotx](gotx/home-1024-dark.png) · [diff](diff/home-1024-dark.png) · [compare](compare/home-1024-dark.png) |
+| home | 1440×900 | light | 1440×1829 → 1440×1829 | 10.24 % / 3.25 % | 124/131 | 69/80 | 192/193 | 0.2 | 0.8 | 2.9 | 0.2 / 0.8 | 0.2 / 0.7 | 0 / 0.7 (154) | 1 | [ref](reference/home-1440-light.png) · [gotx](gotx/home-1440-light.png) · [diff](diff/home-1440-light.png) · [compare](compare/home-1440-light.png) |
+| home | 1440×900 | dark | 1440×1829 → 1440×1829 | 15.84 % / 3.44 % | 124/131 | 69/80 | 192/193 | 0.2 | 0.8 | 2.9 | 0.2 / 0.8 | 0.2 / 0.7 | 0 / 0.7 (154) | 1 | [ref](reference/home-1440-dark.png) · [gotx](gotx/home-1440-dark.png) · [diff](diff/home-1440-dark.png) · [compare](compare/home-1440-dark.png) |
+| home | 1024×900 | light | 1024×1765 → 1024×1765 | 11.88 % / 3.59 % | 96/101 | 57/64 | 153/153 | 0.3 | 0.7 | 1.4 | 0.3 / 0.6 | 0.6 / 0.7 | 0.3 / 0.7 (119) | 0 | [ref](reference/home-1024-light.png) · [gotx](gotx/home-1024-light.png) · [diff](diff/home-1024-light.png) · [compare](compare/home-1024-light.png) |
+| home | 1024×900 | dark | 1024×1765 → 1024×1765 | 18.17 % / 3.77 % | 96/101 | 57/64 | 153/153 | 0.3 | 0.7 | 1.4 | 0.3 / 0.6 | 0.6 / 0.7 | 0.3 / 0.7 (119) | 0 | [ref](reference/home-1024-dark.png) · [gotx](gotx/home-1024-dark.png) · [diff](diff/home-1024-dark.png) · [compare](compare/home-1024-dark.png) |
 | home | 640×900 | light | 640×1297 → 640×1298 ⚠ | 29.47 % / 2.46 % | 8/9 | 4/4 | 12/12 | 0.5 | 0.9 | 1.4 | 0.5 / 0.6 | 0.5 / 0.9 | 0 / 0 (0) | 0 | [ref](reference/home-640-light.png) · [gotx](gotx/home-640-light.png) · [diff](diff/home-640-light.png) · [compare](compare/home-640-light.png) |
 | home | 640×900 | dark | 640×1297 → 640×1298 ⚠ | 21.21 % / 2.48 % | 8/9 | 4/4 | 12/12 | 0.5 | 0.9 | 1.4 | 0.5 / 0.6 | 0.5 / 0.9 | 0 / 0 (0) | 0 | [ref](reference/home-640-dark.png) · [gotx](gotx/home-640-dark.png) · [diff](diff/home-640-dark.png) · [compare](compare/home-640-dark.png) |
 | dashboard-01 | 1440×900 | light | 1440×900 → 1440×900 | 27.03 % / 3.19 % | 66/153 | 44/131 | 110/110 | 0.3 | 0.9 | 1.5 | 0.3 / 0.7 | 0.5 / 1 | 0.5 / 1 (24) | 0 | [ref](reference/dashboard-01-1440-light.png) · [gotx](gotx/dashboard-01-1440-light.png) · [diff](diff/dashboard-01-1440-light.png) · [compare](compare/dashboard-01-1440-light.png) |
 | dashboard-01 | 1440×900 | dark | 1440×900 → 1440×900 | 17.93 % / 3.57 % | 66/153 | 44/131 | 110/110 | 0.3 | 0.9 | 1.5 | 0.3 / 0.7 | 0.5 / 1 | 0.5 / 1 (24) | 0 | [ref](reference/dashboard-01-1440-dark.png) · [gotx](gotx/dashboard-01-1440-dark.png) · [diff](diff/dashboard-01-1440-dark.png) · [compare](compare/dashboard-01-1440-dark.png) |
-| dashboard-01 | 1024×768 | light | 1024×768 → 1024×768 | 34.93 % / 3.04 % | 42/146 | 24/123 | 66/66 | 0 | 0.7 | 1 | 0 / 0.7 | 0 / 0.7 | 0.5 / 1 (24) | 0 | [ref](reference/dashboard-01-1024-light.png) · [gotx](gotx/dashboard-01-1024-light.png) · [diff](diff/dashboard-01-1024-light.png) · [compare](compare/dashboard-01-1024-light.png) |
-| dashboard-01 | 1024×768 | dark | 1024×768 → 1024×768 | 19.12 % / 3.16 % | 42/146 | 24/123 | 66/66 | 0 | 0.7 | 1 | 0 / 0.7 | 0 / 0.7 | 0.5 / 1 (24) | 0 | [ref](reference/dashboard-01-1024-dark.png) · [gotx](gotx/dashboard-01-1024-dark.png) · [diff](diff/dashboard-01-1024-dark.png) · [compare](compare/dashboard-01-1024-dark.png) |
+| dashboard-01 | 1024×768 | light | 1024×768 → 1024×768 | 34.93 % / 3.03 % | 42/146 | 24/123 | 66/66 | 0 | 0.6 | 1 | 0 / 0.6 | 0 / 0.7 | 0.5 / 1 (24) | 0 | [ref](reference/dashboard-01-1024-light.png) · [gotx](gotx/dashboard-01-1024-light.png) · [diff](diff/dashboard-01-1024-light.png) · [compare](compare/dashboard-01-1024-light.png) |
+| dashboard-01 | 1024×768 | dark | 1024×768 → 1024×768 | 19.11 % / 3.16 % | 42/146 | 24/123 | 66/66 | 0 | 0.6 | 1 | 0 / 0.6 | 0 / 0.7 | 0.5 / 1 (24) | 0 | [ref](reference/dashboard-01-1024-dark.png) · [gotx](gotx/dashboard-01-1024-dark.png) · [diff](diff/dashboard-01-1024-dark.png) · [compare](compare/dashboard-01-1024-dark.png) |
 | sidebar-07 | 1440×900 | light | 1440×900 → 1440×900 | 0.88 % / 0.65 % | 19/20 | 15/19 | 34/34 | 0 | 0.5 | 2 | 0 / 0.5 | 0 / 0 | 0 / 0 (0) | 0 | [ref](reference/sidebar-07-1440-light.png) · [gotx](gotx/sidebar-07-1440-light.png) · [diff](diff/sidebar-07-1440-light.png) · [compare](compare/sidebar-07-1440-light.png) |
 | sidebar-07 | 1440×900 | dark | 1440×900 → 1440×900 | 0.97 % / 0.70 % | 19/20 | 15/19 | 34/34 | 0 | 0.5 | 2 | 0 / 0.5 | 0 / 0 | 0 / 0 (0) | 0 | [ref](reference/sidebar-07-1440-dark.png) · [gotx](gotx/sidebar-07-1440-dark.png) · [diff](diff/sidebar-07-1440-dark.png) · [compare](compare/sidebar-07-1440-dark.png) |
-| sidebar-07 | 1024×768 | light | 1024×768 → 1024×768 | 1.45 % / 1.08 % | 19/20 | 15/19 | 34/34 | 0 | 0.5 | 2 | 0 / 0.5 | 0 / 0 | 0 / 0 (0) | 0 | [ref](reference/sidebar-07-1024-light.png) · [gotx](gotx/sidebar-07-1024-light.png) · [diff](diff/sidebar-07-1024-light.png) · [compare](compare/sidebar-07-1024-light.png) |
+| sidebar-07 | 1024×768 | light | 1024×768 → 1024×768 | 1.44 % / 1.07 % | 19/20 | 15/19 | 34/34 | 0 | 0.5 | 2 | 0 / 0.5 | 0 / 0 | 0 / 0 (0) | 0 | [ref](reference/sidebar-07-1024-light.png) · [gotx](gotx/sidebar-07-1024-light.png) · [diff](diff/sidebar-07-1024-light.png) · [compare](compare/sidebar-07-1024-light.png) |
 | sidebar-07 | 1024×768 | dark | 1024×768 → 1024×768 | 1.58 % / 1.15 % | 19/20 | 15/19 | 34/34 | 0 | 0.5 | 2 | 0 / 0.5 | 0 / 0 | 0 / 0 (0) | 0 | [ref](reference/sidebar-07-1024-dark.png) · [gotx](gotx/sidebar-07-1024-dark.png) · [diff](diff/sidebar-07-1024-dark.png) · [compare](compare/sidebar-07-1024-dark.png) |
-| sidebar-03 | 1440×900 | light | 1440×900 → 1440×900 | 1.51 % / 1.25 % | 30/36 | 32/42 | 62/62 | 0 | 0 | 2 | 0 / 0 | 0 / 0 | 0 / 0 (0) | 0 | [ref](reference/sidebar-03-1440-light.png) · [gotx](gotx/sidebar-03-1440-light.png) · [diff](diff/sidebar-03-1440-light.png) · [compare](compare/sidebar-03-1440-light.png) |
+| sidebar-03 | 1440×900 | light | 1440×900 → 1440×900 | 1.51 % / 1.24 % | 30/36 | 32/42 | 62/62 | 0 | 0 | 2 | 0 / 0 | 0 / 0 | 0 / 0 (0) | 0 | [ref](reference/sidebar-03-1440-light.png) · [gotx](gotx/sidebar-03-1440-light.png) · [diff](diff/sidebar-03-1440-light.png) · [compare](compare/sidebar-03-1440-light.png) |
 | sidebar-03 | 1440×900 | dark | 1440×900 → 1440×900 | 1.70 % / 1.34 % | 30/36 | 32/42 | 62/62 | 0 | 0 | 2 | 0 / 0 | 0 / 0 | 0 / 0 (0) | 0 | [ref](reference/sidebar-03-1440-dark.png) · [gotx](gotx/sidebar-03-1440-dark.png) · [diff](diff/sidebar-03-1440-dark.png) · [compare](compare/sidebar-03-1440-dark.png) |
 | sidebar-03 | 1024×768 | light | 1024×768 → 1024×768 | 2.13 % / 1.75 % | 26/36 | 28/42 | 54/54 | 0 | 0 | 2 | 0 / 0 | 0 / 0 | 0 / 0 (0) | 0 | [ref](reference/sidebar-03-1024-light.png) · [gotx](gotx/sidebar-03-1024-light.png) · [diff](diff/sidebar-03-1024-light.png) · [compare](compare/sidebar-03-1024-light.png) |
-| sidebar-03 | 1024×768 | dark | 1024×768 → 1024×768 | 2.38 % / 1.88 % | 26/36 | 28/42 | 54/54 | 0 | 0 | 2 | 0 / 0 | 0 / 0 | 0 / 0 (0) | 0 | [ref](reference/sidebar-03-1024-dark.png) · [gotx](gotx/sidebar-03-1024-dark.png) · [diff](diff/sidebar-03-1024-dark.png) · [compare](compare/sidebar-03-1024-dark.png) |
+| sidebar-03 | 1024×768 | dark | 1024×768 → 1024×768 | 2.37 % / 1.88 % | 26/36 | 28/42 | 54/54 | 0 | 0 | 2 | 0 / 0 | 0 / 0 | 0 / 0 (0) | 0 | [ref](reference/sidebar-03-1024-dark.png) · [gotx](gotx/sidebar-03-1024-dark.png) · [diff](diff/sidebar-03-1024-dark.png) · [compare](compare/sidebar-03-1024-dark.png) |
 | login-03 | 1440×900 | light | 1440×900 → 1440×900 | 2.71 % / 0.85 % | 13/15 | 4/6 | 16/17 | 0.2 | 0.8 | 3.5 | 0.4 / 1.1 | 0.1 / 0.3 | 0.3 / 1 (14) | 0 | [ref](reference/login-03-1440-light.png) · [gotx](gotx/login-03-1440-light.png) · [diff](diff/login-03-1440-light.png) · [compare](compare/login-03-1440-light.png) |
 | login-03 | 1440×900 | dark | 1440×900 → 1440×900 | 1.75 % / 0.85 % | 13/15 | 4/6 | 16/17 | 0.2 | 0.8 | 3.5 | 0.4 / 1.1 | 0.1 / 0.3 | 0.3 / 1 (14) | 0 | [ref](reference/login-03-1440-dark.png) · [gotx](gotx/login-03-1440-dark.png) · [diff](diff/login-03-1440-dark.png) · [compare](compare/login-03-1440-dark.png) |
 | login-03 | 1024×768 | light | 1024×768 → 1024×768 | 4.47 % / 1.40 % | 13/15 | 4/6 | 16/17 | 0.2 | 0.8 | 3.5 | 0.4 / 1.1 | 0.1 / 0.3 | 0.3 / 1 (14) | 0 | [ref](reference/login-03-1024-light.png) · [gotx](gotx/login-03-1024-light.png) · [diff](diff/login-03-1024-light.png) · [compare](compare/login-03-1024-light.png) |
@@ -69,37 +69,37 @@ Light theme (layout is theme-independent). Rects are `x,y w×h`; Δ = GotX − r
 | Kind | Text | Reference | GotX | Δx | Δy | Δw | Δh |
 |---|---|---|---|---|---|---|---|
 | text | $50 (MIN) | 752,1031.6 63.7×18 | 752,1033 63.9×21 | 0 | 2.9 | 0.3 | 3 |
-| text | Outline | 259.1,401.8 47.8×18 | 261,401 47.8×20 | 1.9 | 0.2 | -0 | 2 |
-| box button | Outline | 246.1,394.8 73.8×32 | 248,395 74×32 | 1.9 | 0.2 | 0.2 | 0 |
 | text | shadcn | 563.4,1771.8 47.7×18 | 562,1771 47.7×20 | -1.4 | 0.2 | -0 | 2 |
-| text | Secondary | 154.7,401.8 70.3×18 | 156,401 70.4×20 | 1.3 | 0.2 | 0 | 2 |
-| box button | Button | 44,394.8 89.7×32 | 44,395 91×32 | 0 | 0.2 | 1.3 | 0 |
-| box button | Secondary | 141.7,394.8 96.3×32 | 143,395 97×32 | 1.3 | 0.2 | 0.7 | 0 |
-| text | Button Group | 202.1,645.8 86.9×18 | 201,645 87.6×20 | -1.1 | 0.2 | 0.7 | 2 |
-| box button | Button Group | 189.1,638.8 112.9×32 | 188,639 114×32 | -1.1 | 0.2 | 1.1 | 0 |
 | text | Realty Income | 415,1654.6 93.4×18 | 415,1655 93.4×19.3 | 0 | 1.1 | -0 | 1.3 |
 | text | Notes | 752,1077.6 39.1×18 | 752,1078 39.1×19.3 | 0 | 1.1 | -0 | 1.3 |
 | text | $2500.00 | 931,968.6 111×31 | 931,969 111×32 | 0 | 1 | 0 | 1 |
 | text | $10,000 (MAX) | 946.6,1033.6 95.4×18 | 946,1033 95.3×21 | -0.6 | 0.9 | -0.1 | 3 |
+| text | Outline | 259.1,401.8 47.8×18 | 260,401 47.8×20 | 0.9 | 0.2 | -0 | 2 |
+| box button | Outline | 246.1,394.8 73.8×32 | 247,395 74×32 | 0.9 | 0.2 | 0.2 | 0 |
 | text | Secondary | 115.1,596.8 60.3×16 | 116,597 60.3×16 | 0.9 | 0.2 | 0 | 0 |
 | box badge | Badge | 44,594.8 54.1×20 | 44,595 55×20 | 0 | 0.2 | 0.9 | 0 |
+| box button | Get Started | 592.5,267.3 102.1×35 | 592,267 103×35 | -0.5 | -0.3 | 0.9 | 0 |
+| box badge | Secondary | 106.1,594.8 78.3×20 | 107,595 79×20 | 0.9 | 0.2 | 0.7 | 0 |
+| text | -$37.46 | 618.9,1058.8 52.1×18 | 618,1058 52.1×20 | -0.9 | 0.2 | -0 | 2 |
+| text | Goal Name | 752,484.8 71.9×18 | 752,485 71.9×19.3 | 0 | 0.8 | -0 | 1.3 |
+| text | Vanguard | 415,1386.8 63×18 | 415,1387 62.9×19.3 | 0 | 0.8 | -0 | 1.3 |
 
 **Worst residuals inside containers** (14 matched containers; container Δ removed)
 
 | Kind | Text | Container | Container Δx, Δy | Residual Δx | Residual Δy | Δw | Δh |
 |---|---|---|---|---|---|---|---|
 | text | $50 (MIN) | Payout Threshold Set the minim… | 0, -0.3 | 0 | 3.2 | 0.3 | 3 |
-| text | Outline | Button Secondary Outline Badge… | 0, 0.2 | 1.9 | 0 | -0 | 2 |
-| box button | Outline | Button Secondary Outline Badge… | 0, 0.2 | 1.9 | 0 | 0.2 | 0 |
 | text | Notes | Payout Threshold Set the minim… | 0, -0.3 | 0 | 1.4 | -0 | 1.3 |
-| text | Secondary | Button Secondary Outline Badge… | 0, 0.2 | 1.3 | 0 | 0 | 2 |
-| box button | Button | Button Secondary Outline Badge… | 0, 0.2 | 0 | 0 | 1.3 | 0 |
-| box button | Secondary | Button Secondary Outline Badge… | 0, 0.2 | 1.3 | 0 | 0.7 | 0 |
 | text | $2500.00 | Payout Threshold Set the minim… | 0, -0.3 | 0 | 1.3 | 0 | 1 |
 | text | $10,000 (MAX) | Payout Threshold Set the minim… | 0, -0.3 | -0.6 | 1.2 | -0.1 | 3 |
-| text | Button Group | Button Secondary Outline Badge… | 0, 0.2 | -1.1 | 0 | 0.7 | 2 |
-| box button | Button Group | Button Secondary Outline Badge… | 0, 0.2 | -1.1 | 0 | 1.1 | 0 |
+| text | Outline | Button Secondary Outline Badge… | 0, 0.2 | 0.9 | 0 | -0 | 2 |
+| box button | Outline | Button Secondary Outline Badge… | 0, 0.2 | 0.9 | 0 | 0.2 | 0 |
 | text | Secondary | Button Secondary Outline Badge… | 0, 0.2 | 0.9 | 0 | 0 | 0 |
+| box badge | Badge | Button Secondary Outline Badge… | 0, 0.2 | 0 | 0 | 0.9 | 0 |
+| box badge | Secondary | Button Secondary Outline Badge… | 0, 0.2 | 0.9 | 0 | 0.7 | 0 |
+| text | -$37.46 | Claimable Balance $1,211.29 Pe… | 0, 0.2 | -0.9 | -0 | -0 | 2 |
+| text | Realty Income | Q2 Dividend Income Quarterly d… | 0, 0.2 | 0 | 0.9 | -0 | 1.3 |
+| text | USD — United States Dollar | Payout Threshold Set the minim… | 0, -0.3 | 0 | 0.8 | -0 | 2 |
 
 **Offset jumps, top → bottom** (first 1 of 1; Δy vs the element directly above or the enclosing box)
 
@@ -111,38 +111,38 @@ Light theme (layout is theme-independent). Rects are `x,y w×h`; Δ = GotX − r
 
 | Kind | Text | Reference | GotX | Δx | Δy | Δw | Δh |
 |---|---|---|---|---|---|---|---|
-| text | Outline | 259.1,358 47.8×18 | 261,357 47.8×20 | 1.9 | 0 | -0 | 2 |
-| box button | Outline | 246.1,351 73.8×32 | 248,351 74×32 | 1.9 | 0 | 0.2 | 0 |
-| text | Button Group | 181.5,602 86.9×18 | 180,601 87.6×20 | -1.4 | 0 | 0.7 | 2 |
-| box button | Button Group | 168.5,595 112.9×32 | 167,595 114×32 | -1.4 | 0 | 1.1 | 0 |
 | text | shadcn | 355.4,1728 47.7×18 | 354,1727 47.7×20 | -1.4 | 0 | -0 | 2 |
-| text | Secondary | 154.7,358 70.3×18 | 156,357 70.4×20 | 1.3 | 0 | 0 | 2 |
-| box button | Button | 44,351 89.7×32 | 44,351 91×32 | 0 | 0 | 1.3 | 0 |
-| box button | Secondary | 141.7,351 96.3×32 | 143,351 97×32 | 1.3 | 0 | 0.7 | 0 |
 | text | Apple AAPL | 394.3,1541.5 77.8×18 | 394,1542 77.8×19.3 | -0.3 | 1.1 | 0 | 1.3 |
 | text | Recurring card payments | 757.7,1588.5 164.1×18 | 758,1589 164.1×19.3 | 0.3 | 1.1 | 0 | 1.3 |
+| text | Outline | 259.1,358 47.8×18 | 260,357 47.8×20 | 0.9 | 0 | -0 | 2 |
+| box button | Outline | 246.1,351 73.8×32 | 247,351 74×32 | 0.9 | 0 | 0.2 | 0 |
 | text | $273,000 | 232.9,1403 63.4×18 | 232,1402 63.4×20 | -0.9 | 0 | -0 | 2 |
 | text | Secondary | 115.1,553 60.3×16 | 116,553 60.3×16 | 0.9 | 0 | 0 | 0 |
 | box badge | Badge | 44,551 54.1×20 | 44,551 55×20 | 0 | 0 | 0.9 | 0 |
 | box badge | Secondary | 106.1,551 78.3×20 | 107,551 79×20 | 0.9 | 0 | 0.7 | 0 |
 | box button | Get Started | 384.5,223.5 102.1×35 | 384,224 103×35 | -0.5 | 0.5 | 0.9 | 0 |
+| text | Realty Income | 394.3,1630.8 93.4×18 | 394,1631 93.4×19.3 | -0.3 | 0.9 | -0 | 1.3 |
+| box item | Scheduled transfers Set up a transfer to send at a later dat | 710.7,1464.3 269.3×93.3 | 711,1464 269×94 | 0.3 | -0.3 | -0.3 | 0.8 |
+| box item | S&P 500 VOO 112 Shares | 377.3,1437.3 269.3×73.3 | 377,1437 270×74 | -0.3 | -0.3 | 0.7 | 0.8 |
+| text | 112 Shares | 394.3,1476.5 66.8×18 | 394,1476 67.4×20 | -0.3 | 0.5 | 0.7 | 2 |
+| box card | Contribution History Last 6 months of activity Dec Jan Feb M | 357.3,331 309.3×480 | 357,331 310×480 | -0.3 | 0 | 0.7 | 0 |
 
 **Worst residuals inside containers** (11 matched containers; container Δ removed)
 
 | Kind | Text | Container | Container Δx, Δy | Residual Δx | Residual Δy | Δw | Δh |
 |---|---|---|---|---|---|---|---|
-| text | Outline | Button Secondary Outline Badge… | 0, 0 | 1.9 | 0 | -0 | 2 |
-| box button | Outline | Button Secondary Outline Badge… | 0, 0 | 1.9 | 0 | 0.2 | 0 |
-| text | Button Group | Button Secondary Outline Badge… | 0, 0 | -1.4 | 0 | 0.7 | 2 |
-| box button | Button Group | Button Secondary Outline Badge… | 0, 0 | -1.4 | 0 | 1.1 | 0 |
-| text | Secondary | Button Secondary Outline Badge… | 0, 0 | 1.3 | 0 | 0 | 2 |
-| box button | Button | Button Secondary Outline Badge… | 0, 0 | 0 | 0 | 1.3 | 0 |
-| box button | Secondary | Button Secondary Outline Badge… | 0, 0 | 1.3 | 0 | 0.7 | 0 |
 | text | Apple AAPL | Q2 Dividend Income Quarterly d… | -0.3, 0 | 0 | 1.1 | 0 | 1.3 |
+| text | Outline | Button Secondary Outline Badge… | 0, 0 | 0.9 | 0 | -0 | 2 |
+| box button | Outline | Button Secondary Outline Badge… | 0, 0 | 0.9 | 0 | 0.2 | 0 |
 | text | $273,000 | Savings Targets Active milesto… | 0, 0 | -0.9 | 0 | -0 | 2 |
 | text | Secondary | Button Secondary Outline Badge… | 0, 0 | 0.9 | 0 | 0 | 0 |
 | box badge | Badge | Button Secondary Outline Badge… | 0, 0 | 0 | 0 | 0.9 | 0 |
 | box badge | Secondary | Button Secondary Outline Badge… | 0, 0 | 0.9 | 0 | 0.7 | 0 |
+| text | Realty Income | Q2 Dividend Income Quarterly d… | -0.3, 0 | 0 | 0.9 | -0 | 1.3 |
+| box item | S&P 500 VOO 112 Shares | Q2 Dividend Income Quarterly d… | -0.3, 0 | 0 | -0.3 | 0.7 | 0.8 |
+| text | 112 Shares | Q2 Dividend Income Quarterly d… | -0.3, 0 | 0 | 0.5 | 0.7 | 2 |
+| box item | UPCOMING May 2024 Scheduled | Contribution History Last 6 mo… | -0.3, 0 | 0 | 0 | 0.7 | 0 |
+| box button | View Full Report | Contribution History Last 6 mo… | -0.3, 0 | 0 | 0 | 0.7 | 0 |
 
 ### home 640×900
 
@@ -190,13 +190,13 @@ Light theme (layout is theme-independent). Rects are `x,y w×h`; Δ = GotX − r
 | text | +12.5% | Active Accounts 45,678 +12.5% … | 0, 0 | -1 | 0 | 0.1 | 0 |
 | box badge | +4.5% | Growth Rate 4.5% +4.5% Steady … | 0, 0 | -0.7 | 0 | 0.7 | 0 |
 | text | +4.5% | Growth Rate 4.5% +4.5% Steady … | 0, 0 | -0.7 | 0 | -0 | 0 |
-| text | Acquisition needs attention | New Customers 1,234 -20% Down … | 0, 0 | 0 | 0 | 0.7 | 2 |
 | text | -20% | New Customers 1,234 -20% Down … | 0, 0 | -0.6 | 0 | -0 | 0 |
 | box badge | -20% | New Customers 1,234 -20% Down … | 0, 0 | -0.6 | 0 | 0.6 | 0 |
 | text | $1,250.00 | Total Revenue $1,250.00 +12.5%… | 0, 0 | 0 | 0.5 | 0 | -3 |
 | text | 4.5% | Growth Rate 4.5% +4.5% Steady … | 0, 0 | 0 | 0.5 | -0 | -3 |
 | text | 1,234 | New Customers 1,234 -20% Down … | 0, 0 | 0 | 0.5 | -0 | -3 |
 | text | 45,678 | Active Accounts 45,678 +12.5% … | 0, 0 | 0 | 0.5 | -0 | -3 |
+| text | +12.5% | Total Revenue $1,250.00 +12.5%… | 0, 0 | 0.5 | 0 | 0.1 | 0 |
 
 ### dashboard-01 1024×768
 
@@ -205,18 +205,18 @@ Light theme (layout is theme-independent). Rects are `x,y w×h`; Δ = GotX − r
 | text | Documents | 369,20.5 85.7×21 | 369,20 85.7×24 | 0 | 1 | 0 | 3 |
 | box badge | +12.5% | 546,105 73×22 | 545,105 74×22 | -1 | 0 | 1 | 0 |
 | box badge | +12.5% | 546,305 73×22 | 545,305 74×22 | -1 | 0 | 1 | 0 |
-| text | +12.5% | 571,308 39×16 | 570,308 39.1×16 | -1 | 0 | 0.1 | 0 |
 | text | +12.5% | 571,108 39×16 | 570,108 39.1×16 | -1 | 0 | 0.1 | 0 |
+| text | +12.5% | 571,308 39×16 | 570,308 39.1×16 | -1 | 0 | 0.1 | 0 |
 | box badge | +4.5% | 898.7,305 68.3×22 | 898,305 69×22 | -0.7 | 0 | 0.7 | 0 |
 | text | +4.5% | 923.7,308 34.3×16 | 923,308 34.3×16 | -0.7 | 0 | -0 | 0 |
-| text | Acquisition needs attention | 685,220 172.8×18 | 685,219 173.5×20 | 0 | 0 | 0.7 | 2 |
-| text | Settings | 48,591 53×18 | 48,590 53.7×20 | 0 | 0 | 0.7 | 2 |
 | text | -20% | 927.6,108 30.4×16 | 927,108 30.4×16 | -0.6 | 0 | -0 | 0 |
 | box badge | -20% | 902.6,105 64.4×22 | 902,105 65×22 | -0.6 | 0 | 0.6 | 0 |
 | text | $1,250.00 | 337,131 145.5×39 | 337,133 145.5×36 | 0 | 0.5 | 0 | -3 |
 | text | 4.5% | 685,331 68.7×39 | 685,333 68.7×36 | 0 | 0.5 | -0 | -3 |
 | text | shadcn | 64,710.3 47.7×18 | 64,711 47.7×17.5 | 0 | 0.5 | -0 | -0.5 |
 | text | Total Visitors | 337,510 100×21 | 337,513 100×16 | 0 | 0.5 | -0 | -5 |
+| text | 1,234 | 685,131 81.6×39 | 685,133 81.6×36 | 0 | 0.5 | -0 | -3 |
+| text | 45,678 | 337,331 100.4×39 | 337,333 100.4×36 | 0 | 0.5 | -0 | -3 |
 
 **Worst residuals inside containers** (4 matched containers; container Δ removed)
 
@@ -224,24 +224,22 @@ Light theme (layout is theme-independent). Rects are `x,y w×h`; Δ = GotX − r
 |---|---|---|---|---|---|---|---|
 | box badge | +12.5% | Total Revenue $1,250.00 +12.5%… | 0, 0 | -1 | 0 | 1 | 0 |
 | box badge | +12.5% | Active Accounts 45,678 +12.5% … | 0, 0 | -1 | 0 | 1 | 0 |
-| text | +12.5% | Active Accounts 45,678 +12.5% … | 0, 0 | -1 | 0 | 0.1 | 0 |
 | text | +12.5% | Total Revenue $1,250.00 +12.5%… | 0, 0 | -1 | 0 | 0.1 | 0 |
+| text | +12.5% | Active Accounts 45,678 +12.5% … | 0, 0 | -1 | 0 | 0.1 | 0 |
 | box badge | +4.5% | Growth Rate 4.5% +4.5% Steady … | 0, 0 | -0.7 | 0 | 0.7 | 0 |
 | text | +4.5% | Growth Rate 4.5% +4.5% Steady … | 0, 0 | -0.7 | 0 | -0 | 0 |
-| text | Acquisition needs attention | New Customers 1,234 -20% Down … | 0, 0 | 0 | 0 | 0.7 | 2 |
 | text | -20% | New Customers 1,234 -20% Down … | 0, 0 | -0.6 | 0 | -0 | 0 |
 | box badge | -20% | New Customers 1,234 -20% Down … | 0, 0 | -0.6 | 0 | 0.6 | 0 |
 | text | $1,250.00 | Total Revenue $1,250.00 +12.5%… | 0, 0 | 0 | 0.5 | 0 | -3 |
 | text | 4.5% | Growth Rate 4.5% +4.5% Steady … | 0, 0 | 0 | 0.5 | -0 | -3 |
 | text | 1,234 | New Customers 1,234 -20% Down … | 0, 0 | 0 | 0.5 | -0 | -3 |
+| text | 45,678 | Active Accounts 45,678 +12.5% … | 0, 0 | 0 | 0.5 | -0 | -3 |
 
 ### sidebar-07 1440×900
 
 | Kind | Text | Reference | GotX | Δx | Δy | Δw | Δh |
 |---|---|---|---|---|---|---|---|
 | box breadcrumb-link | Build Your Application | 321,23 139.5×18 | 321,22 140×20 | 0 | -1 | 0.5 | 2 |
-| text | Settings | 41,207 53×18 | 41,206 53.7×20 | 0 | 0 | 0.7 | 2 |
-| text | Settings | 40,315 53×18 | 40,314 53.7×20 | 0 | 0 | 0.7 | 2 |
 | text | Data Fetching | 494.5,23 89.3×18 | 495,22 89.3×20 | 0.5 | 0 | -0 | 2 |
 | text | shadcn | 56,850.3 47.7×18 | 56,851 47.7×17.5 | 0 | 0.5 | -0 | -0.5 |
 | text | Acme Inc | 56,14.3 60.8×18 | 56,15 60.8×17.5 | 0 | 0.5 | 0 | -0.5 |
@@ -253,15 +251,15 @@ Light theme (layout is theme-independent). Rects are `x,y w×h`; Δ = GotX − r
 | text | History | 41,143 45.5×18 | 41,142 45.5×20 | 0 | 0 | -0 | 2 |
 | text | Models | 40,243 46.9×18 | 40,242 46.9×20 | 0 | 0 | -0 | 2 |
 | text | Design Engineering | 40,403 124.1×18 | 40,402 124.1×20 | 0 | 0 | -0 | 2 |
-| text | More | 40,511 32.6×18 | 40,510 32.6×20 | 0 | 0 | -0 | 2 |
+| text | Playground | 40,111 72.7×18 | 40,110 72.7×20 | 0 | 0 | -0 | 2 |
+| text | Settings | 41,207 53×18 | 41,206 53×20 | 0 | 0 | -0 | 2 |
+| text | Settings | 40,315 53×18 | 40,314 53×20 | 0 | 0 | -0 | 2 |
 
 ### sidebar-07 1024×768
 
 | Kind | Text | Reference | GotX | Δx | Δy | Δw | Δh |
 |---|---|---|---|---|---|---|---|
 | box breadcrumb-link | Build Your Application | 321,23 139.5×18 | 321,22 140×20 | 0 | -1 | 0.5 | 2 |
-| text | Settings | 41,207 53×18 | 41,206 53.7×20 | 0 | 0 | 0.7 | 2 |
-| text | Settings | 40,315 53×18 | 40,314 53.7×20 | 0 | 0 | 0.7 | 2 |
 | text | Data Fetching | 494.5,23 89.3×18 | 495,22 89.3×20 | 0.5 | 0 | -0 | 2 |
 | text | shadcn | 56,718.3 47.7×18 | 56,719 47.7×17.5 | 0 | 0.5 | -0 | -0.5 |
 | text | Acme Inc | 56,14.3 60.8×18 | 56,15 60.8×17.5 | 0 | 0.5 | 0 | -0.5 |
@@ -273,14 +271,15 @@ Light theme (layout is theme-independent). Rects are `x,y w×h`; Δ = GotX − r
 | text | History | 41,143 45.5×18 | 41,142 45.5×20 | 0 | 0 | -0 | 2 |
 | text | Models | 40,243 46.9×18 | 40,242 46.9×20 | 0 | 0 | -0 | 2 |
 | text | Design Engineering | 40,403 124.1×18 | 40,402 124.1×20 | 0 | 0 | -0 | 2 |
-| text | More | 40,511 32.6×18 | 40,510 32.6×20 | 0 | 0 | -0 | 2 |
+| text | Playground | 40,111 72.7×18 | 40,110 72.7×20 | 0 | 0 | -0 | 2 |
+| text | Settings | 41,207 53×18 | 41,206 53×20 | 0 | 0 | -0 | 2 |
+| text | Settings | 40,315 53×18 | 40,314 53×20 | 0 | 0 | -0 | 2 |
 
 ### sidebar-03 1440×900
 
 | Kind | Text | Reference | GotX | Δx | Δy | Δw | Δh |
 |---|---|---|---|---|---|---|---|
 | box breadcrumb-link | Build Your Application | 321,22.5 139.5×18 | 321,22 140×20 | 0 | -0.5 | 0.5 | 2 |
-| text | Getting Started | 16,79 100.7×18 | 16,78 101.4×20 | 0 | 0 | 0.7 | 2 |
 | text | Data Fetching | 494.5,22.5 89.3×18 | 495,22 89.3×20 | 0.5 | 0.5 | -0 | 2 |
 | text | Build Your Application | 321,22.5 139.5×18 | 321,22 139.5×20 | 0 | 0.5 | -0 | 2 |
 | text | Documentation | 56,15 100.1×18 | 56,17 100.1×14 | 0 | 0 | 0 | -4 |
@@ -291,16 +290,16 @@ Light theme (layout is theme-independent). Rects are `x,y w×h`; Δ = GotX − r
 | text | Installation | 41,111 70.5×18 | 41,110 70.5×20 | 0 | 0 | -0 | 2 |
 | text | Optimizing | 41,371 69.7×18 | 41,370 69.7×20 | 0 | 0 | -0 | 2 |
 | text | Examples | 41,563 62.2×18 | 41,562 62.2×20 | 0 | 0 | -0 | 2 |
-| text | Project Structure | 41,143 109.4×18 | 41,142 109.4×20 | 0 | 0 | -0 | 2 |
 | text | File Conventions | 41,663 105.6×18 | 41,662 105.6×20 | 0 | 0 | -0 | 2 |
 | text | Configuring | 41,403 74.6×18 | 41,402 74.6×20 | 0 | 0 | -0 | 2 |
+| text | Project Structure | 41,143 109.4×18 | 41,142 109.4×20 | 0 | 0 | -0 | 2 |
+| text | CLI | 41,759 20.9×18 | 41,758 20.9×20 | 0 | 0 | -0 | 2 |
 
 ### sidebar-03 1024×768
 
 | Kind | Text | Reference | GotX | Δx | Δy | Δw | Δh |
 |---|---|---|---|---|---|---|---|
 | box breadcrumb-link | Build Your Application | 321,22.5 139.5×18 | 321,22 140×20 | 0 | -0.5 | 0.5 | 2 |
-| text | Getting Started | 16,79 100.7×18 | 16,78 101.4×20 | 0 | 0 | 0.7 | 2 |
 | text | Data Fetching | 494.5,22.5 89.3×18 | 495,22 89.3×20 | 0.5 | 0.5 | -0 | 2 |
 | text | Build Your Application | 321,22.5 139.5×18 | 321,22 139.5×20 | 0 | 0.5 | -0 | 2 |
 | text | Documentation | 56,15 100.1×18 | 56,17 100.1×14 | 0 | 0 | 0 | -4 |
@@ -309,11 +308,12 @@ Light theme (layout is theme-independent). Rects are `x,y w×h`; Δ = GotX − r
 | text | Styling | 41,339 44.8×18 | 41,338 44.8×20 | 0 | 0 | -0 | 2 |
 | text | Installation | 41,111 70.5×18 | 41,110 70.5×20 | 0 | 0 | -0 | 2 |
 | text | Optimizing | 41,371 69.7×18 | 41,370 69.7×20 | 0 | 0 | -0 | 2 |
+| text | Configuring | 41,403 74.6×18 | 41,402 74.6×20 | 0 | 0 | -0 | 2 |
+| text | Examples | 41,563 62.2×18 | 41,562 62.2×20 | 0 | 0 | -0 | 2 |
 | text | File Conventions | 41,663 105.6×18 | 41,662 105.6×20 | 0 | 0 | -0 | 2 |
 | text | Project Structure | 41,143 109.4×18 | 41,142 109.4×20 | 0 | 0 | -0 | 2 |
-| text | Examples | 41,563 62.2×18 | 41,562 62.2×20 | 0 | 0 | -0 | 2 |
-| text | Configuring | 41,403 74.6×18 | 41,402 74.6×20 | 0 | 0 | -0 | 2 |
-| text | Rendering | 41,275 65.5×18 | 41,274 65.5×20 | 0 | 0 | -0 | 2 |
+| text | CLI | 41,759 20.9×18 | 41,758 20.9×20 | 0 | 0 | -0 | 2 |
+| text | v1.0.0 | 56,31 37.1×18 | 56,33 37.1×14 | 0 | 0 | -0 | -4 |
 
 ### login-03 1440×900
 
@@ -437,7 +437,7 @@ Light theme (layout is theme-independent). Rects are `x,y w×h`; Δ = GotX − r
 | text | Forgot your password? | 333,317.6 147×18 | 333,317 147×20 | -0 | 0.4 | -0 | 2 |
 | text | Or continue with | 235.7,469.6 105.7×18 | 236,469 105.6×20 | 0.3 | 0.4 | -0 | 2 |
 | box button | Login | 97,412.6 383×36 | 97,413 383×36 | 0 | 0.4 | 0 | 0 |
-| text | Email | 97,221.4 36×18 | 97,221 36×19.3 | 0 | 0.2 | -0 | 1.3 |
+| text | Email | 97,221.4 36×18 | 97,221 36×19.3 | 0 | 0.2 | 0 | 1.3 |
 | text | Login to your Acme Inc account | 173,170.4 230.9×21 | 173,169 230.9×24 | 0 | 0.1 | -0 | 3 |
 
 **Worst residuals inside containers** (1 matched containers; container Δ removed)
@@ -451,7 +451,7 @@ Light theme (layout is theme-independent). Rects are `x,y w×h`; Δ = GotX − r
 | text | Or continue with | Welcome back Login to your Acm… | 0, -0.4 | 0.3 | 0.7 | -0 | 2 |
 | text | Login | Welcome back Login to your Acm… | 0, -0.4 | -0.5 | 0.7 | -0 | 2 |
 | box button | Login | Welcome back Login to your Acm… | 0, -0.4 | 0 | 0.7 | 0 | 0 |
-| text | Email | Welcome back Login to your Acm… | 0, -0.4 | 0 | 0.6 | -0 | 1.3 |
+| text | Email | Welcome back Login to your Acm… | 0, -0.4 | 0 | 0.6 | 0 | 1.3 |
 | text | Welcome back | Welcome back Login to your Acm… | 0, -0.4 | 0.5 | 0.5 | -0 | 1 |
 | text | Login to your Acme Inc account | Welcome back Login to your Acm… | 0, -0.4 | 0 | 0.5 | -0 | 3 |
 
@@ -575,7 +575,7 @@ Light theme (layout is theme-independent). Rects are `x,y w×h`; Δ = GotX − r
 | text | Must be at least 8 characters long. | 97,405.8 220.2×18 | 97,405 220.2×21 | 0 | 0.8 | -0 | 3 |
 | text | Sign in | 350.7,614.8 44×18 | 351,614 44×21 | 0.3 | 0.8 | -0 | 3 |
 | box card | Create your account Enter your email below to create your ac | 64,55.3 896×612.5 | 64,55 896×613 | 0 | -0.3 | 0 | 0.5 |
-| text | Email | 97,176.3 36×18 | 97,176 36×19.3 | 0 | 0.4 | -0 | 1.3 |
+| text | Email | 97,176.3 36×18 | 97,176 36×19.3 | 0 | 0.4 | 0 | 1.3 |
 | text | Create Account | 237.6,462.8 101.8×18 | 238,462 101.8×20 | 0.4 | 0.3 | 0 | 2 |
 | text | Or continue with | 235.7,510.8 105.7×18 | 236,510 105.6×20 | 0.3 | 0.3 | -0 | 2 |
 | text | Enter your email below to create your account | 141.5,129.3 294×18 | 141.5,128 294×20 | 0 | -0.3 | -0 | 2 |
@@ -592,7 +592,7 @@ Light theme (layout is theme-independent). Rects are `x,y w×h`; Δ = GotX − r
 | text | We'll use this to contact you. We will not share your email  | Create your account Enter your… | 0, -0.3 | 0 | 1.3 | 0 | 3 |
 | text | Must be at least 8 characters long. | Create your account Enter your… | 0, -0.3 | 0 | 1 | -0 | 3 |
 | text | Sign in | Create your account Enter your… | 0, -0.3 | 0.3 | 1 | -0 | 3 |
-| text | Email | Create your account Enter your… | 0, -0.3 | 0 | 0.6 | -0 | 1.3 |
+| text | Email | Create your account Enter your… | 0, -0.3 | 0 | 0.6 | 0 | 1.3 |
 | text | Create your account | Create your account Enter your… | 0, -0.3 | -0 | 0.5 | 0 | 1 |
 | text | Or continue with | Create your account Enter your… | 0, -0.3 | 0.3 | 0.5 | -0 | 2 |
 | text | Create Account | Create your account Enter your… | 0, -0.3 | 0.4 | 0.5 | 0 | 2 |
@@ -645,30 +645,30 @@ fidelity test picks the new states up automatically (first run records their bas
 | home / view-components-focus-key | dark | 194×85 → 194×85 | 13.3 % / 5.0 % | 0 / 0 | 6 (6) | 0.4 |  | [ref](states/reference/home-view-components-focus-key-dark.png) · [gotx](states/gotx/home-view-components-focus-key-dark.png) · [compare](states/compare/home-view-components-focus-key-dark.png) |
 | home / view-components-press | light | 194×85 → 194×85 | 6.2 % / 4.2 % | 0 / 0 | 6 (6) | 0.4 |  | [ref](states/reference/home-view-components-press-light.png) · [gotx](states/gotx/home-view-components-press-light.png) · [compare](states/compare/home-view-components-press-light.png) |
 | home / view-components-press | dark | 194×85 → 194×85 | 6.5 % / 4.5 % | 0 / 0 | 6 (6) | 0.4 |  | [ref](states/reference/home-view-components-press-dark.png) · [gotx](states/gotx/home-view-components-press-dark.png) · [compare](states/compare/home-view-components-press-dark.png) |
-| home / button-default-hover | light | 138×81 → 138×81 | 9.3 % / 3.7 % | 0 / 0 | 7 (7) | 0.7 |  | [ref](states/reference/home-button-default-hover-light.png) · [gotx](states/gotx/home-button-default-hover-light.png) · [compare](states/compare/home-button-default-hover-light.png) |
-| home / button-default-hover | dark | 138×81 → 138×81 | 27.4 % / 3.4 % | 0 / 0 | 7 (7) | 0.7 |  | [ref](states/reference/home-button-default-hover-dark.png) · [gotx](states/gotx/home-button-default-hover-dark.png) · [compare](states/compare/home-button-default-hover-dark.png) |
-| home / button-default-focus-key | light | 138×81 → 138×81 | 11.6 % / 4.2 % | 0 / 0 | 7 (7) | 0.7 |  | [ref](states/reference/home-button-default-focus-key-light.png) · [gotx](states/gotx/home-button-default-focus-key-light.png) · [compare](states/compare/home-button-default-focus-key-light.png) |
-| home / button-default-focus-key | dark | 138×81 → 138×81 | 12.0 % / 4.1 % | 0 / 0 | 7 (7) | 0.7 |  | [ref](states/reference/home-button-default-focus-key-dark.png) · [gotx](states/gotx/home-button-default-focus-key-dark.png) · [compare](states/compare/home-button-default-focus-key-dark.png) |
-| home / button-default-press | light | 138×81 → 138×81 | 9.3 % / 3.7 % | 0 / 0 | 7 (7) | 0.7 |  | [ref](states/reference/home-button-default-press-light.png) · [gotx](states/gotx/home-button-default-press-light.png) · [compare](states/compare/home-button-default-press-light.png) |
-| home / button-default-press | dark | 138×81 → 138×81 | 27.4 % / 3.4 % | 0 / 0 | 7 (7) | 0.7 |  | [ref](states/reference/home-button-default-press-dark.png) · [gotx](states/gotx/home-button-default-press-dark.png) · [compare](states/compare/home-button-default-press-dark.png) |
-| home / button-secondary-hover | light | 146×81 → 146×81 | 8.7 % / 3.5 % | 0 / 0 | 8 (8) | 1 |  | [ref](states/reference/home-button-secondary-hover-light.png) · [gotx](states/gotx/home-button-secondary-hover-light.png) · [compare](states/compare/home-button-secondary-hover-light.png) |
-| home / button-secondary-hover | dark | 146×81 → 146×81 | 9.6 % / 3.9 % | 0 / 0 | 8 (8) | 1 |  | [ref](states/reference/home-button-secondary-hover-dark.png) · [gotx](states/gotx/home-button-secondary-hover-dark.png) · [compare](states/compare/home-button-secondary-hover-dark.png) |
-| home / button-secondary-focus-key | light | 146×81 → 146×81 | 11.0 % / 4.4 % | 0 / 0 | 8 (8) | 1 |  | [ref](states/reference/home-button-secondary-focus-key-light.png) · [gotx](states/gotx/home-button-secondary-focus-key-light.png) · [compare](states/compare/home-button-secondary-focus-key-light.png) |
-| home / button-secondary-focus-key | dark | 146×81 → 146×81 | 12.0 % / 4.8 % | 0 / 0 | 8 (8) | 1 |  | [ref](states/reference/home-button-secondary-focus-key-dark.png) · [gotx](states/gotx/home-button-secondary-focus-key-dark.png) · [compare](states/compare/home-button-secondary-focus-key-dark.png) |
-| home / button-secondary-press | light | 146×81 → 146×81 | 8.7 % / 3.5 % | 0 / 0 | 8 (8) | 1 |  | [ref](states/reference/home-button-secondary-press-light.png) · [gotx](states/gotx/home-button-secondary-press-light.png) · [compare](states/compare/home-button-secondary-press-light.png) |
-| home / button-secondary-press | dark | 146×81 → 146×81 | 9.6 % / 3.9 % | 0 / 0 | 8 (8) | 1 |  | [ref](states/reference/home-button-secondary-press-dark.png) · [gotx](states/gotx/home-button-secondary-press-dark.png) · [compare](states/compare/home-button-secondary-press-dark.png) |
-| home / button-outline-hover | light | 122×81 → 122×81 | 8.0 % / 3.1 % | 0 / 0 | 7 (7) | 0.7 |  | [ref](states/reference/home-button-outline-hover-light.png) · [gotx](states/gotx/home-button-outline-hover-light.png) · [compare](states/compare/home-button-outline-hover-light.png) |
-| home / button-outline-hover | dark | 122×81 → 122×81 | 9.4 % / 3.3 % | 0 / 0 | 7 (7) | 0.7 |  | [ref](states/reference/home-button-outline-hover-dark.png) · [gotx](states/gotx/home-button-outline-hover-dark.png) · [compare](states/compare/home-button-outline-hover-dark.png) |
-| home / button-outline-focus-key | light | 122×81 → 122×81 | 9.3 % / 3.5 % | 0 / 0 | 7 (7) | 0.7 |  | [ref](states/reference/home-button-outline-focus-key-light.png) · [gotx](states/gotx/home-button-outline-focus-key-light.png) · [compare](states/compare/home-button-outline-focus-key-light.png) |
-| home / button-outline-focus-key | dark | 122×81 → 122×81 | 10.2 % / 3.6 % | 0 / 0 | 7 (7) | 0.7 |  | [ref](states/reference/home-button-outline-focus-key-dark.png) · [gotx](states/gotx/home-button-outline-focus-key-dark.png) · [compare](states/compare/home-button-outline-focus-key-dark.png) |
-| home / button-outline-press | light | 122×81 → 122×81 | 8.0 % / 3.1 % | 0 / 0 | 7 (7) | 0.7 |  | [ref](states/reference/home-button-outline-press-light.png) · [gotx](states/gotx/home-button-outline-press-light.png) · [compare](states/compare/home-button-outline-press-light.png) |
-| home / button-outline-press | dark | 122×81 → 122×81 | 9.4 % / 3.3 % | 0 / 0 | 7 (7) | 0.7 |  | [ref](states/reference/home-button-outline-press-dark.png) · [gotx](states/gotx/home-button-outline-press-dark.png) · [compare](states/compare/home-button-outline-press-dark.png) |
+| home / button-default-hover | light | 138×81 → 138×81 | 8.4 % / 2.7 % | 0 / 0 | 7 (7) | 0.2 |  | [ref](states/reference/home-button-default-hover-light.png) · [gotx](states/gotx/home-button-default-hover-light.png) · [compare](states/compare/home-button-default-hover-light.png) |
+| home / button-default-hover | dark | 138×81 → 138×81 | 26.9 % / 2.3 % | 0 / 0 | 7 (7) | 0.2 |  | [ref](states/reference/home-button-default-hover-dark.png) · [gotx](states/gotx/home-button-default-hover-dark.png) · [compare](states/compare/home-button-default-hover-dark.png) |
+| home / button-default-focus-key | light | 138×81 → 138×81 | 10.3 % / 2.9 % | 0 / 0 | 7 (7) | 0.2 |  | [ref](states/reference/home-button-default-focus-key-light.png) · [gotx](states/gotx/home-button-default-focus-key-light.png) · [compare](states/compare/home-button-default-focus-key-light.png) |
+| home / button-default-focus-key | dark | 138×81 → 138×81 | 10.9 % / 2.6 % | 0 / 0 | 7 (7) | 0.2 |  | [ref](states/reference/home-button-default-focus-key-dark.png) · [gotx](states/gotx/home-button-default-focus-key-dark.png) · [compare](states/compare/home-button-default-focus-key-dark.png) |
+| home / button-default-press | light | 138×81 → 138×81 | 8.4 % / 2.7 % | 0 / 0 | 7 (7) | 0.2 |  | [ref](states/reference/home-button-default-press-light.png) · [gotx](states/gotx/home-button-default-press-light.png) · [compare](states/compare/home-button-default-press-light.png) |
+| home / button-default-press | dark | 138×81 → 138×81 | 26.9 % / 2.3 % | 0 / 0 | 7 (7) | 0.2 |  | [ref](states/reference/home-button-default-press-dark.png) · [gotx](states/gotx/home-button-default-press-dark.png) · [compare](states/compare/home-button-default-press-dark.png) |
+| home / button-secondary-hover | light | 146×81 → 146×81 | 8.7 % / 3.5 % | 0 / 0 | 8 (8) | 0.3 |  | [ref](states/reference/home-button-secondary-hover-light.png) · [gotx](states/gotx/home-button-secondary-hover-light.png) · [compare](states/compare/home-button-secondary-hover-light.png) |
+| home / button-secondary-hover | dark | 146×81 → 146×81 | 9.6 % / 3.9 % | 0 / 0 | 8 (8) | 0.3 |  | [ref](states/reference/home-button-secondary-hover-dark.png) · [gotx](states/gotx/home-button-secondary-hover-dark.png) · [compare](states/compare/home-button-secondary-hover-dark.png) |
+| home / button-secondary-focus-key | light | 146×81 → 146×81 | 11.0 % / 4.4 % | 0 / 0 | 8 (8) | 0.3 |  | [ref](states/reference/home-button-secondary-focus-key-light.png) · [gotx](states/gotx/home-button-secondary-focus-key-light.png) · [compare](states/compare/home-button-secondary-focus-key-light.png) |
+| home / button-secondary-focus-key | dark | 146×81 → 146×81 | 12.0 % / 4.8 % | 0 / 0 | 8 (8) | 0.3 |  | [ref](states/reference/home-button-secondary-focus-key-dark.png) · [gotx](states/gotx/home-button-secondary-focus-key-dark.png) · [compare](states/compare/home-button-secondary-focus-key-dark.png) |
+| home / button-secondary-press | light | 146×81 → 146×81 | 8.7 % / 3.5 % | 0 / 0 | 8 (8) | 0.3 |  | [ref](states/reference/home-button-secondary-press-light.png) · [gotx](states/gotx/home-button-secondary-press-light.png) · [compare](states/compare/home-button-secondary-press-light.png) |
+| home / button-secondary-press | dark | 146×81 → 146×81 | 9.6 % / 3.9 % | 0 / 0 | 8 (8) | 0.3 |  | [ref](states/reference/home-button-secondary-press-dark.png) · [gotx](states/gotx/home-button-secondary-press-dark.png) · [compare](states/compare/home-button-secondary-press-dark.png) |
+| home / button-outline-hover | light | 122×81 → 122×81 | 9.5 % / 3.9 % | 0 / 0 | 7 (7) | 0.3 |  | [ref](states/reference/home-button-outline-hover-light.png) · [gotx](states/gotx/home-button-outline-hover-light.png) · [compare](states/compare/home-button-outline-hover-light.png) |
+| home / button-outline-hover | dark | 122×81 → 122×81 | 11.0 % / 4.0 % | 0 / 0 | 7 (7) | 0.3 |  | [ref](states/reference/home-button-outline-hover-dark.png) · [gotx](states/gotx/home-button-outline-hover-dark.png) · [compare](states/compare/home-button-outline-hover-dark.png) |
+| home / button-outline-focus-key | light | 122×81 → 122×81 | 11.7 % / 5.4 % | 0 / 0 | 7 (7) | 0.3 |  | [ref](states/reference/home-button-outline-focus-key-light.png) · [gotx](states/gotx/home-button-outline-focus-key-light.png) · [compare](states/compare/home-button-outline-focus-key-light.png) |
+| home / button-outline-focus-key | dark | 122×81 → 122×81 | 12.4 % / 5.5 % | 0 / 0 | 7 (7) | 0.3 |  | [ref](states/reference/home-button-outline-focus-key-dark.png) · [gotx](states/gotx/home-button-outline-focus-key-dark.png) · [compare](states/compare/home-button-outline-focus-key-dark.png) |
+| home / button-outline-press | light | 122×81 → 122×81 | 9.5 % / 3.9 % | 0 / 0 | 7 (7) | 0.3 |  | [ref](states/reference/home-button-outline-press-light.png) · [gotx](states/gotx/home-button-outline-press-light.png) · [compare](states/compare/home-button-outline-press-light.png) |
+| home / button-outline-press | dark | 122×81 → 122×81 | 11.0 % / 4.0 % | 0 / 0 | 7 (7) | 0.3 |  | [ref](states/reference/home-button-outline-press-dark.png) · [gotx](states/gotx/home-button-outline-press-dark.png) · [compare](states/compare/home-button-outline-press-dark.png) |
 | home / input-name-hover | light | 312×81 → 312×81 | 2.0 % / 0.7 % | 0 / 0 | 6 (6) | 0.2 |  | [ref](states/reference/home-input-name-hover-light.png) · [gotx](states/gotx/home-input-name-hover-light.png) · [compare](states/compare/home-input-name-hover-light.png) |
 | home / input-name-hover | dark | 312×81 → 312×81 | 2.6 % / 0.7 % | 0 / 0 | 6 (6) | 0.2 |  | [ref](states/reference/home-input-name-hover-dark.png) · [gotx](states/gotx/home-input-name-hover-dark.png) · [compare](states/compare/home-input-name-hover-dark.png) |
 | home / input-name-focus-key | light | 312×81 → 312×81 | 2.9 % / 0.8 % | 0 / 0 | 6 (6) | 0.2 |  | [ref](states/reference/home-input-name-focus-key-light.png) · [gotx](states/gotx/home-input-name-focus-key-light.png) · [compare](states/compare/home-input-name-focus-key-light.png) |
-| home / input-name-focus-key | dark | 312×81 → 312×81 | 3.6 % / 0.9 % | 0 / 0 | 6 (6) | 0.2 |  | [ref](states/reference/home-input-name-focus-key-dark.png) · [gotx](states/gotx/home-input-name-focus-key-dark.png) · [compare](states/compare/home-input-name-focus-key-dark.png) |
-| home / input-name-type | light | 312×81 → 312×81 | 4.1 % / 1.9 % | 0 / 0 | 5 (4) | 1.3 |  | [ref](states/reference/home-input-name-type-light.png) · [gotx](states/gotx/home-input-name-type-light.png) · [compare](states/compare/home-input-name-type-light.png) |
-| home / input-name-type | dark | 312×81 → 312×81 | 4.8 % / 2.2 % | 0 / 0 | 5 (4) | 1.3 |  | [ref](states/reference/home-input-name-type-dark.png) · [gotx](states/gotx/home-input-name-type-dark.png) · [compare](states/compare/home-input-name-type-dark.png) |
+| home / input-name-focus-key | dark | 312×81 → 312×81 | 3.5 % / 0.9 % | 0 / 0 | 6 (6) | 0.2 |  | [ref](states/reference/home-input-name-focus-key-dark.png) · [gotx](states/gotx/home-input-name-focus-key-dark.png) · [compare](states/compare/home-input-name-focus-key-dark.png) |
+| home / input-name-type | light | 312×81 → 312×81 | 4.1 % / 1.9 % | 0 / 0 | 5 (4) | 0.7 |  | [ref](states/reference/home-input-name-type-light.png) · [gotx](states/gotx/home-input-name-type-light.png) · [compare](states/compare/home-input-name-type-light.png) |
+| home / input-name-type | dark | 312×81 → 312×81 | 4.8 % / 2.2 % | 0 / 0 | 5 (4) | 0.7 |  | [ref](states/reference/home-input-name-type-dark.png) · [gotx](states/gotx/home-input-name-type-dark.png) · [compare](states/compare/home-input-name-type-dark.png) |
 | home / textarea-message-hover | light | 338×113 → 338×113 | 2.4 % / 0.7 % | 0 / 0 | 3 (3) | 0.2 |  | [ref](states/reference/home-textarea-message-hover-light.png) · [gotx](states/gotx/home-textarea-message-hover-light.png) · [compare](states/compare/home-textarea-message-hover-light.png) |
 | home / textarea-message-hover | dark | 338×113 → 338×113 | 3.1 % / 0.7 % | 0 / 0 | 3 (3) | 0.2 |  | [ref](states/reference/home-textarea-message-hover-dark.png) · [gotx](states/gotx/home-textarea-message-hover-dark.png) · [compare](states/compare/home-textarea-message-hover-dark.png) |
 | home / textarea-message-focus-key | light | 338×113 → 338×113 | 3.2 % / 0.7 % | 0 / 0 | 3 (3) | 0.2 |  | [ref](states/reference/home-textarea-message-focus-key-light.png) · [gotx](states/gotx/home-textarea-message-focus-key-light.png) · [compare](states/compare/home-textarea-message-focus-key-light.png) |
@@ -697,14 +697,14 @@ fidelity test picks the new states up automatically (first run records their bas
 | home / alert-dialog-focus-key | dark | 151×81 → 151×81 | 13.8 % / 4.1 % | 0 / 0 | 7 (7) | 0.2 |  | [ref](states/reference/home-alert-dialog-focus-key-dark.png) · [gotx](states/gotx/home-alert-dialog-focus-key-dark.png) · [compare](states/compare/home-alert-dialog-focus-key-dark.png) |
 | home / alert-dialog-click | light | 368×227 → 368×227 | 37.4 % / 12.6 % | 1 / 1 | 24 (24) | 0.4 |  | [ref](states/reference/home-alert-dialog-click-light.png) · [gotx](states/gotx/home-alert-dialog-click-light.png) · [compare](states/compare/home-alert-dialog-click-light.png) |
 | home / alert-dialog-click | dark | 368×227 → 368×227 | 37.9 % / 12.9 % | 1 / 1 | 24 (24) | 0.4 |  | [ref](states/reference/home-alert-dialog-click-dark.png) · [gotx](states/gotx/home-alert-dialog-click-dark.png) · [compare](states/compare/home-alert-dialog-click-dark.png) |
-| home / group-button-hover | light | 161×81 → 161×81 | 10.4 % / 4.6 % | 0 / 0 | 6 (6) | 1 |  | [ref](states/reference/home-group-button-hover-light.png) · [gotx](states/gotx/home-group-button-hover-light.png) · [compare](states/compare/home-group-button-hover-light.png) |
-| home / group-button-hover | dark | 161×81 → 161×81 | 13.2 % / 4.4 % | 0 / 0 | 6 (6) | 1 |  | [ref](states/reference/home-group-button-hover-dark.png) · [gotx](states/gotx/home-group-button-hover-dark.png) · [compare](states/compare/home-group-button-hover-dark.png) |
+| home / group-button-hover | light | 161×81 → 161×81 | 9.5 % / 3.8 % | 0 / 0 | 6 (6) | 0.2 |  | [ref](states/reference/home-group-button-hover-light.png) · [gotx](states/gotx/home-group-button-hover-light.png) · [compare](states/compare/home-group-button-hover-light.png) |
+| home / group-button-hover | dark | 161×81 → 161×81 | 12.6 % / 4.1 % | 0 / 0 | 6 (6) | 0.2 |  | [ref](states/reference/home-group-button-hover-dark.png) · [gotx](states/gotx/home-group-button-hover-dark.png) · [compare](states/compare/home-group-button-hover-dark.png) |
 | home / group-menu-hover | light | 80×81 → 80×81 | 10.0 % / 1.2 % | 0 / 0 | 5 (5) | 0.2 |  | [ref](states/reference/home-group-menu-hover-light.png) · [gotx](states/gotx/home-group-menu-hover-light.png) · [compare](states/compare/home-group-menu-hover-light.png) |
 | home / group-menu-hover | dark | 80×81 → 80×81 | 11.1 % / 1.3 % | 0 / 0 | 5 (5) | 0.2 |  | [ref](states/reference/home-group-menu-hover-dark.png) · [gotx](states/gotx/home-group-menu-hover-dark.png) · [compare](states/compare/home-group-menu-hover-dark.png) |
 | home / group-menu-focus-key | light | 80×81 → 80×81 | 11.2 % / 1.2 % | 0 / 0 | 5 (5) | 0.2 |  | [ref](states/reference/home-group-menu-focus-key-light.png) · [gotx](states/gotx/home-group-menu-focus-key-light.png) · [compare](states/compare/home-group-menu-focus-key-light.png) |
 | home / group-menu-focus-key | dark | 80×81 → 80×81 | 12.9 % / 1.3 % | 0 / 0 | 5 (5) | 0.2 |  | [ref](states/reference/home-group-menu-focus-key-dark.png) · [gotx](states/gotx/home-group-menu-focus-key-dark.png) · [compare](states/compare/home-group-menu-focus-key-dark.png) |
-| home / group-menu-click | light | 208×253 → 208×253 | 18.1 % / 5.9 % | 1 / 1 | 13 (13) | 0 |  | [ref](states/reference/home-group-menu-click-light.png) · [gotx](states/gotx/home-group-menu-click-light.png) · [compare](states/compare/home-group-menu-click-light.png) |
-| home / group-menu-click | dark | 208×253 → 208×253 | 19.9 % / 6.5 % | 1 / 1 | 13 (13) | 0 |  | [ref](states/reference/home-group-menu-click-dark.png) · [gotx](states/gotx/home-group-menu-click-dark.png) · [compare](states/compare/home-group-menu-click-dark.png) |
+| home / group-menu-click | light | 208×253 → 208×253 | 18.0 % / 5.8 % | 1 / 1 | 13 (13) | 0 |  | [ref](states/reference/home-group-menu-click-light.png) · [gotx](states/gotx/home-group-menu-click-light.png) · [compare](states/compare/home-group-menu-click-light.png) |
+| home / group-menu-click | dark | 208×253 → 208×253 | 19.8 % / 6.4 % | 1 / 1 | 13 (13) | 0 |  | [ref](states/reference/home-group-menu-click-dark.png) · [gotx](states/gotx/home-group-menu-click-dark.png) · [compare](states/compare/home-group-menu-click-dark.png) |
 | home / sidebar-active-hover | light | 185×81 → 185×81 | 12.0 % / 7.3 % | 0 / 0 | 8 (8) | 0.2 |  | [ref](states/reference/home-sidebar-active-hover-light.png) · [gotx](states/gotx/home-sidebar-active-hover-light.png) · [compare](states/compare/home-sidebar-active-hover-light.png) |
 | home / sidebar-active-hover | dark | 185×81 → 185×81 | 13.5 % / 7.7 % | 0 / 0 | 8 (8) | 0.2 |  | [ref](states/reference/home-sidebar-active-hover-dark.png) · [gotx](states/gotx/home-sidebar-active-hover-dark.png) · [compare](states/compare/home-sidebar-active-hover-dark.png) |
 | home / sidebar-item-hover | light | 185×81 → 185×81 | 14.1 % / 9.1 % | 0 / 0 | 9 (9) | 0.2 |  | [ref](states/reference/home-sidebar-item-hover-light.png) · [gotx](states/gotx/home-sidebar-item-hover-light.png) · [compare](states/compare/home-sidebar-item-hover-light.png) |
@@ -757,8 +757,8 @@ fidelity test picks the new states up automatically (first run records their bas
 | home / payments-menu-click | dark | 177×185 → 177×185 | 31.7 % / 5.9 % | 1 / 1 | 11 (11) | 0.1 |  | [ref](states/reference/home-payments-menu-click-dark.png) · [gotx](states/gotx/home-payments-menu-click-dark.png) · [compare](states/compare/home-payments-menu-click-dark.png) |
 | home / payments-menu-item-hover | light | 177×185 → 177×185 | 28.8 % / 5.3 % | 1 / 1 | 12 (12) | 0.1 |  | [ref](states/reference/home-payments-menu-item-hover-light.png) · [gotx](states/gotx/home-payments-menu-item-hover-light.png) · [compare](states/compare/home-payments-menu-item-hover-light.png) |
 | home / payments-menu-item-hover | dark | 177×185 → 177×185 | 31.1 % / 5.8 % | 1 / 1 | 12 (12) | 0.1 |  | [ref](states/reference/home-payments-menu-item-hover-dark.png) · [gotx](states/gotx/home-payments-menu-item-hover-dark.png) · [compare](states/compare/home-payments-menu-item-hover-dark.png) |
-| home / group-menu-item-hover | light | 208×253 → 208×253 | 18.1 % / 5.9 % | 1 / 1 | 14 (14) | 0 |  | [ref](states/reference/home-group-menu-item-hover-light.png) · [gotx](states/gotx/home-group-menu-item-hover-light.png) · [compare](states/compare/home-group-menu-item-hover-light.png) |
-| home / group-menu-item-hover | dark | 208×253 → 208×253 | 21.2 % / 6.4 % | 1 / 1 | 14 (14) | 0 |  | [ref](states/reference/home-group-menu-item-hover-dark.png) · [gotx](states/gotx/home-group-menu-item-hover-dark.png) · [compare](states/compare/home-group-menu-item-hover-dark.png) |
+| home / group-menu-item-hover | light | 208×253 → 208×253 | 18.1 % / 5.8 % | 1 / 1 | 14 (14) | 0 |  | [ref](states/reference/home-group-menu-item-hover-light.png) · [gotx](states/gotx/home-group-menu-item-hover-light.png) · [compare](states/compare/home-group-menu-item-hover-light.png) |
+| home / group-menu-item-hover | dark | 208×253 → 208×253 | 21.1 % / 6.3 % | 1 / 1 | 14 (14) | 0 |  | [ref](states/reference/home-group-menu-item-hover-dark.png) · [gotx](states/gotx/home-group-menu-item-hover-dark.png) · [compare](states/compare/home-group-menu-item-hover-dark.png) |
 | home / alert-dialog-cancel-hover | light | 368×227 → 368×227 | 37.4 % / 12.6 % | 1 / 1 | 24 (24) | 0.4 |  | [ref](states/reference/home-alert-dialog-cancel-hover-light.png) · [gotx](states/gotx/home-alert-dialog-cancel-hover-light.png) · [compare](states/compare/home-alert-dialog-cancel-hover-light.png) |
 | home / alert-dialog-cancel-hover | dark | 368×227 → 368×227 | 38.2 % / 12.9 % | 1 / 1 | 24 (24) | 0.4 |  | [ref](states/reference/home-alert-dialog-cancel-hover-dark.png) · [gotx](states/gotx/home-alert-dialog-cancel-hover-dark.png) · [compare](states/compare/home-alert-dialog-cancel-hover-dark.png) |
 | home / textarea-message-type | light | 338×113 → 338×113 | 3.2 % / 0.9 % | 0 / 0 | 2 (2) | 0 |  | [ref](states/reference/home-textarea-message-type-light.png) · [gotx](states/gotx/home-textarea-message-type-light.png) · [compare](states/compare/home-textarea-message-type-light.png) |
@@ -885,14 +885,14 @@ fidelity test picks the new states up automatically (first run records their bas
 | sidebar-07 / team-hover | dark | 271×80 → 271×80 | 5.4 % / 3.6 % | 0 / 0 | 4 (4) | 0.3 |  | [ref](states/reference/sidebar-07-team-hover-dark.png) · [gotx](states/gotx/sidebar-07-team-hover-dark.png) · [compare](states/compare/sidebar-07-team-hover-dark.png) |
 | sidebar-07 / team-focus-key | light | 271×80 → 271×80 | 15.3 % / 11.1 % | 0 / 0 | 4 (4) | 0.3 |  | [ref](states/reference/sidebar-07-team-focus-key-light.png) · [gotx](states/gotx/sidebar-07-team-focus-key-light.png) · [compare](states/compare/sidebar-07-team-focus-key-light.png) |
 | sidebar-07 / team-focus-key | dark | 271×80 → 271×80 | 15.7 % / 6.2 % | 0 / 0 | 4 (4) | 0.3 |  | [ref](states/reference/sidebar-07-team-focus-key-dark.png) · [gotx](states/gotx/sidebar-07-team-focus-key-dark.png) · [compare](states/compare/sidebar-07-team-focus-key-dark.png) |
-| sidebar-07 / team-click | light | 514×239 → 514×239 | 20.0 % / 5.9 % | 1 / 1 | 27 (20) | 0.3 |  | [ref](states/reference/sidebar-07-team-click-light.png) · [gotx](states/gotx/sidebar-07-team-click-light.png) · [compare](states/compare/sidebar-07-team-click-light.png) |
-| sidebar-07 / team-click | dark | 514×239 → 514×239 | 22.4 % / 5.1 % | 1 / 1 | 27 (20) | 0.3 |  | [ref](states/reference/sidebar-07-team-click-dark.png) · [gotx](states/gotx/sidebar-07-team-click-dark.png) · [compare](states/compare/sidebar-07-team-click-dark.png) |
-| sidebar-07 / models-hover | light | 271×80 → 271×80 | 6.9 % / 5.1 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-07-models-hover-light.png) · [gotx](states/gotx/sidebar-07-models-hover-light.png) · [compare](states/compare/sidebar-07-models-hover-light.png) |
+| sidebar-07 / team-click | light | 514×239 → 514×239 | 20.0 % / 5.9 % | 1 / 1 | 27 (20) | 0 |  | [ref](states/reference/sidebar-07-team-click-light.png) · [gotx](states/gotx/sidebar-07-team-click-light.png) · [compare](states/compare/sidebar-07-team-click-light.png) |
+| sidebar-07 / team-click | dark | 514×239 → 514×239 | 22.4 % / 5.1 % | 1 / 1 | 27 (20) | 0 |  | [ref](states/reference/sidebar-07-team-click-dark.png) · [gotx](states/gotx/sidebar-07-team-click-dark.png) · [compare](states/compare/sidebar-07-team-click-dark.png) |
+| sidebar-07 / models-hover | light | 271×80 → 271×80 | 6.8 % / 5.0 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-07-models-hover-light.png) · [gotx](states/gotx/sidebar-07-models-hover-light.png) · [compare](states/compare/sidebar-07-models-hover-light.png) |
 | sidebar-07 / models-hover | dark | 271×80 → 271×80 | 7.4 % / 5.3 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-07-models-hover-dark.png) · [gotx](states/gotx/sidebar-07-models-hover-dark.png) · [compare](states/compare/sidebar-07-models-hover-dark.png) |
 | sidebar-07 / models-focus-key | light | 271×80 → 271×80 | 9.8 % / 7.5 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-07-models-focus-key-light.png) · [gotx](states/gotx/sidebar-07-models-focus-key-light.png) · [compare](states/compare/sidebar-07-models-focus-key-light.png) |
 | sidebar-07 / models-focus-key | dark | 271×80 → 271×80 | 14.6 % / 12.7 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-07-models-focus-key-dark.png) · [gotx](states/gotx/sidebar-07-models-focus-key-dark.png) · [compare](states/compare/sidebar-07-models-focus-key-dark.png) |
-| sidebar-07 / models-click | light | 271×80 → 271×80 | 5.6 % / 4.1 % | 0 / 0 | 9 (9) | 0 |  | [ref](states/reference/sidebar-07-models-click-light.png) · [gotx](states/gotx/sidebar-07-models-click-light.png) · [compare](states/compare/sidebar-07-models-click-light.png) |
-| sidebar-07 / models-click | dark | 271×80 → 271×80 | 6.2 % / 4.6 % | 0 / 0 | 9 (9) | 0 |  | [ref](states/reference/sidebar-07-models-click-dark.png) · [gotx](states/gotx/sidebar-07-models-click-dark.png) · [compare](states/compare/sidebar-07-models-click-dark.png) |
+| sidebar-07 / models-click | light | 271×80 → 271×80 | 5.5 % / 4.0 % | 0 / 0 | 9 (9) | 0 |  | [ref](states/reference/sidebar-07-models-click-light.png) · [gotx](states/gotx/sidebar-07-models-click-light.png) · [compare](states/compare/sidebar-07-models-click-light.png) |
+| sidebar-07 / models-click | dark | 271×80 → 271×80 | 6.2 % / 4.5 % | 0 / 0 | 9 (9) | 0 |  | [ref](states/reference/sidebar-07-models-click-dark.png) · [gotx](states/gotx/sidebar-07-models-click-dark.png) · [compare](states/compare/sidebar-07-models-click-dark.png) |
 | sidebar-07 / history-hover | light | 238×76 → 238×76 | 7.0 % / 5.1 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-07-history-hover-light.png) · [gotx](states/gotx/sidebar-07-history-hover-light.png) · [compare](states/compare/sidebar-07-history-hover-light.png) |
 | sidebar-07 / history-hover | dark | 238×76 → 238×76 | 7.2 % / 5.6 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-07-history-hover-dark.png) · [gotx](states/gotx/sidebar-07-history-hover-dark.png) · [compare](states/compare/sidebar-07-history-hover-dark.png) |
 | sidebar-07 / history-focus-key | light | 238×76 → 238×76 | 9.7 % / 7.4 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-07-history-focus-key-light.png) · [gotx](states/gotx/sidebar-07-history-focus-key-light.png) · [compare](states/compare/sidebar-07-history-focus-key-light.png) |
@@ -919,18 +919,18 @@ fidelity test picks the new states up automatically (first run records their bas
 | sidebar-03 / brand-hover | dark | 271×80 → 271×80 | 5.9 % / 4.1 % | 0 / 0 | 6 (6) | 0 |  | [ref](states/reference/sidebar-03-brand-hover-dark.png) · [gotx](states/gotx/sidebar-03-brand-hover-dark.png) · [compare](states/compare/sidebar-03-brand-hover-dark.png) |
 | sidebar-03 / brand-focus-key | light | 271×80 → 271×80 | 8.2 % / 6.5 % | 0 / 0 | 6 (6) | 0 |  | [ref](states/reference/sidebar-03-brand-focus-key-light.png) · [gotx](states/gotx/sidebar-03-brand-focus-key-light.png) · [compare](states/compare/sidebar-03-brand-focus-key-light.png) |
 | sidebar-03 / brand-focus-key | dark | 271×80 → 271×80 | 13.6 % / 11.9 % | 0 / 0 | 6 (6) | 0 |  | [ref](states/reference/sidebar-03-brand-focus-key-dark.png) · [gotx](states/gotx/sidebar-03-brand-focus-key-dark.png) · [compare](states/compare/sidebar-03-brand-focus-key-dark.png) |
-| sidebar-03 / getting-started-hover | light | 271×80 → 271×80 | 7.0 % / 6.0 % | 0 / 0 | 7 (7) | 0 |  | [ref](states/reference/sidebar-03-getting-started-hover-light.png) · [gotx](states/gotx/sidebar-03-getting-started-hover-light.png) · [compare](states/compare/sidebar-03-getting-started-hover-light.png) |
-| sidebar-03 / getting-started-hover | dark | 271×80 → 271×80 | 7.7 % / 6.3 % | 0 / 0 | 7 (7) | 0 |  | [ref](states/reference/sidebar-03-getting-started-hover-dark.png) · [gotx](states/gotx/sidebar-03-getting-started-hover-dark.png) · [compare](states/compare/sidebar-03-getting-started-hover-dark.png) |
-| sidebar-03 / getting-started-focus-key | light | 271×80 → 271×80 | 9.8 % / 8.5 % | 0 / 0 | 7 (7) | 0 |  | [ref](states/reference/sidebar-03-getting-started-focus-key-light.png) · [gotx](states/gotx/sidebar-03-getting-started-focus-key-light.png) · [compare](states/compare/sidebar-03-getting-started-focus-key-light.png) |
-| sidebar-03 / getting-started-focus-key | dark | 271×80 → 271×80 | 14.9 % / 13.7 % | 0 / 0 | 7 (7) | 0 |  | [ref](states/reference/sidebar-03-getting-started-focus-key-dark.png) · [gotx](states/gotx/sidebar-03-getting-started-focus-key-dark.png) · [compare](states/compare/sidebar-03-getting-started-focus-key-dark.png) |
-| sidebar-03 / installation-hover | light | 238×76 → 238×76 | 11.1 % / 8.8 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-03-installation-hover-light.png) · [gotx](states/gotx/sidebar-03-installation-hover-light.png) · [compare](states/compare/sidebar-03-installation-hover-light.png) |
-| sidebar-03 / installation-hover | dark | 238×76 → 238×76 | 11.3 % / 9.7 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-03-installation-hover-dark.png) · [gotx](states/gotx/sidebar-03-installation-hover-dark.png) · [compare](states/compare/sidebar-03-installation-hover-dark.png) |
-| sidebar-03 / installation-focus-key | light | 238×76 → 238×76 | 13.8 % / 11.2 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-03-installation-focus-key-light.png) · [gotx](states/gotx/sidebar-03-installation-focus-key-light.png) · [compare](states/compare/sidebar-03-installation-focus-key-light.png) |
-| sidebar-03 / installation-focus-key | dark | 238×76 → 238×76 | 18.2 % / 16.8 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-03-installation-focus-key-dark.png) · [gotx](states/gotx/sidebar-03-installation-focus-key-dark.png) · [compare](states/compare/sidebar-03-installation-focus-key-dark.png) |
-| sidebar-03 / installation-press | light | 238×76 → 238×76 | 11.1 % / 8.8 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-03-installation-press-light.png) · [gotx](states/gotx/sidebar-03-installation-press-light.png) · [compare](states/compare/sidebar-03-installation-press-light.png) |
-| sidebar-03 / installation-press | dark | 238×76 → 238×76 | 11.3 % / 9.7 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-03-installation-press-dark.png) · [gotx](states/gotx/sidebar-03-installation-press-dark.png) · [compare](states/compare/sidebar-03-installation-press-dark.png) |
-| sidebar-03 / installation-click | light | 238×76 → 238×76 | 11.1 % / 8.8 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-03-installation-click-light.png) · [gotx](states/gotx/sidebar-03-installation-click-light.png) · [compare](states/compare/sidebar-03-installation-click-light.png) |
-| sidebar-03 / installation-click | dark | 238×76 → 238×76 | 11.3 % / 9.7 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-03-installation-click-dark.png) · [gotx](states/gotx/sidebar-03-installation-click-dark.png) · [compare](states/compare/sidebar-03-installation-click-dark.png) |
+| sidebar-03 / getting-started-hover | light | 271×80 → 271×80 | 6.8 % / 5.6 % | 0 / 0 | 7 (7) | 0 |  | [ref](states/reference/sidebar-03-getting-started-hover-light.png) · [gotx](states/gotx/sidebar-03-getting-started-hover-light.png) · [compare](states/compare/sidebar-03-getting-started-hover-light.png) |
+| sidebar-03 / getting-started-hover | dark | 271×80 → 271×80 | 7.5 % / 6.0 % | 0 / 0 | 7 (7) | 0 |  | [ref](states/reference/sidebar-03-getting-started-hover-dark.png) · [gotx](states/gotx/sidebar-03-getting-started-hover-dark.png) · [compare](states/compare/sidebar-03-getting-started-hover-dark.png) |
+| sidebar-03 / getting-started-focus-key | light | 271×80 → 271×80 | 9.7 % / 8.1 % | 0 / 0 | 7 (7) | 0 |  | [ref](states/reference/sidebar-03-getting-started-focus-key-light.png) · [gotx](states/gotx/sidebar-03-getting-started-focus-key-light.png) · [compare](states/compare/sidebar-03-getting-started-focus-key-light.png) |
+| sidebar-03 / getting-started-focus-key | dark | 271×80 → 271×80 | 14.7 % / 13.4 % | 0 / 0 | 7 (7) | 0 |  | [ref](states/reference/sidebar-03-getting-started-focus-key-dark.png) · [gotx](states/gotx/sidebar-03-getting-started-focus-key-dark.png) · [compare](states/compare/sidebar-03-getting-started-focus-key-dark.png) |
+| sidebar-03 / installation-hover | light | 238×76 → 238×76 | 10.9 % / 8.5 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-03-installation-hover-light.png) · [gotx](states/gotx/sidebar-03-installation-hover-light.png) · [compare](states/compare/sidebar-03-installation-hover-light.png) |
+| sidebar-03 / installation-hover | dark | 238×76 → 238×76 | 11.1 % / 9.4 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-03-installation-hover-dark.png) · [gotx](states/gotx/sidebar-03-installation-hover-dark.png) · [compare](states/compare/sidebar-03-installation-hover-dark.png) |
+| sidebar-03 / installation-focus-key | light | 238×76 → 238×76 | 13.6 % / 10.8 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-03-installation-focus-key-light.png) · [gotx](states/gotx/sidebar-03-installation-focus-key-light.png) · [compare](states/compare/sidebar-03-installation-focus-key-light.png) |
+| sidebar-03 / installation-focus-key | dark | 238×76 → 238×76 | 17.9 % / 16.4 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-03-installation-focus-key-dark.png) · [gotx](states/gotx/sidebar-03-installation-focus-key-dark.png) · [compare](states/compare/sidebar-03-installation-focus-key-dark.png) |
+| sidebar-03 / installation-press | light | 238×76 → 238×76 | 10.9 % / 8.5 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-03-installation-press-light.png) · [gotx](states/gotx/sidebar-03-installation-press-light.png) · [compare](states/compare/sidebar-03-installation-press-light.png) |
+| sidebar-03 / installation-press | dark | 238×76 → 238×76 | 11.1 % / 9.4 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-03-installation-press-dark.png) · [gotx](states/gotx/sidebar-03-installation-press-dark.png) · [compare](states/compare/sidebar-03-installation-press-dark.png) |
+| sidebar-03 / installation-click | light | 238×76 → 238×76 | 10.9 % / 8.5 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-03-installation-click-light.png) · [gotx](states/gotx/sidebar-03-installation-click-light.png) · [compare](states/compare/sidebar-03-installation-click-light.png) |
+| sidebar-03 / installation-click | dark | 238×76 → 238×76 | 11.1 % / 9.4 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-03-installation-click-dark.png) · [gotx](states/gotx/sidebar-03-installation-click-dark.png) · [compare](states/compare/sidebar-03-installation-click-dark.png) |
 | sidebar-03 / data-fetching-hover | light | 238×76 → 238×76 | 7.8 % / 6.3 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-03-data-fetching-hover-light.png) · [gotx](states/gotx/sidebar-03-data-fetching-hover-light.png) · [compare](states/compare/sidebar-03-data-fetching-hover-light.png) |
 | sidebar-03 / data-fetching-hover | dark | 238×76 → 238×76 | 8.2 % / 7.0 % | 0 / 0 | 8 (8) | 0 |  | [ref](states/reference/sidebar-03-data-fetching-hover-dark.png) · [gotx](states/gotx/sidebar-03-data-fetching-hover-dark.png) · [compare](states/compare/sidebar-03-data-fetching-hover-dark.png) |
 | sidebar-03 / trigger-hover | light | 76×70 → 76×70 | 2.7 % / 0.7 % | 0 / 0 | 2 (2) | 0 |  | [ref](states/reference/sidebar-03-trigger-hover-light.png) · [gotx](states/gotx/sidebar-03-trigger-hover-light.png) · [compare](states/compare/sidebar-03-trigger-hover-light.png) |
