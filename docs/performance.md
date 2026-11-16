@@ -109,3 +109,86 @@ buffer instance co về gấp đôi mức cần sau 120 frame dùng dưới 1/4;
 CPU: `SoftwareRenderer.RenderDamaged` vẽ lại các ô hỏng vào canvas giữ lại. D3D11: vẽ có scissor vào texture đích giữ lại rồi `CopyResource` sang back buffer – **ràng buộc flip-model**: `FLIP_DISCARD` xoay back buffer và nội dung sau Present không xác định nên không thể chỉ vẽ phần đổi thẳng vào back buffer.
 Frame không đổi: không vẽ, không Present. `GpuDamageTests.cs`: chuỗi hover / nháy / cuộn / animation cho ảnh giống từng pixel vẽ cả frame (CPU và GPU).
 
+
+## 6. Cập nhật một phần (kiểu React): chỉ phần đổi được dựng lại và vẽ lại
+
+### 6.1 Phase 0 – phân tích (trước khi sửa; Release, `bench`, trung vị mỗi frame)
+
+`rend`/`repl` = view render / phát lại, `meas` = số lần Measure, `prim` = primitive của scene, `nodes` = node dựng trong frame.
+
+| target / kịch bản | frame | rend | repl | meas | prim | nodes | draw ms | layout | paint | alloc B |
+|---|---|---|---|---|---|---|---|---|---|---|
+| demo / idle,hover,scroll | 60-461 | 3 | 5 | 589 | 3125 | 186 | 0.27 | 0.15 | 0.09 | 0 |
+| gallery-display / idle (spinner) | 60 | 2 | 0 | 1783 | 2266 | 680 | 0.70 | 0.42 | 0.22 | 144 |
+| gallery-forms / type | 42 | 4 | 37 | 595 | 1272 | 225 | 0.26 | 0.16 | 0.07 | 728 |
+| gallery-forms / resize | 78 | 54 | 0 | 1707 | 1271 | 528 | 1.16 | 0.70 | 0.43 | 64 |
+| shadcn-home / idle (không có gì đổi) | 60 | 0 | 1 | 0 | 2429 | 1 | 0.04 | 0 | 0.03 | 0 |
+| shadcn-home / scroll | 82 | 33 | 0 | 1635 | 2429 | 700 | 1.08 | 0.03 | 1.00 | 56 |
+| shadcn-home / type | 42 | 9 | 7 | 982 | 2435 | 390 | 0.52 | 0.36 | 0.13 | 760 |
+| shadcn-home / resize | 112 | 61 | 2 | 2070 | 1466 | 801 | 9.62 | 8.72 | 1.04 | 839 784 |
+| dashboard-01 / type | 42 | 39 | 22 | 3749 | 1541 | 509 | 1.23 | 0.98 | 0.18 | 2000 |
+| stress / idle,hover,click | 3-85 | 0 | 1 | 0 | 35751 | 1 | 2.07 | 0 | 2.05 | 0 |
+| stress / scroll | 87 | 4 | 1 | 15734 | 35753 | 4152 | 4.50 | 0.44 | 3.79 | 808 |
+| stress / resize | 78 | 5 | 0 | 15794 | 33663 | 4181 | 8.33 | 3.82 | 4.13 | 7312 |
+
+Kết luận có bằng chứng:
+
+1. Frame rảnh / hover / click vẫn chép lại cả scene dù không có gì đổi (stress 2 ms = 35k primitive × 200 B).
+2. Một Notify render lại mọi view cha (gõ phím: 4-39 view, 0.26-1.23 ms thay vì 1 view) và đo lại cả cây của chúng (595-3749 Measure).
+3. Animation (gallery-display) render lại 2 view và đo 1783 node mỗi frame.
+4. Gõ phím cấp phát 664-2000 B/frame: shape cache nhận khoá ở lần thứ hai thấy (xảy ra ngay trong frame: đo + vẽ) và bộ đệm định hình nở đúng bằng độ dài chữ mỗi phím.
+5. Đổi kích thước: Render lại 54-61 view/frame (7 ms trên trang chủ) và ngắt dòng lại ~200 đoạn/frame (1.5 ms trên 8 ms ở stress).
+6. Cuộn trang chủ: 33 view render lại vì view có vùng cắt trong bị cắt ở mép khung cuộn không phát lại được (đã ghi ở §4 "chưa làm").
+
+### 6.2 Cơ chế đã làm (Phase 1-5)
+
+- **Notify chỉ làm bẩn view đó** (`Window.DirtyAncestors` / `GOTX_DIRTY_CHAIN=1` trả lại hành vi cũ). Focus ô nhập vẫn làm bẩn view cha (component cha đọc `IsFocused` trong Render, vd. `Ui.InputGroup`).
+  Hệ quả: view cha đọc state của con trong Render mà không `Observe` sẽ không tự cập nhật nữa.
+- **Khung một phần** (`Window.Partial.cs`, `Window.Splice.cs`): view bẩn cao nhất được Render + layout + vẽ vào scene tạm, rồi đoạn primitive / hitbox / hover / thứ tự view / bảng cache cũ của nó được thay TẠI CHỖ
+  (`Scene.ReplaceRange`; Start/End của tổ tiên và phần đuôi dời theo độ lệch; chỉ số hitbox bao ngoài đổi sang toàn cục). Điều kiện (relayout boundary): mọi kết quả đo + min-content của view khớp với lần cha đã thấy, số vùng cắt hình / gradient
+  và cờ cắt trong không đổi, view không phải vùng cuộn, không phủ quá 60 % scene. Không thoả thì dựng khung đầy đủ, dùng lại kết quả Render đã có (không Render hai lần). Frame không có view bẩn không làm gì (scene giữ nguyên).
+- **Vùng hỏng theo đoạn** (`FrameDamage`, Phase 3): khung một phần ghi hộp (kể cả blur bóng, vùng cắt, biến đổi) của primitive thật sự đổi (bỏ tiền tố / hậu tố giống hệt); khung đầy đủ đánh dấu Full; `SceneDamage` đổi sang lưới ô 64² không hash scene.
+  **Mặc định bật** (CPU: canvas giữ lại; D3D11: đích giữ lại + scissor). `GOTX_DAMAGE=0` tắt, `GOTX_DAMAGE=hash` dùng so hash cũ.
+- **Cô lập** (Phase 4): con trỏ nháy / animate-* / hover chỉ Render view chứa chúng; nháy con trỏ ≤ 2 trên 88 ô hỏng; spinner 1 view/frame, ≤ 2 ô.
+- **Bộ nhớ** (Phase 5): shape cache chỉ nhận khoá ở frame khác; bộ đệm định hình nở gấp đôi; cache ngắt dòng theo **khoảng bề rộng** (kết quả đúng cho mọi bề rộng trong [dòng rộng nhất, bề rộng nhỏ nhất làm một từ bị ngắt lọt vào dòng trước));
+  `Scene.Reserve` (hai scene thay phiên + scene tạm cấp một lần, không nở dần); bảng snapshot view được dọn khi view biến mất.
+- Sửa kèm: transition kết thúc đúng từng bit trên đích; cuộn mượt bắt đầu bằng đúng một frame (trước đây phụ thuộc việc view cha có bị vẽ lại hay không).
+
+Test mới (`tests/GotX.Tests/Perf`):
+
+- `PartialParityTests`: chuỗi input ngẫu nhiên có seed trên 8 trang. Cửa sổ bật so cửa sổ tắt khung một phần (primitive, vùng cắt, hitbox, con trỏ) khớp từng phần tử; canvas giữ lại vẽ theo hint bằng vẽ cả frame từng pixel (renderer bỏ qua frame ngẫu nhiên, hint phủ kín ô hỏng của so hash).
+- `IsolationTests`: nháy con trỏ, spinner. `WrapSpanTests`: 2400 cặp chuỗi/bề rộng bằng tính trực tiếp; kéo giãn 0 miss, ≤ 256 B. `ZeroAllocTests`: gõ 150 phím ≤ 32 B/frame.
+- Các test cũ ghim "view cha cũng render" / "frame rảnh phát lại view gốc" đã cập nhật theo ngữ nghĩa mới.
+
+### 6.3 Số đo trước → sau (Release, `bench`, trung vị, cùng máy)
+
+| kịch bản | views/frame | draw ms | alloc B/frame |
+|---|---|---|---|
+| gallery-forms / type | 4 → 1 | 0.26 → 0.05 | 728 → 0 |
+| shadcn-home / type | 9 → 5 | 0.52 → 0.13 | 760 → 0 |
+| dashboard-01 / type | 39 → 1 | 1.23 → 0.05 | 2000 → 0 |
+| idle (stress / home) | 0 | 2.07 → 0.01 / 0.04 → 0.01 | 0 |
+| hover (stress) | 0 | 2.13 → 0.01 | 0 |
+| click (dashboard-01) | 3 → 1 | 0.20 → 0.08 | 0 |
+| stress / resize | 5 | 8.33 → 5.98 (baseline 6.16) | 7312 → 10168 (xem §6.4) |
+| spinner trong view riêng (IsolationTests) | 1 | 0.03 trên 1159 primitive | 0 |
+
+Footprint (`tools/GotX.Footprint run --renderer software --repeat 1`, trước = `footprint-baseline.json`, JIT): home rảnh CPU 1.20 % → 0.00 %, 1584 → 0 B/frame, 2.1 → 0 frame/giây;
+spin CPU 0.90 % → 0.41 %; dialog 1.80 % → 1.02 %; resize 5.63 % → 5.42 %, 4022 → 2891 B/frame; input 0.13 % → 0.09 %; vlist 2.67 % → 2.63 % (B/frame 1594 → 2944 do chuỗi nhãn dòng mới của kịch bản, không phải của Core).
+Working set không đổi đáng kể (home 79 MB, hello 46 MB).
+
+### 6.4 Còn đỏ trong cổng bench (4 mục) và nút cổ chai còn lại
+
+- `stress/resize allocMed` 808 → ~10 KB: lấp đầy shape cache / từ điển ngắt dòng cho chuỗi mới mỗi lần Render (StressView tạo chuỗi mới mỗi frame). `resizelong` (936 frame) trung bình 4.6 KB/frame, 55 % là `ShapedGlyph[]`
+  của ô cache định hình: hữu hạn (2048 ô), giảm dần, không phải trạng thái ổn định. Chưa gỡ (cần cache định hình theo nội dung hoặc kho mảng dùng chung).
+- `shadcn-home/dark`, `shadcn-sidebar-03/dark` drawP95 (+1.7 / +0.6 ms) và `stress/dark allocMed` (0 → 808): frame dựng đầy đủ đầu tiên sau chuỗi dài frame không làm gì. Suy luận chưa kiểm chứng: cache CPU nguội / GC rơi vào frame đó (frame này không chạy bước mới nào).
+- `stress/resize`: layout còn 2.4 ms với 15 794 Measure / 4181 node (3.8 lần mỗi node), paint 3.1 ms. Cần giữ cây element qua frame để đổi kích thước không Render lại mọi view (chưa làm).
+- Trang có animation nằm thẳng trong view lớn (gallery-display 0.63 ms, 2 view, 1783 Measure mỗi frame): view phủ trên 60 % scene đi đường khung đầy đủ. Tách spinner thành view riêng đưa về 0.03 ms.
+- Cuộn trang chủ shadcn: 33 view render lại + paint 1.07 ms (view có vùng cắt trong bị cắt ở mép khung cuộn không phát lại được).
+- Chưa làm: segment dạng danh sách gián tiếp (đoạn đổi độ dài vẫn dời phần đuôi bằng `Array.Copy`), khung một phần cho view cuộn / view phủ trên 60 %, relayout boundary cho view đổi kích thước (hiện lùi về khung đầy đủ nên cha và tổ tiên render lại).
+
+### 6.5 Rủi ro chưa kiểm chứng trên cửa sổ D3D11 thật (máy chỉ có WARP)
+
+- Vùng hỏng bật mặc định cho D3D11: đích giữ lại + `CopyResource` sang back buffer flip-model và scissor chỉ được test pixel-exact trên WARP offscreen (`gpu/damage`), chưa trên swap chain / driver thật. Mất thiết bị đặt lại về Full qua `Damage.Invalidate()`. Thoát hiểm: `GOTX_DAMAGE=0`.
+- Frame không có gì đổi giờ trả scene cũ và renderer bỏ qua Present: hành vi chờ vsync / DWM với cửa sổ không Present chưa quan sát được trên máy thật.
+- Khung một phần sửa scene tại chỗ: mã giữ tham chiếu `Scene` của frame trước qua Draw kế tiếp sẽ thấy nó đổi (trong repo chỉ có `SceneDamage` / renderer dùng, cả hai không giữ).
