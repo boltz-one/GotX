@@ -31,7 +31,10 @@ internal readonly record struct Affine(float A, float B, float C, float D, float
 /// </summary>
 public sealed partial class Font
 {
-    readonly byte[] _d;
+    // Dữ liệu font: mảng (font nhúng) hoặc file ánh xạ bộ nhớ (font hệ thống). Hai trường + một nhánh dễ đoán, nhanh hơn Memory<byte>.Span ở đường tạo hình.
+    readonly byte[]? _arr;
+    readonly MappedFontData? _map;
+    ReadOnlySpan<byte> D => _arr is { } a ? a : _map!.Span;
     readonly int _hmtx, _loca, _glyf, _cmap, _numHMetrics, _numGlyphs;
     readonly bool _locaLong;
     readonly ushort _cmapFormat;
@@ -44,11 +47,17 @@ public sealed partial class Font
     public short Ascender { get; }
     public short Descender { get; }
 
-    public static Font Load(string path, int id, FontWeight weight) => new(File.ReadAllBytes(path), id, weight);
+    public static Font Load(string path, int id, FontWeight weight) => FromFile(path, id, weight, default, false);
 
-    public Font(byte[] data, int id, FontWeight weight)
+    /// <summary>File font: ánh xạ bộ nhớ (chỉ tốn các trang được đọc) nếu được, không thì đọc cả file.</summary>
+    internal static Font FromFile(string path, int id, FontWeight weight, FontFamily family, bool italic) =>
+        MappedFontData.TryOpen(path) is { } map ? new Font(null, map, id, weight) { Family = family, Italic = italic } : new Font(File.ReadAllBytes(path), null, id, weight) { Family = family, Italic = italic };
+
+    public Font(byte[] data, int id, FontWeight weight) : this(data, null, id, weight) { }
+
+    Font(byte[]? data, MappedFontData? map, int id, FontWeight weight)
     {
-        _d = data; Id = id; Weight = weight;
+        _arr = data; _map = map; Id = id; Weight = weight;
         if (U32(0) == 0x74746366) throw new NotSupportedException("TTC chưa được hỗ trợ.");
         int numTables = U16(4);
         int head = 0, hhea = 0, maxp = 0;
@@ -97,9 +106,9 @@ public sealed partial class Font
         _cmapFormat = U16(_cmap);
     }
 
-    ushort U16(int o) => BinaryPrimitives.ReadUInt16BigEndian(_d.AsSpan(o));
-    short I16(int o) => BinaryPrimitives.ReadInt16BigEndian(_d.AsSpan(o));
-    uint U32(int o) => BinaryPrimitives.ReadUInt32BigEndian(_d.AsSpan(o));
+    ushort U16(int o) => BinaryPrimitives.ReadUInt16BigEndian(D[o..]);
+    short I16(int o) => BinaryPrimitives.ReadInt16BigEndian(D[o..]);
+    uint U32(int o) => BinaryPrimitives.ReadUInt32BigEndian(D[o..]);
     float F2Dot14(int o) => I16(o) / 16384f;
 
     // Tra cmap bằng tìm nhị phân mỗi ký tự là chi phí chính của đo/ngắt dòng/vẽ chữ: nhớ theo trang 256 codepoint của BMP.

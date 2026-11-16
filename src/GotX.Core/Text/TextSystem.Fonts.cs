@@ -63,7 +63,7 @@ public sealed partial class TextSystem
     static Font? Load(Entry e)
     {
         if (e.Font is not null || e.Broken) return e.Font;
-        try { e.Font = new Font(File.ReadAllBytes(e.Path), e.Id, e.Weight) { Family = e.Family, Italic = e.Italic }; }
+        try { e.Font = Font.FromFile(e.Path, e.Id, e.Weight, e.Family, e.Italic); }
         catch (Exception ex) when (ex is NotSupportedException or IOException or IndexOutOfRangeException or ArgumentOutOfRangeException) { e.Broken = true; }
         return e.Font;
     }

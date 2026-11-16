@@ -119,6 +119,8 @@ public static partial class SoftwareRenderer
         return PixelRect(b, p.Clip, c);
     }
 
+    internal static readonly float[] Div255 = Enumerable.Range(0, 256).Select(k => k / 255f).ToArray();
+
     /// <summary>Source-over với màu premultiplied (0..1).</summary>
     static void Blend(ref uint dst, float r, float g, float b, float a)
     {
@@ -126,11 +128,12 @@ public static partial class SoftwareRenderer
         if (a >= 0.999f) { dst = Canvas.Pack(r, g, b, 1); return; }
         float inv = 1 - a;
         uint d = dst;
+        var q = Div255; // bảng k / 255f: đúng từng bit với phép chia, bỏ chia + đổi int→float mỗi kênh
         dst = Canvas.Pack(
-            r + ((d >> 16) & 0xFF) / 255f * inv,
-            g + ((d >> 8) & 0xFF) / 255f * inv,
-            b + (d & 0xFF) / 255f * inv,
-            a + (d >> 24) / 255f * inv);
+            r + q[(d >> 16) & 0xFF] * inv,
+            g + q[(d >> 8) & 0xFF] * inv,
+            b + q[d & 0xFF] * inv,
+            a + q[d >> 24] * inv);
     }
 
     /// <summary>SDF của hình chữ nhật bo góc tâm (0,0), nửa kích thước (hw, hh), bán kính r.</summary>

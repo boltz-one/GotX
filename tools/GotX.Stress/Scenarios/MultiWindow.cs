@@ -41,16 +41,3 @@ static class MultiWindowScenario
         return m.Finish();
     }
 }
-
-static class GpuLossScenario
-{
-    /// <summary>
-    /// Skipped: the only device-loss seam (D3D11Renderer.InjectHr/InjectCount) is internal to GotX.Platform.Windows and that assembly's
-    /// InternalsVisibleTo lists only GotX.Tests and GotX.Perf. Needs InternalsVisibleTo Include="GotX.Stress" (Core change request).
-    /// </summary>
-    public static Dictionary<string, double>? Run(GotX.Text.TextSystem text)
-    {
-        Console.WriteLine("  gpu-loss: SKIPPED - D3D11Renderer / device-loss inject seam are internal; GotX.Platform.Windows has no InternalsVisibleTo for GotX.Stress");
-        return null;
-    }
-}

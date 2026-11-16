@@ -25,6 +25,9 @@ static class TreeScenarios
     {
         var rig = new Rig(text);
         var win = rig.Add(a => a.New(new VListPage(rows)), Scenarios.Desktop);
+        rig.Settle(win); // unmeasured scroll out and back: sizes the damage / hash arrays for this list before the measured window
+        for (int i = 0; i < 3; i++) rig.Send(win, new InputEvent(InputKind.Scroll, new Point(400, 300), Delta: new Point(0, 120)));
+        for (int i = 0; i < 3; i++) rig.Send(win, new InputEvent(InputKind.Scroll, new Point(400, 300), Delta: new Point(0, -120)));
         var m = Scenarios.Begin(rig, win, 6);
         var p = new Point(400, 300);
         for (int i = 0; i < 10; i++) m.Add(rig.Frame(win));

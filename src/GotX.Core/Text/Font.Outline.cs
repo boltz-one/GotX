@@ -26,7 +26,7 @@ public sealed partial class Font
             p += 4;
             float dx, dy;
             if ((flags & 0x0001) != 0) { dx = I16(p); dy = I16(p + 2); p += 4; }
-            else { dx = (sbyte)_d[p]; dy = (sbyte)_d[p + 1]; p += 2; }
+            else { dx = (sbyte)D[p]; dy = (sbyte)D[p + 1]; p += 2; }
             if ((flags & 0x0002) == 0) { dx = 0; dy = 0; } // khớp điểm (hiếm) – bỏ qua
 
             float a = 1, b = 0, c = 0, d = 1;
@@ -55,11 +55,11 @@ public sealed partial class Font
         {
             for (int i = 0; i < numPts;)
             {
-                byte f = _d[p++];
+                byte f = D[p++];
                 flags[i++] = f;
                 if ((f & 0x08) != 0)
                 {
-                    int rep = _d[p++];
+                    int rep = D[p++];
                     while (rep-- > 0 && i < numPts) flags[i++] = f;
                 }
             }
@@ -67,7 +67,7 @@ public sealed partial class Font
             for (int i = 0; i < numPts; i++)
             {
                 byte f = flags[i];
-                if ((f & 0x02) != 0) { int dx = _d[p++]; v += (f & 0x10) != 0 ? dx : -dx; }
+                if ((f & 0x02) != 0) { int dx = D[p++]; v += (f & 0x10) != 0 ? dx : -dx; }
                 else if ((f & 0x10) == 0) { v += I16(p); p += 2; }
                 xs[i] = v;
             }
@@ -75,7 +75,7 @@ public sealed partial class Font
             for (int i = 0; i < numPts; i++)
             {
                 byte f = flags[i];
-                if ((f & 0x04) != 0) { int dy = _d[p++]; v += (f & 0x20) != 0 ? dy : -dy; }
+                if ((f & 0x04) != 0) { int dy = D[p++]; v += (f & 0x20) != 0 ? dy : -dy; }
                 else if ((f & 0x20) == 0) { v += I16(p); p += 2; }
                 ys[i] = v;
             }

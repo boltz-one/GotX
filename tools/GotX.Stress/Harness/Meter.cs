@@ -61,6 +61,7 @@ public sealed class Meter
             ["wsGrowthMB"] = (ws - _ws0) / mb, ["wsPeakMB"] = (Math.Max(_peakWs, ws) - _ws0) / mb, ["privGrowthMB"] = (priv - _priv0) / mb,
             ["heapGrowthMB"] = (heap - _heap0) / mb,
             ["views"] = _s.Sum(x => (double)x.Rendered) / n, ["replayed"] = _s.Sum(x => (double)x.Replayed) / n,
+            ["cover"] = _s.Sum(x => x.Cover) / n, ["fullFrac"] = _s.Count(x => x.Kind == 1) / n, ["emptyFrac"] = _s.Count(x => x.Kind == 0) / n,
             ["nodes"] = _s.Count == 0 ? 0 : _s.Max(x => x.Nodes), ["prims"] = _s.Sum(x => (double)x.Prims) / n,
         };
         foreach (var (k, v) in _extra) m[k] = v;

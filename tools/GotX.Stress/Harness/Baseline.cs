@@ -14,7 +14,7 @@ static class Baseline
         ["layoutMs"] = (1.8, 0.5), ["paintMs"] = (1.8, 0.5), ["rasterMs"] = (1.8, 1.0),
         ["allocPerFrame"] = (1.3, 1024), ["gen0"] = (1.5, 4), ["gen1"] = (2, 3), ["gen2"] = (2, 2),
         ["wsGrowthMB"] = (1.5, 128), ["privGrowthMB"] = (1.5, 128), ["heapGrowthMB"] = (1.5, 128),
-        ["views"] = (1.2, 1), ["nodes"] = (1.1, 50), ["prims"] = (1.2, 50),
+        ["views"] = (1.2, 1), ["nodes"] = (1.1, 50), ["prims"] = (1.2, 50), ["lossErrors"] = (1, 0),
     };
 
     public static string Path { get; set; } = "stress-baseline.json";

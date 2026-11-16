@@ -1,6 +1,6 @@
 namespace GotX;
 
-public enum TraceKind : byte { Input, Click, Key, Focus, ViewRender, ViewDirty, Overlay, Scroll, Frame }
+public enum TraceKind : byte { Input, Click, Key, Focus, ViewRender, ViewDirty, Overlay, Scroll, Frame, Warn }
 
 /// <summary>Một sự việc bên trong Window, phát qua <see cref="Window.Trace"/> để công cụ test/debug dựng lại chuỗi nhân quả.</summary>
 public readonly record struct TraceEvent(TraceKind Kind, string Message, Bounds Bounds, int ViewId, int Frame)

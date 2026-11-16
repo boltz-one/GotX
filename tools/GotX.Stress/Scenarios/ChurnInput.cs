@@ -7,6 +7,9 @@ static class ChurnScenario
         var rig = new Rig(text);
         var win = rig.Add(a => a.New(new ChurnPage(400)), Scenarios.Desktop);
         var page = (ChurnPage)win.Window.Root!;
+        // Unmeasured burst + a few single changes: sizes the damage / hash arrays for this page before the measured window starts.
+        foreach (var l in page.Leaves) l.Bump();
+        rig.Settle(win); win.Window.Damage.MarkFull(); rig.Frame(win); page.Leaves[3].Bump(); rig.Frame(win); page.Leaves[200].Bump(); page.Leaves[5].Bump(); rig.Frame(win);
         var m = Scenarios.Begin(rig, win);
         var rng = new Random(42);
         for (int f = 0; f < 600; f++)

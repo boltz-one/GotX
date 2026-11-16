@@ -42,6 +42,8 @@ public static class Scenarios
     {
         rig.Settle(win, settleMax);
         for (int i = 0; i < warm; i++) rig.Frame(win);
+        // Damage tracking sizes its per-primitive arrays on the first full-hint frame (a real frame would otherwise pay it inside the measured window).
+        win.Window.Damage.MarkFull(); rig.Frame(win);
         var m = new Meter();
         m.Begin();
         return m;

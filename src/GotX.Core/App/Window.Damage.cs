@@ -15,7 +15,7 @@ public sealed partial class Window
     {
         if (!Damage.Active || Damage.AllFull) return false;
         int n = old.PrimEnd - old.PrimStart;
-        if (_dmgHash.Length < n) { _dmgHash = new ulong[n * 2]; _dmgBox = new Bounds[n * 2]; }
+        if (_dmgHash.Length < n) { _dmgHash = new ulong[n + n / 4 + 64]; _dmgBox = new Bounds[n + n / 4 + 64]; }
         var prims = _scene.Primitives;
         for (int i = 0; i < n; i++)
         {

@@ -6,9 +6,10 @@ namespace GotX;
 /// (cả bản cũ lẫn bản mới, gồm bóng mờ, vùng cắt, biến đổi) đánh dấu ô 64×64 hỏng. Thứ tự vẽ của phần còn lại đổi → Full (an toàn).
 /// Kết quả đúng từng pixel với vẽ toàn frame vì renderer chỉ vẽ lại các ô hỏng bằng đúng mọi primitive chạm vào ô đó.
 /// </summary>
-public sealed class SceneDamage
+public sealed partial class SceneDamage
 {
     public const int Tile = 64;
+    const int MaxReorderSpan = 16384; // số primitive tối đa ở giữa để còn dựng từ điển đối chiếu (lệch số lượng)
 
     public readonly struct Result(bool full, bool empty, int tx, int ty, bool[]? dirty, int dirtyCount)
     {
@@ -16,6 +17,8 @@ public sealed class SceneDamage
         public bool Full { get; } = full;
         /// <summary>Không có gì khác frame trước: không cần vẽ, không cần present.</summary>
         public bool Empty { get; } = empty;
+        /// <summary>Hộp nhìn thấy của từng primitive frame này (nếu đã tính khi so hash), chỉ hợp lệ tới lần Update kế tiếp: renderer khỏi tính lại.</summary>
+        public Bounds[]? Boxes { get; init; }
         public int TilesX { get; } = tx;
         public int TilesY { get; } = ty;
         /// <summary>Lưới ô hỏng (TilesX × TilesY, hàng trước); null nếu Full.</summary>
@@ -64,7 +67,7 @@ public sealed class SceneDamage
         bool sameFrame = _has && width == _w && height == _h && scene.ClearColor == _clear && scene.Atlas.Generation == _gen && scene.ClearColor.A >= 1;
         int tx = (width + Tile - 1) / Tile, ty = (height + Tile - 1) / Tile;
         Result result;
-        if (hint.Full || !sameFrame) result = new Result(true, false, tx, ty, null, tx * ty);
+        if (hint.Full || !sameFrame) result = FullHint(scene, sameFrame, tx, ty);
         else
         {
             if (_dirty.Length < tx * ty) _dirty = new bool[tx * ty];
@@ -75,9 +78,10 @@ public sealed class SceneDamage
             result = count == 0 ? new Result(false, true, tx, ty, null, 0) : new Result(false, false, tx, ty, _dirty, count);
         }
         hint.Consume();
-        _prevCount = -1; // trạng thái hash không còn khớp frame hiển thị: lần so hash kế tiếp (nếu có) phải vẽ cả frame
+        if (!_hashedNow) _prevCount = -1; // hint của khung một phần: hash không còn khớp frame hiển thị, lần so hash kế tiếp phải vẽ cả frame
+        _hashedNow = false;
         _w = width; _h = height; _clear = scene.ClearColor; _gen = scene.Atlas.Generation; _has = true;
-        _hashStale = true;
+        _hashStale = _prevCount < 0;
         return result;
     }
 
@@ -89,7 +93,7 @@ public sealed class SceneDamage
         if (_hashStale) { _has = false; _hashStale = false; }
         var prims = scene.Primitives;
         int n = prims.Length;
-        if (_curHash.Length < n) { _curHash = new ulong[n * 2]; _curBox = new Bounds[n * 2]; _matchedB = new bool[n * 2]; }
+        EnsureCapacity(n);
         for (int i = 0; i < n; i++)
         {
             _curHash[i] = SceneDamageMath.Hash(scene, prims[i]);
@@ -104,7 +108,6 @@ public sealed class SceneDamage
         (_prevHash, _curHash) = (_curHash, _prevHash);
         (_prevBox, _curBox) = (_curBox, _prevBox);
         _prevCount = n; _w = width; _h = height; _clear = scene.ClearColor; _gen = scene.Atlas.Generation; _has = true;
-        if (_matchedB.Length < n) _matchedB = new bool[n * 2];
         return result;
     }
 
@@ -116,7 +119,22 @@ public sealed class SceneDamage
         while (suf < n - pre && suf < m - pre && _curHash[n - 1 - suf] == _prevHash[m - 1 - suf]) suf++;
         int aEnd = m - suf, bEnd = n - suf; // phần giữa: prev [pre, aEnd), cur [pre, bEnd)
         if (aEnd == pre && bEnd == pre) return new Result(false, true, tx, ty, null, 0);
+        // Cùng số primitive ở giữa: so theo vị trí (không từ điển, không đổi thứ tự được) – trường hợp thường gặp khi chỉ đổi màu / chữ / vị trí.
+        if (aEnd - pre == bEnd - pre)
+        {
+            if (_dirty.Length < tx * ty) _dirty = new bool[tx * ty];
+            Array.Clear(_dirty, 0, tx * ty);
+            for (int i = pre; i < bEnd; i++)
+            {
+                if (_curHash[i] == _prevHash[i]) continue;
+                Mark(_prevBox[i], tx, ty); Mark(_curBox[i], tx, ty);
+            }
+            int cnt = 0;
+            for (int i = 0; i < tx * ty; i++) if (_dirty[i]) cnt++;
+            return cnt == 0 ? new Result(false, true, tx, ty, null, 0) : new Result(false, false, tx, ty, _dirty, cnt);
+        }
 
+        if (aEnd - pre > MaxReorderSpan || bEnd - pre > MaxReorderSpan) return new Result(true, false, tx, ty, null, tx * ty); // đổi lớn (cuộn cả trang…): dựng từ điển tốn hơn vẽ cả frame
         if (_dirty.Length < tx * ty) _dirty = new bool[tx * ty];
         Array.Clear(_dirty, 0, tx * ty);
         _counts.Clear();

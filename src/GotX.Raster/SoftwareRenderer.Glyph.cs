@@ -21,7 +21,7 @@ public static partial class SoftwareRenderer
             {
                 byte m = alpha[mrow + x];
                 if (m == 0) continue;
-                float a = m / 255f * col.A;
+                float a = Div255[m] * col.A;
                 if (clip.On) a *= clip.Coverage(x + 0.5f, y + 0.5f);
                 Blend(ref px[row + x], col.R * a, col.G * a, col.B * a, a);
             }

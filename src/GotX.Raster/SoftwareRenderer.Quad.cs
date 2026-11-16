@@ -2,6 +2,9 @@ namespace GotX.Raster;
 
 public static partial class SoftwareRenderer
 {
+    /// <summary>Tắt đường nhanh của Quad (tô đoạn SIMD + lặp một pixel giữa cạnh) để so từng pixel với đường SDF gốc trong test.</summary>
+    public static bool QuadFastPaths { get; set; } = true;
+
     // ---------- Quad: nền + viền từng cạnh (liền/gạch/chấm) + bo góc (+ biến đổi) ----------
 
     static void Quad(Canvas c, Scene scene, in Primitive p, in Shape clip)
@@ -9,36 +12,20 @@ public static partial class SoftwareRenderer
         var r = Area(p, 1, c);
         if (r.Empty) return;
 
+        var q = new QuadShader(scene, p);
         var b = p.Bounds;
-        float hw = b.Width / 2, hh = b.Height / 2;
-        var f = new Frame(b, p.Transform);
-        var corners = ClampCorners(p.Corners, MathF.Min(hw, hh));
-
-        // Viền từng cạnh → hộp bên trong (tâm lệch nếu các cạnh dày khác nhau)
-        var w = p.BorderWidths;
-        bool hasBorder = p.HasBorder && p.BorderStyle != BorderStyle.None;
-        float bt = MathF.Min(w.Top, b.Height), bb = MathF.Min(w.Bottom, b.Height), bl = MathF.Min(w.Left, b.Width), br = MathF.Min(w.Right, b.Width);
-        float ix0 = -hw + bl, ix1 = hw - br, iy0 = -hh + bt, iy1 = hh - bb;
-        float icx = (ix0 + ix1) / 2, icy = (iy0 + iy1) / 2, ihw = (ix1 - ix0) / 2, ihh = (iy1 - iy0) / 2;
-        var inner = new Corners(
-            MathF.Max(0, corners.TopLeft - MathF.Max(bl, bt)), MathF.Max(0, corners.TopRight - MathF.Max(br, bt)),
-            MathF.Max(0, corners.BottomRight - MathF.Max(br, bb)), MathF.Max(0, corners.BottomLeft - MathF.Max(bl, bb)));
-
-        var bg = p.Color;
-        float bgR = bg.R * bg.A, bgG = bg.G * bg.A, bgB = bg.B * bg.A;
-        uint solid = Canvas.Pack(bgR, bgG, bgB, 1);
-        bool opaque = bg.A >= 0.999f;
-
-        // Gradient (background-image) phủ lên màu nền, tính theo toạ độ cục bộ như shader
-        bool hasGrad = p.Gradient != 0;
-        var grad = hasGrad ? new GradientSampler(scene.Gradient(p.Gradient), hw, hh) : default;
+        bool opaque = q.Bg.A >= 0.999f;
+        uint solid = Canvas.Pack(q.BgR, q.BgG, q.BgB, 1);
 
         // Vùng chắc chắn nằm trong: tô nhanh không cần SDF (chỉ khi không biến đổi, không cắt hình, màu đặc)
-        bool canFast = !f.T && !hasGrad;
-        float maxR = MathF.Max(MathF.Max(corners.TopLeft, corners.TopRight), MathF.Max(corners.BottomRight, corners.BottomLeft));
-        float maxB = MathF.Max(MathF.Max(bt, bb), MathF.Max(bl, br));
-        float inset = MathF.Max(maxR, maxB) + 1;
+        bool canFast = QuadFastPaths && !q.F.T && !q.HasGrad;
+        float inset = q.Inset + 1;
         int fastX0 = (int)MathF.Ceiling(b.X + inset), fastX1 = (int)MathF.Floor(b.Right - inset);
+        // Đoạn giữa của hàng sát cạnh (xa mọi góc >= bán kính + độ dày viền + 2): kết quả SDF chỉ phụ thuộc y (xem QuadShader) nên tính một pixel rồi lặp.
+        // Không dùng khi có vùng cắt hình / viền gạch-chấm / bốn cạnh khác màu (phụ thuộc x); gradient đã loại ở canFast.
+        bool canSpan = canFast && !clip.On && (!q.HasBorder || (p.BorderStyle == BorderStyle.Solid && q.UniformBorder));
+        float spanInset = q.Inset + q.MaxBorder + 2;
+        int spanX0 = (int)MathF.Ceiling(b.X + spanInset), spanX1 = (int)MathF.Floor(b.Right - spanInset);
 
         using var run = new BlendRun();
         var px = c.Pixels;
@@ -46,7 +33,7 @@ public static partial class SoftwareRenderer
         {
             int row = y * c.Width;
             float py = y + 0.5f;
-            bool rowFast = canFast && MathF.Abs(py - f.Cy) <= hh - inset;
+            bool rowFast = canFast && MathF.Abs(py - q.F.Cy) <= q.Hh - inset;
             int rx0 = fastX0, rx1 = fastX1;
             if (rowFast && clip.On)
             {
@@ -54,48 +41,28 @@ public static partial class SoftwareRenderer
                 if (clip.SolidRow(py, out float cx0, out float cx1)) { rx0 = Math.Max(rx0, (int)MathF.Ceiling(cx0 - 0.5f)); rx1 = Math.Min(rx1, (int)MathF.Floor(cx1 - 0.5f) + 1); }
                 else rowFast = false;
             }
+            // Đoạn chắc chắn nằm trong: tô một lượt (SIMD Fill khi đặc), hai đầu đi SDF từng pixel.
+            int fx0 = r.X1, fx1 = r.X1;
+            if (rowFast) fx0 = Math.Max(rx0, r.X0);
+            else if (canSpan) fx0 = Math.Max(spanX0, r.X0);
+            if (fx0 < r.X1) { fx1 = Math.Min(rowFast ? rx1 : spanX1, r.X1); if (fx0 >= fx1) fx0 = fx1 = r.X1; }
+            if (fx0 < fx1)
+            {
+                if (rowFast)
+                {
+                    if (opaque) px.AsSpan(row + fx0, fx1 - fx0).Fill(solid);
+                    else if (q.Bg.A > 0) for (int x = fx0; x < fx1; x++) run.Blend(ref px[row + x], q.BgR, q.BgG, q.BgB, q.Bg.A);
+                }
+                else if (q.Shade(fx0 + 0.5f, py, clip, out float sr, out float sg, out float sb, out float sa)) // hàng sát cạnh: một pixel đại diện
+                {
+                    if (sa >= 0.999f) px.AsSpan(row + fx0, fx1 - fx0).Fill(Canvas.Pack(sr, sg, sb, 1));
+                    else for (int x = fx0; x < fx1; x++) run.Blend(ref px[row + x], sr, sg, sb, sa);
+                }
+            }
             for (int x = r.X0; x < r.X1; x++)
             {
-                if (rowFast && x >= rx0 && x < rx1)
-                {
-                    if (opaque) px[row + x] = solid;
-                    else run.Blend(ref px[row + x], bgR, bgG, bgB, bg.A);
-                    continue;
-                }
-                float pxx = x + 0.5f;
-                f.Local(pxx, py, out float lx, out float ly);
-                float d = RoundedBox(lx, ly, hw, hh, PickRadius(corners, lx, ly));
-                float cov = Math.Clamp(0.5f - d, 0, 1);
-                if (clip.On && cov > 0) cov *= clip.Coverage(pxx, py);
-                if (cov <= 0) continue;
-
-                float cr = bgR, cg = bgG, cb = bgB, ca = bg.A;
-                if (hasGrad)
-                {
-                    var (gr, gg, gb, ga) = grad.Sample(lx, ly);
-                    cr = gr + cr * (1 - ga); cg = gg + cg * (1 - ga); cb = gb + cb * (1 - ga); ca = ga + ca * (1 - ga);
-                }
-                if (hasBorder)
-                {
-                    float ex = lx - icx, ey = ly - icy;
-                    float din = ihw <= 0 || ihh <= 0 ? 1 : RoundedBox(ex, ey, ihw, ihh, PickRadius(inner, ex, ey));
-                    float band = 1 - Math.Clamp(0.5f - din, 0, 1); // 1 = trên viền, 0 = bên trong
-                    float amount = p.BorderStyle == BorderStyle.Solid ? band
-                        : Pattern(p.BorderStyle, lx, ly, hw, hh, bt, br, bb, bl, band);
-                    if (amount > 0)
-                    {
-                        var side = SideColor(p, lx, ly, hw, hh, bt, br, bb, bl);
-                        float sr = side.R * side.A, sg = side.G * side.A, sb = side.B * side.A;
-                        if (side.A >= 1) { cr += (sr - cr) * amount; cg += (sg - cg) * amount; cb += (sb - cb) * amount; ca += (side.A - ca) * amount; }
-                        else
-                        {
-                            // viền trong suốt / mờ vẽ ĐÈ LÊN nền (CSS: nền nằm dưới viền), không thay thế nền
-                            float k = 1 - side.A * amount;
-                            cr = sr * amount + cr * k; cg = sg * amount + cg * k; cb = sb * amount + cb * k; ca = side.A * amount + ca * k;
-                        }
-                    }
-                }
-                Blend(ref px[row + x], cr * cov, cg * cov, cb * cov, ca * cov);
+                if (x == fx0 && fx0 < fx1) { x = fx1 - 1; continue; }
+                if (q.Shade(x + 0.5f, py, clip, out float cr, out float cg, out float cb, out float ca)) Blend(ref px[row + x], cr, cg, cb, ca);
             }
         }
     }
@@ -110,13 +77,6 @@ public static partial class SoftwareRenderer
         float m = MathF.Min(MathF.Min(t, r), MathF.Min(b, l));
         return m == t ? 0 : m == r ? 1 : m == b ? 2 : 3;
     }
-
-    /// <summary>
-    /// Màu viền tại một điểm theo cạnh của nó. Ranh giới giữa hai cạnh là đường chéo nối góc ngoài với góc trong –
-    /// giống cách CSS vẽ góc viền.
-    /// </summary>
-    static Rgba SideColor(in Primitive p, float lx, float ly, float hw, float hh, float bt, float br, float bb, float bl) =>
-        Side(lx, ly, hw, hh, bt, br, bb, bl) switch { 0 => p.BorderTop, 1 => p.BorderRight, 2 => p.BorderBottom, _ => p.BorderLeft };
 
     /// <summary>
     /// Viền gạch / chấm: tham số hoá theo chiều dài cạnh, số gạch (chấm) được làm tròn để chia đều cạnh và

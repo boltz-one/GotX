@@ -40,6 +40,7 @@ Tìm component: `src/GotX.Components/{Display,Forms,Overlays,Navigation,Chat}`. 
 - Tương tác được thì phải dùng được bằng bàn phím: `.Focusable()` + vòng focus `focus-visible:ring-[3px] focus-visible:ring-ring/50`; danh sách/menu: `OnKey` ở gốc nội dung + chỉ số "đang chọn" trong state; nội dung overlay `.AutoFocus()`.
 - Icon lấy từ `Icon.*` (`Core/Icon.cs`); thiếu thì thêm `static readonly VectorPath` bằng path Lucide.
 - Token màu: `bg-background text-foreground bg-primary text-muted-foreground border-border ring-ring…`, không dùng màu cứng.
+- `VirtualList` BẮT BUỘC có chiều cao xác định (`Class = "h-96"`, hoặc cha có chiều cao + `flex-1 min-h-0`). Thiếu thì vùng cuộn cao bằng nội dung nên dựng hết mọi hàng (100.000 hàng ≈ 3,5 s/frame) mà không báo lỗi; Core chỉ phát cảnh báo dev một lần `virtual-list-unbounded` (`TraceKind.Warn`, `PerfLog` warn, `Debug` output).
 - Mỗi file < 200 dòng; chú thích tiếng Việt nói *vì sao*; không thêm package.
 
 ## Khi đối chiếu bản gốc

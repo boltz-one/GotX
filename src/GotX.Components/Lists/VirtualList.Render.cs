@@ -24,6 +24,7 @@ public sealed partial class VirtualList
     int _start, _end;
     float _targetY = float.NaN; // vị trí cuộn đã yêu cầu bằng code, chưa tới nơi: NaN = không có
     string[] _renderedKeys = [];
+    bool _warnedUnbounded;
 
     static void Range(HeightIndex index, double y, double viewport, out int first, out int last)
     {
@@ -47,6 +48,7 @@ public sealed partial class VirtualList
         LastVisible = last;
         _start = Math.Max(0, first - _overscan);
         _end = _count == 0 ? 0 : Math.Min(_count, last + _overscan + 1);
+        CheckBounded(w, index, viewport);
 
         var area = Ui.ScrollArea(w, scrollKey).Class("size-full min-h-0 min-w-0").Anchor(scrollKey)
             .OnScroll(this, static (l, info) => l.OnScrolled(info));
@@ -65,6 +67,15 @@ public sealed partial class VirtualList
             .Class(Class).Key(FocusKey).Focusable().Role(SemanticRole.List)
             .OnKey(this, static (l, e) => l.OnKey(e))
             .Child(area);
+    }
+
+    // Không có chiều cao xác định (vd cha cao theo nội dung, thiếu h-* / flex-1 min-h-0): vùng cuộn cao bằng nội dung nên "khung nhìn" đo được lớn dần theo số hàng dựng,
+    // vòng lặp đó dựng hết mọi hàng (100.000 hàng = vài giây mỗi frame) mà không lỗi gì. Khung nhìn phủ trọn danh sách dài là dấu hiệu chắc chắn: báo một lần.
+    void CheckBounded(Window w, HeightIndex index, double viewport)
+    {
+        if (_warnedUnbounded || _count <= 200 || _end - _start <= 200 || viewport < index.Total - 1) return;
+        _warnedUnbounded = true;
+        w.Warn("virtual-list-unbounded", $"VirtualList \"{ScrollKey}\" không có chiều cao xác định nên dựng cả {_end - _start}/{_count} hàng; đặt Class = \"h-96\" (hoặc cha có chiều cao + min-h-0 + flex-1) để chỉ dựng hàng nhìn thấy.");
     }
 
     // Cuộn (hoặc khung đổi cỡ) làm hàng nhìn thấy tới sát mép vùng đã dựng thì dựng lại; nửa đệm là lề an toàn cho một lần lăn.

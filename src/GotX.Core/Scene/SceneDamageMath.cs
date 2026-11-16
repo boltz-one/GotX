@@ -21,7 +21,18 @@ public static class SceneDamageMath
         ulong h = 14695981039346656037UL;
         var words = System.Runtime.InteropServices.MemoryMarshal.Cast<byte, ulong>(
             System.Runtime.InteropServices.MemoryMarshal.AsBytes(System.Runtime.InteropServices.MemoryMarshal.CreateReadOnlySpan(in p, 1))[..(System.Runtime.CompilerServices.Unsafe.SizeOf<Primitive>() & ~7)]);
-        foreach (ulong w in words) h = (h ^ w) * 0x9E3779B97F4A7C15UL + (h >> 32);
+        // 4 làn độc lập (chuỗi nhân phụ thuộc nối tiếp chậm gấp ~4 lần) rồi gộp
+        ulong h1 = h ^ 0x1, h2 = h ^ 0x2, h3 = h ^ 0x3;
+        int i = 0;
+        for (; i + 4 <= words.Length; i += 4)
+        {
+            h = (h ^ words[i]) * 0x9E3779B97F4A7C15UL + (h >> 32);
+            h1 = (h1 ^ words[i + 1]) * 0x9E3779B97F4A7C15UL + (h1 >> 32);
+            h2 = (h2 ^ words[i + 2]) * 0x9E3779B97F4A7C15UL + (h2 >> 32);
+            h3 = (h3 ^ words[i + 3]) * 0x9E3779B97F4A7C15UL + (h3 >> 32);
+        }
+        for (; i < words.Length; i++) h = (h ^ words[i]) * 0x9E3779B97F4A7C15UL + (h >> 32);
+        h = ((h * 31 + h1) * 31 + h2) * 31 + h3;
         Mix(ref h, (uint)p.Gradient); // đuôi struct có thể nằm ngoài các từ 8 byte; cờ vùng loại trừ của bóng nằm ở đây
         if (p.ClipShape != 0) { var s = scene.Shape(p.ClipShape); Mix(ref h, 1u); Mix(ref h, s.Rect); Mix(ref h, s.Corners); Mix(ref h, s.Transform); }
         if (p.Kind == PrimitiveKind.Quad && p.Gradient != 0)

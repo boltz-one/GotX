@@ -8,6 +8,7 @@
     <ProjectReference Include="../../src/GotX.Core/GotX.Core.csproj" />
     <ProjectReference Include="../../src/GotX.Raster/GotX.Raster.csproj" />
     <ProjectReference Include="../../src/GotX.Components/GotX.Components.csproj" />
+    <ProjectReference Include="../../src/GotX.Platform.Windows/GotX.Platform.Windows.csproj" />
     <!-- GeistFonts: deterministic font set, independent of the machine's system fonts -->
     <ProjectReference Include="../../samples/Shadcn/Shadcn.csproj" />
   </ItemGroup>

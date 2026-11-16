@@ -7,5 +7,6 @@
     <!-- Test GPU (parity, mất thiết bị, rò rỉ) dùng renderer nội bộ. -->
     <InternalsVisibleTo Include="GotX.Tests" />
     <InternalsVisibleTo Include="GotX.Perf" />
+    <InternalsVisibleTo Include="GotX.Stress" />
   </ItemGroup>
 </Project>

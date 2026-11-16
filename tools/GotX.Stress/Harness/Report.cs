@@ -6,9 +6,9 @@ static class Report
     public static void Table(Dictionary<string, Dictionary<string, double>> r)
     {
         Console.WriteLine();
-        Console.WriteLine($"{"scenario",-16}{"frames",7}{"p50",8}{"p95",8}{"p99",8}{"max",8}{"B/frm",9}{"g0",5}{"g1",4}{"g2",4}{"wsMB",7}{"privMB",8}{"views",7}{"nodes",8}{"prims",8}");
+        Console.WriteLine($"{"scenario",-16}{"frames",7}{"p50",8}{"p95",8}{"p99",8}{"max",8}{"B/frm",9}{"g0",5}{"g1",4}{"g2",4}{"wsMB",7}{"privMB",8}{"views",7}{"nodes",8}{"prims",8}{"cover",7}{"full%",7}{"empty%",8}");
         foreach (var (k, m) in r)
-            Console.WriteLine($"{k,-16}{m["frames"],7:0}{m["p50"],8:0.00}{m["p95"],8:0.00}{m["p99"],8:0.00}{m["max"],8:0.0}{m["allocPerFrame"],9:0}{m["gen0"],5:0}{m["gen1"],4:0}{m["gen2"],4:0}{m["wsGrowthMB"],7:0.0}{m["privGrowthMB"],8:0.0}{m["views"],7:0.0}{m["nodes"],8:0}{m["prims"],8:0}");
+            Console.WriteLine($"{k,-16}{m["frames"],7:0}{m["p50"],8:0.00}{m["p95"],8:0.00}{m["p99"],8:0.00}{m["max"],8:0.0}{m["allocPerFrame"],9:0}{m["gen0"],5:0}{m["gen1"],4:0}{m["gen2"],4:0}{m["wsGrowthMB"],7:0.0}{m["privGrowthMB"],8:0.0}{m["views"],7:0.0}{m["nodes"],8:0}{m["prims"],8:0}{m["cover"],7:0.00}{m["fullFrac"] * 100,7:0}{m["emptyFrac"] * 100,8:0}");
         Console.WriteLine("(ms/frame incl. input dispatch, layout, paint, software raster; growth = end minus start, start after a forced GC)");
     }
 

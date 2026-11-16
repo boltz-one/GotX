@@ -24,6 +24,17 @@ public sealed partial class Window
     void Emit(TraceKind kind, string message, Bounds bounds = default, int viewId = 0) =>
         Trace?.Invoke(new TraceEvent(kind, message, bounds, viewId, _frame));
 
+    /// <summary>
+    /// Cảnh báo lúc dev (cấu hình sai nhưng vẫn chạy được, vd VirtualList không có chiều cao): phát <see cref="TraceKind.Warn"/> cho test/debug,
+    /// ghi <c>warn</c> vào nhật ký hiệu năng nếu bật, và <see cref="Debug.WriteLine(string)"/> (chỉ có trong bản Debug). Không bao giờ ném. Người gọi tự chống lặp.
+    /// </summary>
+    public void Warn(string kind, string message)
+    {
+        Emit(TraceKind.Warn, kind + ": " + message);
+        Log?.Warn(kind, message, _frame);
+        Debug.WriteLine($"GotX warning [{kind}]: {message}");
+    }
+
     void TraceInput(in InputEvent e)
     {
         string what = e.Kind switch

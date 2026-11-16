@@ -29,6 +29,7 @@ var text = Scenarios.Fonts();
 Console.Write("warm-up (JIT, caches; not measured) ... ");
 Scenarios.All.First(s => s.Name == "input").Run(text);
 Console.WriteLine("done");
+var allocs = Environment.GetEnvironmentVariable("STRESS_ALLOC") == "1" ? new AllocListener() : null;
 var results = new Dictionary<string, Dictionary<string, double>>();
 foreach (var sc in Scenarios.All.Where(s => only is null || only.Contains(s.Name)))
 {
@@ -38,6 +39,7 @@ foreach (var sc in Scenarios.All.Where(s => only is null || only.Contains(s.Name
     {
         Console.Write($"run {sc.Name} ({r + 1}/{reps}) ... ");
         var m = sc.Run(text);
+        if (allocs is not null) Console.WriteLine(Environment.NewLine + allocs.Drain());
         if (m is null) break;
         Console.WriteLine($"p50 {m["p50"]:0.00} p95 {m["p95"]:0.00} p99 {m["p99"]:0.00} max {m["max"]:0.0} ms");
         runs.Add(m);
