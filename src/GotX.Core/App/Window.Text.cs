@@ -10,14 +10,24 @@ public sealed partial class Window
 {
     const float FauxSlant = 0.2f;
 
-    void PaintText(string text, Bounds b, in TextStyle ts, Bounds deviceClip, Xf xf)
+    /// <summary>Mặc định của <see cref="SubpixelText"/>: bật bằng GOTX_SUBPIXEL_TEXT=1.</summary>
+    public static bool SubpixelTextDefault { get; set; } = Environment.GetEnvironmentVariable("GOTX_SUBPIXEL_TEXT") == "1";
+
+    /// <summary>
+    /// Định vị glyph theo 1/4 pixel ngang (4 biến thể mỗi glyph, kiểu GPUI; dọc vẫn làm tròn): khoảng cách giữa các chữ nhỏ đều hơn, đổi lại atlas
+    /// tốn tới 4 lần bộ nhớ / công raster. Mặc định TẮT vì mọi pixel chữ đổi (ảnh chuẩn phải dựng lại). Đặt trước frame đầu; cả renderer CPU lẫn D3D11 dùng chung.
+    /// </summary>
+    public bool SubpixelText { get; set; } = SubpixelTextDefault;
+
+    void PaintText(string text, Bounds b, in TextStyle ts, Bounds deviceClip, Xf xf, Bounds clip)
     {
         text = Text.ApplyCase(text, ts.Case);
         Text.WrapStyled(text, ts, ts.NoWrap ? float.NaN : b.Width + 0.01f, _lines);
         float align = ts.Align switch { TextAlign.Center => 0.5f, TextAlign.Right => 1f, _ => 0f };
         var color = Fade(ts.Color, ts.Opacity);
         int shown = ts.LineClamp > 0 ? Math.Min(_lines.Count, ts.LineClamp) : _lines.Count;
-        for (int i = 0; i < shown; i++)
+        VisibleLines(b, ts, clip, xf, shown, out int lo, out int hi);
+        for (int i = lo; i < hi; i++)
         {
             var l = _lines[i];
             float y = b.Y + i * ts.LineHeight;
@@ -101,17 +111,28 @@ public sealed partial class Window
         Font? cur = null;
         GlyphFace face = null!;
         float k = 0;
+        bool subpixel = SubpixelText;
 
         for (int i = 0; i < count; i++)
         {
             ref readonly var s = ref glyphs[i];
             if (s.Font != cur) { cur = s.Font; face = atlas.Face(cur, px); k = px / cur.UnitsPerEm; }
             dx += s.Pre * k;
-            int gi = face.Get(s.Id);
+            float gx = MathF.Round(dx + s.XOff * k);
+            int phase = 0;
+            if (subpixel)
+            {
+                // Làm tròn tới 1/4 px gần nhất: phần nguyên → vị trí, phần lẻ → biến thể glyph (4 → carry sang pixel kế).
+                float px0 = dx + s.XOff * k, fl = MathF.Floor(px0);
+                phase = (int)((px0 - fl) * 4 + 0.5f);
+                if (phase == 4) { phase = 0; fl++; }
+                gx = fl;
+            }
+            int gi = (phase == 0 ? face : face.Phase(phase)).Get(s.Id);
             var mask = atlas[gi];
             if (mask.Width > 0)
             {
-                var gb = new Bounds(MathF.Round(dx + s.XOff * k) + mask.Left, baseline - MathF.Round(s.YOff * k) + mask.Top, mask.Width, mask.Height);
+                var gb = new Bounds(gx + mask.Left, baseline - MathF.Round(s.YOff * k) + mask.Top, mask.Width, mask.Height);
                 Mat2 slant = default;
                 if (fauxItalic)
                 {

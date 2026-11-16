@@ -12,14 +12,15 @@ dotnet run -c Release --project tools/GotX.Stress -- --soak 10           # + soa
 ```
 
 Flags: `--only a,b` `--repeat N` `--baseline file` `--out results.json` `--list`. Always use Release (Debug prints a warning; numbers are meaningless).
-Env: `STRESS_FULL_RASTER=1` whole-frame raster every frame (A/B against the default damage raster), `STRESS_ALLOC=1` per-scenario allocation sample by type, `STRESS_ALLOC_TRACE=<bytes>` print every frame allocating more than that, `STRESS_TRACE=1` slow frames.
+Env: `STRESS_RESIZE_TRACE=1` prints every `resize-dpi` frame (total / layout / paint / raster / alloc / DPI), `STRESS_FULL_RASTER=1` whole-frame raster every frame (A/B against the default damage raster), `STRESS_ALLOC=1` per-scenario allocation sample by type, `STRESS_ALLOC_TRACE=<bytes>` print every frame allocating more than that, `STRESS_TRACE=1` slow frames.
 
 ## Scenarios
 
 | name | load |
 |---|---|
 | `tree-10k` / `tree-100k` | 100 / 1000 child views of ~100 nodes in a scrolling column: hover zigzag, 150 wheel notches down, 50 up |
-| `vlist-100k` / `vlist-1m` | `VirtualList` 100k / 1,000,000 rows (fixed `h-[640px]`: with no definite height it renders every row): wheel, click, PageDown, Down, End, Home |
+| `vlist-100k` / `vlist-1m` | `VirtualList` 100k / 1,000,000 rows (fixed `h-[640px]`): wheel, click, PageDown, Down, End, Home |
+| `vlist-auto-100k` | same script, 100k rows, no definite height (`Class = ""`): exercises the `max-h-screen` fallback (was 3.5 s/frame) |
 | `churn` | 400 leaf views, 1-8 random `Notify` per frame, a burst of all 400 every 100 frames |
 | `input` | 4000 seeded mouse move/down/up, wheel, key, text events on a mixed page (one frame per event) |
 | `resize-dpi` | sinusoidal size sweep ~320-1600 wide, DPI 1 / 1.25 / 1.5 / 2 every 25 frames |

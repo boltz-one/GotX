@@ -34,6 +34,9 @@ public sealed partial class Window
     readonly int[] _inputCounts = new int[s_inputNames.Length];
     long _firstInputTicks, _prevDrawTicks;
     Size _lastSize;
+
+    /// <summary>Kích thước logic của frame đầy đủ gần nhất (đã đặt trước khi view render).</summary>
+    public Size LogicalSize => _lastSize;
     PerfCounters.Snapshot _counters0;
     int _gc0, _gc1, _gc2;
     bool _lastFrameLogged;

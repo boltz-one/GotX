@@ -68,6 +68,8 @@ PerfBudgetTests.Register(suite);
 ZeroAllocTests.Register(suite);
 PartialParityTests.Register(suite);
 ScrollBlitTests.Register(suite);
+TextCullTests.Register(suite);
+SubpixelTextTests.Register(suite);
 IsolationTests.Register(suite);
 WrapSpanTests.Register(suite);
 

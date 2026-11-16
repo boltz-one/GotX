@@ -20,11 +20,11 @@ static class TreeScenarios
         return m.Finish();
     }
 
-    /// <summary>VirtualList (fixed 640 px height: without a definite height it renders every row): wheel, click-to-focus, PageDown / Down / End / Home.</summary>
-    public static Dictionary<string, double>? VList(GotX.Text.TextSystem text, int rows)
+    /// <summary>VirtualList (fixed 640 px height, or cls = "" for no definite height: falls back to max-h-screen): wheel, click-to-focus, PageDown / Down / End / Home.</summary>
+    public static Dictionary<string, double>? VList(GotX.Text.TextSystem text, int rows, string cls = "h-[640px]")
     {
         var rig = new Rig(text);
-        var win = rig.Add(a => a.New(new VListPage(rows)), Scenarios.Desktop);
+        var win = rig.Add(a => a.New(new VListPage(rows, cls)), Scenarios.Desktop);
         rig.Settle(win); // unmeasured scroll out and back: sizes the damage / hash arrays for this list before the measured window
         for (int i = 0; i < 3; i++) rig.Send(win, new InputEvent(InputKind.Scroll, new Point(400, 300), Delta: new Point(0, 120)));
         for (int i = 0; i < 3; i++) rig.Send(win, new InputEvent(InputKind.Scroll, new Point(400, 300), Delta: new Point(0, -120)));

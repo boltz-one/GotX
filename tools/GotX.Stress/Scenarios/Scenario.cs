@@ -17,6 +17,7 @@ public static class Scenarios
         new("tree-100k", "~90k-node tree: wheel scroll + hover (10x fewer events)", t => TreeScenarios.Tree(t, 1000), Slow: true),
         new("vlist-100k", "VirtualList 100k rows: wheel, click, PageDown/Down/End/Home", t => TreeScenarios.VList(t, 100_000)),
         new("vlist-1m", "VirtualList 1M rows: same script", t => TreeScenarios.VList(t, 1_000_000)),
+        new("vlist-auto-100k", "VirtualList 100k rows, no definite height (max-h-screen fallback)", t => TreeScenarios.VList(t, 100_000, "")),
         new("churn", "400 views, random Notify (1-8/frame + bursts of all)", ChurnScenario.Run),
         new("input", "4000 seeded mouse/click/scroll/key/text events", InputScenario.Run),
         new("resize-dpi", "resize sweep 320..1600 wide + DPI 1/1.25/1.5/2", ResizeScenario.Run),

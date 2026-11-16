@@ -24,7 +24,7 @@ public sealed partial class VirtualList
     int _start, _end;
     float _targetY = float.NaN; // vị trí cuộn đã yêu cầu bằng code, chưa tới nơi: NaN = không có
     string[] _renderedKeys = [];
-    bool _warnedUnbounded;
+    bool _warnedUnbounded, _unbounded;
 
     static void Range(HeightIndex index, double y, double viewport, out int first, out int last)
     {
@@ -43,12 +43,12 @@ public sealed partial class VirtualList
         y = Math.Clamp(y, 0, Math.Max(0, index.Total - viewport));
         SendScroll(w);
         _targetY = float.NaN; // chỉ dùng cho đúng lần dựng này; từ frame sau vị trí thật đã nằm trong Window
+        if (CheckBounded(w, index, viewport)) viewport = Math.Max(1, Math.Min(viewport, w.LogicalSize.Height));
         Range(index, y, viewport, out int first, out int last);
         FirstVisible = first;
         LastVisible = last;
         _start = Math.Max(0, first - _overscan);
         _end = _count == 0 ? 0 : Math.Min(_count, last + _overscan + 1);
-        CheckBounded(w, index, viewport);
 
         var area = Ui.ScrollArea(w, scrollKey).Class("size-full min-h-0 min-w-0").Anchor(scrollKey)
             .OnScroll(this, static (l, info) => l.OnScrolled(info));
@@ -64,18 +64,26 @@ public sealed partial class VirtualList
         Spacer(w, area, index.Total - index.Offset(_end));
         _after?.Request();
         return w.Div().Class("relative flex min-h-0 flex-col rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50")
-            .Class(Class).Key(FocusKey).Focusable().Role(SemanticRole.List)
+            .Class(Class).Class(_unbounded ? "max-h-screen" : "").Key(FocusKey).Focusable().Role(SemanticRole.List)
             .OnKey(this, static (l, e) => l.OnKey(e))
             .Child(area);
     }
 
-    // Không có chiều cao xác định (vd cha cao theo nội dung, thiếu h-* / flex-1 min-h-0): vùng cuộn cao bằng nội dung nên "khung nhìn" đo được lớn dần theo số hàng dựng,
-    // vòng lặp đó dựng hết mọi hàng (100.000 hàng = vài giây mỗi frame) mà không lỗi gì. Khung nhìn phủ trọn danh sách dài là dấu hiệu chắc chắn: báo một lần.
-    void CheckBounded(Window w, HeightIndex index, double viewport)
+    // Không có chiều cao xác định (vd cha cao theo nội dung): vùng cuộn cao bằng nội dung nên "khung nhìn" đo được = tổng chiều cao,
+    // và mọi hàng được dựng (100.000 hàng = 3.5 s/frame). Khung nhìn phủ trọn danh sách mà cao hơn hai lần cửa sổ là dấu hiệu chắc chắn:
+    // chốt chế độ dự phòng (khung ngoài max-h-screen, khung nhìn = chiều cao cửa sổ) để chỉ dựng hàng nhìn thấy, và báo một lần.
+    bool CheckBounded(Window w, HeightIndex index, double viewport)
     {
-        if (_warnedUnbounded || _count <= 200 || _end - _start <= 200 || viewport < index.Total - 1) return;
+        if (!_unbounded)
+        {
+            double screen = w.LogicalSize.Height;
+            if (_count <= 200 || screen <= 0 || viewport < index.Total - 1 || viewport <= 2 * screen) return false;
+            _unbounded = true;
+        }
+        if (_warnedUnbounded) return true;
         _warnedUnbounded = true;
-        w.Warn("virtual-list-unbounded", $"VirtualList \"{ScrollKey}\" không có chiều cao xác định nên dựng cả {_end - _start}/{_count} hàng; đặt Class = \"h-96\" (hoặc cha có chiều cao + min-h-0 + flex-1) để chỉ dựng hàng nhìn thấy.");
+        w.Warn("virtual-list-unbounded", $"VirtualList \"{ScrollKey}\" không có chiều cao xác định; tạm giới hạn max-h-screen để chỉ dựng hàng nhìn thấy. Đặt Class = \"h-96\" (hoặc cha có chiều cao + min-h-0 + flex-1).");
+        return true;
     }
 
     // Cuộn (hoặc khung đổi cỡ) làm hàng nhìn thấy tới sát mép vùng đã dựng thì dựng lại; nửa đệm là lề an toàn cho một lần lăn.

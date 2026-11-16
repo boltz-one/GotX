@@ -98,23 +98,23 @@
       "wsGrowthMB": -0.059
     },
     "text": {
-      "allocPerFrame": 24116.057,
+      "allocPerFrame": 28406.076,
       "gen0": 0,
       "gen1": 0,
       "gen2": 0,
-      "heapGrowthMB": 9.71,
-      "layoutMs": 0.705,
-      "max": 17.484,
+      "heapGrowthMB": 11.432,
+      "layoutMs": 0.136,
+      "max": 12.743,
       "nodes": 28,
-      "p50": 7.003,
-      "p95": 12.652,
-      "p99": 14.605,
-      "paintMs": 5,
-      "prims": 59321,
+      "p50": 3.602,
+      "p95": 7.486,
+      "p99": 8.684,
+      "paintMs": 2.625,
+      "prims": 24126.243,
       "privGrowthMB": 0,
-      "rasterMs": 1.684,
+      "rasterMs": 1.232,
       "views": 0.898,
-      "wsGrowthMB": 0.438
+      "wsGrowthMB": 2.711
     },
     "tree-100k": {
       "allocPerFrame": 73006.621,
@@ -191,6 +191,25 @@
       "rasterMs": 0.353,
       "views": 1.382,
       "wsGrowthMB": 0
+    },
+    "vlist-auto-100k": {
+      "allocPerFrame": 19764.353,
+      "gen0": 0,
+      "gen1": 0,
+      "gen2": 0,
+      "heapGrowthMB": 1.293,
+      "layoutMs": 0.096,
+      "max": 1.473,
+      "nodes": 99,
+      "p50": 0.87,
+      "p95": 1.163,
+      "p99": 1.473,
+      "paintMs": 0.051,
+      "prims": 928.147,
+      "privGrowthMB": 0,
+      "rasterMs": 0.489,
+      "views": 1.382,
+      "wsGrowthMB": 0.039
     }
   }
 }

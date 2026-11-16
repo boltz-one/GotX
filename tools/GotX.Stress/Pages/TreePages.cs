@@ -61,13 +61,13 @@ public sealed class ChurnPage(int count) : View
 }
 
 /// <summary>VirtualList with a million rows; labels are cached so frame cost is the library's, not string building.</summary>
-public sealed class VListPage(int rows) : View
+public sealed class VListPage(int rows, string cls = "h-[640px]") : View
 {
     readonly string?[] _keys = new string?[rows], _labels = new string?[rows];
     public VirtualList List = null!;
     protected override void OnCreated() => List = App.New(new VirtualList
     {
-        Count = rows, ItemHeight = 32, Class = "h-[640px]",
+        Count = rows, ItemHeight = 32, Class = cls,
         ItemKey = i => _keys[i] ??= "r" + i,
         RenderItem = (w, i, active) => w.Div().Class(active ? "flex items-center px-3 bg-muted text-sm" : "flex items-center px-3 text-sm border-b")
             .Child(_labels[i] ??= "Row " + i + " - virtualised list item"),

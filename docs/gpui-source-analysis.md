@@ -100,7 +100,7 @@ Kích thước [V] (có test cứng `gpui_wgpu/src/wgpu_renderer.rs:2757-2768`, 
 
 - `uniform_list` (`elements/uniform_list.rs`): đo 1 phần tử (index chỉ định) -> chiều cao chung, **render+layout 2 lần/frame** (`:283`, `:359`, `:653-675`); range = `floor((scrollTop-pad)/h)..ceil((scrollTop+viewport)/h)`, tính bằng f64 (`:437-448`), **không overscan**; chỉ phần tử trong range được render lại mỗi frame, `layout_as_root` từng cái với chiều cao cố định (`:473-486`). Scroll-to-item theo chiến lược Top/Center/Bottom/Nearest (`:395-434`), chiều cao tổng = h*count (f32 mất chính xác sau 2^27 px).
 - `list` (`elements/list.rs`): `SumTree<ListItem>` lưu chiều cao đo của từng phần tử (`:65`, `:996-1269`); `layout_items` render+layout phần tử nhìn thấy mỗi frame, phần tử trong `overdraw` (px, tham số) dùng chiều cao đã đo nếu có, nếu chưa thì render+đo; bù neo cuộn (`scroll_anchor`), hỗ trợ follow-tail, `splice/remeasure` khi nội dung đổi. Chỉ vẽ các phần tử nhìn thấy (`:1301-1330`).
-- GotX `VirtualList`: có chiều cao xác định thì 0.66-0.72 ms/1M-100k hàng; không có thì dựng hết (3.5 s) + cảnh báo.
+- GotX `VirtualList`: có chiều cao xác định thì 0.66-0.72 ms/1M-100k hàng; không có: trước dựng hết (3.5 s), nay dự phòng `max-h-screen` (~0.8 ms, `vlist-auto-100k`) + cảnh báo. Không tự đo hàng đầu (ItemHeight vẫn do người dùng đặt); chỉ chặn vòng khung nhìn = nội dung.
 
 **Verdict:** GotX đủ nhanh; thiếu (a) đo phần tử đầu để suy chiều cao (b) `list` biến chiều cao dùng SumTree/chỉ mục tích luỹ + neo cuộn. Đây là khoảng trống API, không phải hiệu năng.
 

@@ -81,7 +81,7 @@ public sealed partial class Window
 
         PaintBackdrop(s, ts, lb, bw, op, fromShadow, shadowMix, deviceClip, nodeXf);
 
-        if (n.Kind == NodeKind.Text) PaintText(n.Text!, lb, ts, deviceClip, nodeXf);
+        if (n.Kind == NodeKind.Text) PaintText(n.Text!, lb, ts, deviceClip, nodeXf, clip);
         else if (n.Kind == NodeKind.Input) PaintInput(n.Input!, lb, ts, deviceClip, nodeXf);
         else if (n.Vector is { } vector) PaintVector(vector, s, ts, lb, bw, deviceClip, nodeXf);
         else if (n.Image is { } image) PaintImage(image, s, lb, bw, op, deviceClip, nodeXf);

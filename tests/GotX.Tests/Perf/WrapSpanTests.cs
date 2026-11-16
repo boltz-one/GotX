@@ -33,6 +33,31 @@ static class WrapSpanTests
             t.Notes.Add($"{checkedWidths} cặp (chuỗi, bề rộng) khớp");
         });
 
+        suite.Add("perf/wrap/word-table-equals-direct-wrap-for-long-text", t =>
+        {
+            var text = TestFonts.Shared;
+            var rng = new Random(11);
+            string[] words = ["a", "xin", "chào", "GotX", "lorem", "ipsum", "dolor", "sit", "amet", "supercalifragilisticexpialidocious", "日本語のテキスト", "x\ny", "", "  ", "مرحبا", "😀👍", "fi", "Tiếng Việt", "\n\n"];
+            var cached = new List<TextLine>(); var direct = new List<TextLine>();
+            int pairs = 0;
+            for (int round = 0; round < 12; round++)
+            {
+                string s = string.Join(' ', Enumerable.Range(0, rng.Next(120, 400)).Select(_ => words[rng.Next(words.Length)]));
+                var style = TextStyle.Default with { FontSize = 12 + rng.Next(8), LineHeight = 20, Tracking = round % 3 == 0 ? 0.5f : 0 };
+                for (int k = 0; k < 40; k++)
+                {
+                    float w = k == 5 ? float.PositiveInfinity : rng.Next(2, 700) + (float)rng.NextDouble();
+                    text.Wrap(s, style, w, cached);
+                    int old = text.MaxCachedWraps; text.MaxCachedWraps = 0;
+                    text.Wrap(new string(s), style, w, direct);
+                    text.MaxCachedWraps = old;
+                    pairs++;
+                    if (!cached.SequenceEqual(direct)) { t.Fail($"bảng từ lệch: {s.Length} ký tự, bề rộng {w}, cỡ {style.FontSize}: {cached.Count} ≠ {direct.Count} dòng"); return; }
+                }
+            }
+            t.Notes.Add($"{pairs} cặp (chuỗi dài, bề rộng) khớp");
+        });
+
         suite.Add("perf/wrap/resize-drag-hits-span-cache", t =>
         {
             var text = TestFonts.Shared;

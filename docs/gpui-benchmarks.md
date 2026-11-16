@@ -42,7 +42,7 @@ Máy 16 core, Windows 11, .NET 11, Release, không GPU thật. Nguồn: `docs/pe
 | N9 | Damage | Có, mặc định bật: ô 64², hint theo đoạn, CPU canvas giữ lại, D3D11 scissor + CopyResource; frame không đổi không Present. Chưa kiểm trên swap chain thật (§6.5) |
 | N10 | Bộ nhớ | WS hello AOT d3d 33 MB / software 25 MB; home AOT 56-66 MB; JIT hello 47-53, home 88-91 MB; private hello 10-14 MB |
 | N11 | Startup | first present AOT hello 61-132 ms, home 188-205 ms; JIT 247-310 / 525-648 ms; bench cold shadcn-home firstFrame 241 ms |
-| N12 | VirtualList | 100k/1M hàng 0.72/0.66 ms p50, 1.4 KB/frame; **không có chiều cao xác định thì dựng mọi hàng** (100k = 3.5 s/frame) + cảnh báo |
+| N12 | VirtualList | 100k/1M hàng 0.72/0.66 ms p50, 1.4 KB/frame; không có chiều cao xác định: trước dựng mọi hàng (100k = 3.5 s/frame), nay dự phòng `max-h-screen` ~0.8 ms/frame + cảnh báo (vlist-auto-100k) |
 | N13 | Resize | software 5.5 % CPU, d3d(WARP) 13-16 %; 3-4 KB/frame; heap leak 428 KB/200 bước |
 | N14 | GC | gen2 = 0 mọi kịch bản footprint; soak 30 phút: ws +0.39 MB/phút, heap +367 KB/phút (bậc thang, phẳng sau phút 20) |
 

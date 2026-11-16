@@ -52,7 +52,11 @@ public sealed partial class TextSystem
             return;
         }
         long t0 = System.Diagnostics.Stopwatch.GetTimestamp();
-        WrapUncached(text, style, maxWidth, lines);
+        // Cùng chuỗi dài vừa trượt ở bề rộng khác (kéo giãn): đi qua bảng từ thay vì quét + định hình lại.
+        if (text.Length is >= WrapTableMinChars and <= WrapTableMaxChars && ReferenceEquals(span.Text, text) && span.Font == font.Id && span.FontSize == style.FontSize
+            && span.Tracking == style.Tracking && span.Tnum == style.TabularNums)
+            WrapTabled(text, style, maxWidth, lines);
+        else WrapUncached(text, style, maxWidth, lines);
         PerfCounters.WrapMiss++;
         PerfCounters.WrapTicks += System.Diagnostics.Stopwatch.GetTimestamp() - t0;
         if (MaxCachedWraps <= 0) return;

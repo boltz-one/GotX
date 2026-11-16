@@ -10,14 +10,17 @@ static class ResizeScenario
         var win = rig.Add(a => a.New(new MixedPage()), new Size(1000, 700));
         var m = Scenarios.Begin(rig, win);
         // Sinusoidal sweep so widths cross every breakpoint; DPI changes every 25 frames (forces full rebuild of caches keyed by scale).
+        var trace = Environment.GetEnvironmentVariable("STRESS_RESIZE_TRACE") == "1";
         for (int f = 0; f < 300; f++)
         {
             double t = f / 300.0 * Math.PI * 4;
-            m.Add(rig.Frame(win, () =>
+            var s = rig.Frame(win, () =>
             {
                 win.Size = new Size((float)(960 + 640 * Math.Sin(t)), (float)(700 + 300 * Math.Cos(t * 1.7)));
                 win.Scale = Dpis[f / 25 % Dpis.Length];
-            }));
+            });
+            m.Add(s);
+            if (trace) Console.WriteLine($"    f{f,3} {s.Total,6:0.00} ms (layout {s.Layout:0.00} paint {s.Paint:0.00} raster {s.Raster:0.00}) alloc {s.Alloc / 1024} KB prims {s.Prims} dpi {win.Scale} {win.Size}");
         }
         return m.Finish();
     }
@@ -64,10 +67,27 @@ static class TextScenario
     {
         var rig = new Rig(text);
         var win = rig.Add(a => a.New(new TextPage()), new Size(900, 700));
+        // Unmeasured pass over the whole page (several widths, scroll to the bottom and back): scene / shape / damage arrays reach their final size
+        // before measuring (long-text culling makes the scene size depend on the scroll position, so growth would otherwise land inside the window).
+        rig.Settle(win);
+        var wp = rig.ScrollTarget(win);
+        for (int f = 0; f < 4; f++) rig.Frame(win, () => win.Size = new Size(280 + f * 300, 700));
+        for (int f = 0; f < 40; f++) rig.Send(win, new InputEvent(InputKind.Scroll, wp, Delta: new Point(0, 400)));
+        for (int f = 0; f < 40; f++) rig.Send(win, new InputEvent(InputKind.Scroll, wp, Delta: new Point(0, -400)));
+        rig.Frame(win, () => win.Size = new Size(900, 700));
         var m = Scenarios.Begin(rig, win, 2);
         var rng = new Random(7);
+        double sweepPaint = 0, sweepLayout = 0, sweepTotal = 0; var c0 = PerfCounters.Snapshot.Now(); long sh0 = text.ShapeHits, sm0 = text.ShapeMisses;
         for (int f = 0; f < 160; f++) // new width every frame: mostly re-wrap/re-shape cache misses
-            m.Add(rig.Frame(win, () => win.Size = new Size(280 + (f * 53) % 1200, 700)));
+        {
+            var s = rig.Frame(win, () => win.Size = new Size(280 + (f * 53) % 1200, 700));
+            m.Add(s); sweepPaint += s.Paint; sweepLayout += s.Layout; sweepTotal += s.Total;
+        }
+        // Counters of the 160 re-wrap frames only (the later phases would dilute them).
+        var d = PerfCounters.Snapshot.Now() - c0;
+        m.Set("wrapMissPerFrame", d.WrapMiss / 160.0); m.Set("wrapMsPerFrame", PerfCounters.TicksToMs(d.WrapTicks) / 160);
+        m.Set("sweepPaintMs", sweepPaint / 160); m.Set("sweepLayoutMs", sweepLayout / 160); m.Set("sweepTotalMs", sweepTotal / 160);
+        m.Set("shapeMissPerFrame", (text.ShapeMisses - sm0) / 160.0); m.Set("shapeHitPerFrame", (text.ShapeHits - sh0) / 160.0);
         var p = rig.ScrollTarget(win);
         for (int f = 0; f < 80; f++) m.Add(rig.Send(win, new InputEvent(InputKind.Scroll, p, Delta: new Point(0, 160))));
         // Focus the multiline input (scroll it into view first), then type mixed-script text into 400 lines of content.
