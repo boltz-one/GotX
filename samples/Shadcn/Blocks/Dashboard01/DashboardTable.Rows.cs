@@ -34,24 +34,24 @@ public sealed partial class DashboardTable
     /// <summary>Tạo control của một hàng (lúc OnCreated cho cả 68 hàng, và khi thêm hàng) – không tạo entity trong Render.</summary>
     void CreateControls(DashboardSection s)
     {
-        var target = CellEntry(s, s.Target, static (s, v) => s.Target = v);
-        var limit = CellEntry(s, s.Limit, static (s, v) => s.Limit = v);
+        var target = CellEntry(s, s.Target, "Target", static (s, v) => s.Target = v);
+        var limit = CellEntry(s, s.Limit, "Limit", static (s, v) => s.Limit = v);
         Select? reviewer = null;
         if (!s.Assigned)
         {
             reviewer = App.New(new Select { Items = Reviewers, Placeholder = Dashboard01Data.Unassigned, TriggerClass = "h-8 w-full" });
             App.Subscribe<Select.ValueChanged>(reviewer, e => s.Reviewer = e.Value);
         }
-        var menu = App.New(new DropdownMenu { Items = Dashboard01Data.RowMenu, Placement = Placement.BottomEnd, MenuClass = "w-32" });
+        var menu = App.New(new DropdownMenu { Items = Dashboard01Data.RowMenu, Placement = Placement.BottomEnd, MenuClass = "w-32", AriaLabel = "Open menu" });
         menu.Trigger = w => w.Div().Class(menu.IsOpen ? MenuButton + " bg-muted" : MenuButton).Child(DashboardIcons.DotsVertical(w));
         App.Subscribe<DropdownMenu.OpenChanged>(menu, _ => menu.Notify());
         App.Subscribe<MenuItemSelected>(menu, e => LastAction = e.Item.Text + ": " + s.Header);
         _controls[s.Id] = new RowControls(target, limit, reviewer, menu);
     }
 
-    Input CellEntry(DashboardSection s, string value, Action<DashboardSection, string> store)
+    Input CellEntry(DashboardSection s, string value, string label, Action<DashboardSection, string> store)
     {
-        var input = App.New(new Input { Text = value });
+        var input = App.New(new Input { Text = value, AriaLabel = label });
         input.BoxClassOverride = static _ => CellInput;
         App.Subscribe<TextEntry.TextChanged>(input, e => store(s, e.Text));
         // Enter = submit của <form> quanh ô: toast.promise "Saving …" rồi "Done" sau 1 giây.
@@ -113,7 +113,7 @@ public sealed partial class DashboardTable
     {
         var refs = Indexed<DashboardTable>.Ensure(ref _navRefs, this, 4);
         var b = Ui.Button(w, ButtonVariant.Outline, ButtonSize.IconSm).Class(lgOnly ? "hidden disabled:opacity-50 lg:flex" : "disabled:opacity-50")
-            .Key(key).Disabled(!enabled).Child(DashboardIcons.Draw(w, icon));
+            .Key(key).AriaLabel(action switch { 0 => "Go to first page", 1 => "Go to previous page", 2 => "Go to next page", _ => "Go to last page" }).Disabled(!enabled).Child(DashboardIcons.Draw(w, icon));
         return enabled ? b.OnClick(refs[action], static (r, _) => r.Owner.GoTo(r.Index)) : b;
     }
 

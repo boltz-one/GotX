@@ -40,7 +40,7 @@ public sealed partial class DataTable<T>
         var row = Ui.TableRow(w).Class(Grid());
         if (HeaderRowClass.Length > 0) row.Class(HeaderRowClass);
         if (Selectable)
-            row.Child(w.Div().Class(ControlCell).Child(DataTableParts.CheckBox(w, PageSelection()).Key(SelectAllKey)
+            row.Child(w.Div().Class(ControlCell).Child(DataTableParts.CheckBox(w, PageSelection(), "Select all").Key(SelectAllKey)
                 .OnClick(this, static (t, _) => t.SetPageSelected(t.PageSelection() != 1))));
         for (int c = 0; c < _columns.Count; c++)
         {
@@ -49,14 +49,14 @@ public sealed partial class DataTable<T>
             string key = Name(ref _headKeys, c, "head");
             if (column.Compare is null)
             {
-                row.Child(w.Div().Class(HeadCell[(int)column.Align]).Key(key).Child(w.Div().Class("truncate").Child(column.Header)));
+                row.Child(w.Div().Class(HeadCell[(int)column.Align]).Role(SemanticRole.Cell).Key(key).Child(w.Div().Class("truncate").Child(column.Header)));
                 continue;
             }
             // Tiêu đề sắp xếp được là một nút ghost (như ví dụ của shadcn); lề âm bù đệm của nút để chữ thẳng với chữ trong ô.
             bool sorted = c == _sortColumn;
             var icon = !sorted ? Icon.ChevronsUpDown(w).Class("text-muted-foreground")
                 : _sortDirection == SortDirection.Ascending ? Icon.ArrowUp(w) : Icon.ArrowDown(w);
-            row.Child(w.Div().Class(HeadCell[(int)column.Align]).Child(
+            row.Child(w.Div().Class(HeadCell[(int)column.Align]).Role(SemanticRole.Cell).Child(
                 w.Div().Class(DataTableParts.SortButton).Focusable().Key(key)
                     .OnClick(refs[c], static (r, _) => r.Owner.ToggleSort(r.Index))
                     .Child(column.Header).Child(icon)));
@@ -85,7 +85,7 @@ public sealed partial class DataTable<T>
         var row = Ui.TableRow(w, _selected[index]).Class(grid).Key(RowKey(index));
         if (last) row.Class("border-b-0");
         if (Selectable)
-            row.Child(w.Div().Class(ControlCell).Child(DataTableParts.CheckBox(w, _selected[index] ? 1 : 0).Key(RowCheckKey(index))
+            row.Child(w.Div().Class(ControlCell).Child(DataTableParts.CheckBox(w, _selected[index] ? 1 : 0, "Select row").Key(RowCheckKey(index))
                 .OnClick(refs[index], static (r, _) => r.Owner.SetSelected(r.Index, !r.Owner._selected[r.Index]))));
         foreach (var column in _columns)
         {
@@ -97,7 +97,7 @@ public sealed partial class DataTable<T>
         if (RowActions is not null)
         {
             string key = RowActionKey(index);
-            row.Child(w.Div().Class(ControlCell).Child(w.Div().Class(DataTableParts.ActionButton).Focusable().Key(key).Anchor(key)
+            row.Child(w.Div().Class(ControlCell).Child(w.Div().Class(DataTableParts.ActionButton).Focusable().Role(SemanticRole.Button).AriaLabel("Open menu").Key(key).Anchor(key)
                 .OnClick(refs[index], static (r, _) => r.Owner.OpenRowMenu(r.Index))
                 .OnKey(refs[index], static (r, e) => { if (e.Key != GotX.Key.Down) return false; r.Owner.OpenRowMenu(r.Index); return true; })
                 .Child(Icon.MoreHorizontal(w))));
@@ -105,8 +105,8 @@ public sealed partial class DataTable<T>
         return row;
     }
 
-    Div PageButton(Window w, string key, Func<Window, Div> icon, bool disabled, bool wideOnly) =>
-        w.Div().Class(DataTableParts.PageButton).Class(wideOnly ? "hidden lg:flex" : "").Focusable().Key(key).Disabled(disabled).Child(icon(w));
+    Div PageButton(Window w, string label, string key, Func<Window, Div> icon, bool disabled, bool wideOnly) =>
+        w.Div().Class(DataTableParts.PageButton).Class(wideOnly ? "hidden lg:flex" : "").Focusable().Role(SemanticRole.Button).AriaLabel(label).Key(key).Disabled(disabled).Child(icon(w));
 
     Div Footer(Window w)
     {
@@ -119,10 +119,10 @@ public sealed partial class DataTable<T>
             .Child(w.Div().Class("flex items-center justify-center text-sm font-medium whitespace-nowrap").Child(PageText))
             .Child(w.Div().Class("flex-1 lg:hidden"))
             .Child(w.Div().Class("flex items-center gap-2")
-                .Child(PageButton(w, FirstPageKey, DataTableParts.ChevronsLeft, atStart, true).OnClick(this, static (t, _) => t.Page = 1))
-                .Child(PageButton(w, PreviousPageKey, Icon.ChevronLeft, atStart, false).OnClick(this, static (t, _) => t.Page--))
-                .Child(PageButton(w, NextPageKey, Icon.ChevronRight, atEnd, false).OnClick(this, static (t, _) => t.Page++))
-                .Child(PageButton(w, LastPageKey, DataTableParts.ChevronsRight, atEnd, true).OnClick(this, static (t, _) => t.Page = t.PageCount)));
+                .Child(PageButton(w, "Go to first page", FirstPageKey, DataTableParts.ChevronsLeft, atStart, true).OnClick(this, static (t, _) => t.Page = 1))
+                .Child(PageButton(w, "Go to previous page", PreviousPageKey, Icon.ChevronLeft, atStart, false).OnClick(this, static (t, _) => t.Page--))
+                .Child(PageButton(w, "Go to next page", NextPageKey, Icon.ChevronRight, atEnd, false).OnClick(this, static (t, _) => t.Page++))
+                .Child(PageButton(w, "Go to last page", LastPageKey, DataTableParts.ChevronsRight, atEnd, true).OnClick(this, static (t, _) => t.Page = t.PageCount)));
         return w.Div().Class("flex items-center justify-between gap-4 px-2")
             .Child(w.Div().Class("hidden min-w-0 flex-1 text-sm text-muted-foreground lg:flex").Child(Selectable ? SelectionText : ""))
             .Child(right);

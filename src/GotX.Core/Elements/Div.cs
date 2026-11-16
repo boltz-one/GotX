@@ -6,7 +6,7 @@ namespace GotX;
 /// Handle tới một node trong arena (chỉ gồm tham chiếu arena + index, nằm trên stack).
 /// Mọi utility Tailwind (<c>.Flex().P4().Bg(...)</c>) ghi thẳng vào Style trong arena.
 /// </summary>
-public readonly struct Div : IStyled
+public readonly partial struct Div : IStyled
 {
     readonly ElementTree _tree;
     readonly int _id;

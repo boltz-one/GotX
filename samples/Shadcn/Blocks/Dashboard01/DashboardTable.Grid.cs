@@ -78,7 +78,7 @@ public sealed partial class DashboardTable
         int count = PageRows().Count();
         bool all = count > 0 && on == count, some = on > 0 && !all;
         // Ô chọn tất cả: indeterminate của Radix vẫn hiện dấu tích nhưng không tô nền (chỉ data-[state=checked] có nền).
-        var box = w.Div().Key(SelectAllKey).Focusable().Class(all ? CheckboxOn : Checkbox)
+        var box = w.Div().Key(SelectAllKey).Focusable().Role(SemanticRole.Checkbox).AriaLabel("Select all").AriaState(SemanticState.Checked, all).Class(all ? CheckboxOn : Checkbox)
             .OnClick(this, static (t, _) => t.TogglePage())
             .OnKey(this, static (_, e) => e.Key == Key.Enter); // Radix Checkbox: Enter không bấm
         if (all || some) box.Child(Icon.Check(w).Class("size-3.5"));
@@ -137,10 +137,10 @@ public sealed partial class DashboardTable
         var controls = Controls(s);
 
         row.Child(Cell(w, Col.Drag, V4.TableCell)
-            .Child(Ui.Button(w, ButtonVariant.Ghost, ButtonSize.Icon).Class("size-7 text-muted-foreground hover:bg-transparent dark:hover:bg-transparent").Key(s.DragKey)
+            .Child(Ui.Button(w, ButtonVariant.Ghost, ButtonSize.Icon).Class("size-7 text-muted-foreground hover:bg-transparent dark:hover:bg-transparent").Key(s.DragKey).AriaLabel("Drag to reorder")
                 .OnDrag(r, static (x, e) => x.Owner.Drag(x.Index, e)).OnKey(r, static (x, e) => x.Owner.DragKey(x.Index, e))
                 .Child(w.Path(DashboardIcons.GripVerticalPath).Class("size-3 shrink-0 text-muted-foreground"))));
-        var box = w.Div().Key(s.SelectKey).Focusable().Class(selected ? CheckboxOn : Checkbox)
+        var box = w.Div().Key(s.SelectKey).Focusable().Role(SemanticRole.Checkbox).AriaLabel("Select row").AriaState(SemanticState.Checked, selected).Class(selected ? CheckboxOn : Checkbox)
             .OnClick(r, static (x, _) => x.Owner.ToggleRow(x.Index))
             .OnKey(r, static (_, e) => e.Key == Key.Enter);
         if (selected) box.Child(Icon.Check(w).Class("size-3.5"));

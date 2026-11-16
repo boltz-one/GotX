@@ -88,7 +88,7 @@ public sealed class Popover : View
     {
         var s = _sheet;
         using var _ = ComponentStyles.Use(s); // Body theo cùng style
-        var panel = w.Div().Class(s.PopoverPanel).TakeFocus(ContentKey);
+        var panel = w.Div().Class(s.PopoverPanel).TakeFocus(ContentKey).Role(SemanticRole.Dialog).AriaLabel(Title.Length > 0 ? Title : null);
         if (PanelClass.Length > 0) panel.Class(PanelClass);
         if (Title.Length > 0 || Description.Length > 0)
         {

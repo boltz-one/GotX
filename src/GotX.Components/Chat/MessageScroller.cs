@@ -109,7 +109,7 @@ public sealed class MessageScroller : View
             root.Child(w.Div().Class("absolute inset-x-0 bottom-4 flex justify-center")
                 .Child(Ui.Button(w, ButtonVariant.Secondary, ButtonSize.IconSm)
                     .Class("rounded-full border-border bg-background text-foreground shadow-sm hover:bg-muted dark:bg-input/30 dark:hover:bg-input/50")
-                    .Key(_key + "-jump")
+                    .Key(_key + "-jump").AriaLabel("Scroll to latest")
                     .OnClick(this, static (s, _) => s.ScrollToEnd())
                     .Child(Icon.ArrowDown(w))));
         return root;

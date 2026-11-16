@@ -97,10 +97,10 @@ public sealed class Carousel : View
         var root = w.Div().Class("relative").OnKey(this, static (c, e) => c.KeyDown(e))
             .Child(w.Div().Class("overflow-hidden").Child(track))
             .Child(w.Div().Class("absolute inset-y-0 -left-12 flex items-center")
-                .Child(w.Div().Key(PreviousKey).Class(NavClass).Disabled(!CanPrevious).Focusable()
+                .Child(w.Div().Key(PreviousKey).Class(NavClass).Disabled(!CanPrevious).Focusable().Role(SemanticRole.Button).AriaLabel("Previous slide")
                     .OnClick(this, static (c, _) => c.Previous()).Child(Icon.ChevronLeft(w))))
             .Child(w.Div().Class("absolute inset-y-0 -right-12 flex items-center")
-                .Child(w.Div().Key(NextKey).Class(NavClass).Disabled(!CanNext).Focusable()
+                .Child(w.Div().Key(NextKey).Class(NavClass).Disabled(!CanNext).Focusable().Role(SemanticRole.Button).AriaLabel("Next slide")
                     .OnClick(this, static (c, _) => c.Next()).Child(Icon.ChevronRight(w))));
 
         if (!ShowIndex || _count == 0) return root;

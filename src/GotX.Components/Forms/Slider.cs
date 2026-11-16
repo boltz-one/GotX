@@ -45,6 +45,9 @@ public sealed class Slider : View
     /// <summary>Vô hiệu hoá: mờ đi, bỏ qua nhấn/kéo.</summary>
     public bool Disabled { get; set; }
 
+    /// <summary>Tên truy cập (aria-label) cho công cụ hỗ trợ.</summary>
+    public string? AriaLabel { get; set; }
+
     /// <summary>Tỉ lệ của giá trị trên thanh, 0..1.</summary>
     public float Fraction => _max > _min ? (_value - _min) / (_max - _min) : 0;
 
@@ -97,7 +100,7 @@ public sealed class Slider : View
         // Thanh cao 16px để dễ nhấn trúng; đường ray 4px nằm giữa, con chạy tuyệt đối theo tỉ lệ. Cả thanh là phần tử
         // focus (nhấn vào đường ray cũng focus như Base UI), còn vòng focus vẽ ở con chạy nên class chọn theo trạng thái.
         return w.Div().Class("relative flex h-4 w-full items-center cursor-pointer disabled:opacity-50")
-            .Key(_key).Focusable()
+            .Key(_key).Focusable().Role(SemanticRole.Slider).AriaRange(_min, _max, _value).AriaLabel(AriaLabel)
             .Disabled(Disabled)
             .OnDrag(this, static (s, e) => s.OnDrag(e))
             .OnKey(this, static (s, e) => s.OnKey(e))

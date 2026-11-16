@@ -33,6 +33,7 @@ public sealed partial class Command
                 .Child(w.View(_input).Class("min-w-0 flex-1"))));
 
         var list = w.Div().Class("flex flex-col max-h-72 overflow-y-auto p-1").Key(_listKey ??= "gotx-command-list-" + Id.Value);
+        list.Role(SemanticRole.List);
         int flat = 0, shownGroups = 0;
         foreach (var group in _groups)
         {
@@ -62,7 +63,7 @@ public sealed partial class Command
     {
         bool on = r.Index == _active;
         var row = w.Div().Class(item.Disabled ? RowOff : on ? RowOn : RowIdle)
-            .Disabled(item.Disabled)
+            .Disabled(item.Disabled).Role(SemanticRole.ListItem).AriaState(SemanticState.Selected, on)
             .Anchor(RowAnchor(r.Index))
             .OnClick(r, static (x, _) => x.Owner.Pick(x.Index))
             // Rê chuột chỉ ĐỔI dòng đang chọn, rời đi không bỏ chọn (như cmdk): Enter luôn còn đích.

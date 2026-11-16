@@ -9,7 +9,7 @@ internal static class OverlayParts
         // Style có nút × riêng (v4: icon mờ 70%, không nền) thì dùng nó, không thì nút ghost icon-sm.
         string own = ComponentStyles.S.OverlayClose;
         var button = own.Length > 0 ? w.Div().Class(own) : Ui.Button(w, ButtonVariant.Ghost, ButtonSize.IconSm);
-        return button.Class(position).Class(FocusRing.Ring).Key(key).Focusable().Child(Icon.X(w));
+        return button.Class(position).Class(FocusRing.Ring).Key(key).Focusable().Role(SemanticRole.Button).AriaLabel("Close").Child(Icon.X(w));
     }
 
     /// <summary>

@@ -114,6 +114,7 @@ public static class Application
             if (window.WantsAnimationFrame) pw.RequestAnimationFrame();
         };
         pw.Input += e => window.DispatchInput(e);
+        if (pw is IAccessibleWindow accessible) accessible.Accessibility = Window.HostFor(window, pw); // sau Frame: cầu nối trợ năng chạy sau khi frame đã vẽ
         pw.Closed += () => app.RemoveWindow(window);
         pw.RequestFrame();
         return window;

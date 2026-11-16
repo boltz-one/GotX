@@ -99,13 +99,13 @@ public sealed class Accordion : View
             bool open = _open[i];
             var item = w.Div();
             if (i < _items.Count - 1) item.Class(s.AccordionItemDivider);
-            item.Child(w.Div().Key(keys[i * 2]).Class(s.AccordionTrigger).Focusable()
+            item.Child(w.Div().Key(keys[i * 2]).Class(s.AccordionTrigger).Focusable().Role(SemanticRole.Button).AriaState(SemanticState.Expanded, open)
                 .OnClick(refs[i], static (r, _) => r.Owner.Toggle(r.Index))
                 .Child(w.Div().Class("flex-1").Child(it.Title))
                 .Child(w.Div().Key(keys[i * 2 + 1]).Class(s.AccordionChevron[open ? 1 : 0]).Child(Icon.ChevronDown(w))));
             if (open)
             {
-                var body = w.Div().Class(s.AccordionContent);
+                var body = w.Div().Class(s.AccordionContent).Role(SemanticRole.Group);
                 if (it.Content is { } build) body.Child(build(w));
                 else if (it.Text is { } text) body.Child(text);
                 item.Child(body);

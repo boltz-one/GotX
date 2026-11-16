@@ -126,7 +126,7 @@ public sealed partial class UiTest
             App.Flush();
             bool paused = Trace.Paused;
             Trace.Paused = true; // frame soi render lại mọi view: không phải hành vi của app, đừng để lẫn vào nhật ký
-            try { _tree = new UiTree(Window.Inspect(Size, Scale)); }
+            try { _tree = new UiTree(Window.Inspect(Size, Scale)) { SemanticsSource = BuildSemantics }; }
             finally { Trace.Paused = paused; }
             App.Flush();
             _canvas = null;

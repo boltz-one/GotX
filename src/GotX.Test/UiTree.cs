@@ -7,6 +7,13 @@ namespace GotX.Test;
 public sealed partial class UiTree(UiSnapshot snapshot)
 {
     public UiSnapshot Snapshot { get; } = snapshot;
+
+    /// <summary>Nguồn dựng cây ngữ nghĩa của đúng trạng thái này (UiTest gán); chỉ chạy khi có người cần (luật <c>unnamed-control</c>, test ngữ nghĩa).</summary>
+    public Func<SemanticsTree?>? SemanticsSource { get; set; }
+
+    /// <summary>Cây ngữ nghĩa, dựng lần đầu khi cần (một frame riêng). null nếu không có nguồn.</summary>
+    public SemanticsTree? Semantics => _semantics ??= SemanticsSource?.Invoke();
+    SemanticsTree? _semantics;
     public IReadOnlyList<UiNode> Nodes => Snapshot.Nodes;
     public Size Viewport => Snapshot.Viewport;
     public float Scale => Snapshot.Scale;

@@ -58,7 +58,7 @@ public sealed class Dashboard01Block : View
         _nav = App.New(new SidebarNav { Groups = groups, Selectable = false, KeyPrefix = "nav" });
         _userMenu = App.New(new DropdownMenu
         {
-            Items = Dashboard01Data.UserMenu, Trigger = UserTrigger, Placement = Placement.RightEnd, MatchTriggerWidth = true, MenuClass = "min-w-56 rounded-lg",
+            Items = Dashboard01Data.UserMenu, Trigger = UserTrigger, Placement = Placement.RightEnd, MatchTriggerWidth = true, MenuClass = "min-w-56 rounded-lg", AriaLabel = "User menu",
         });
         _chart = App.New(new DashboardChart());
         _table = App.New(new DashboardTable());
@@ -74,7 +74,7 @@ public sealed class Dashboard01Block : View
                 .OnClick(this, static (b, _) => b.LastAction = "Quick Create")
                 .Child(DashboardIcons.Draw(w, DashboardIcons.CirclePlusFilledPath))
                 .Child(w.Div().Class("truncate").Child("Quick Create")))
-            .Child(Ui.Button(w, ButtonVariant.Outline, ButtonSize.IconSm).Key(InboxKey)
+            .Child(Ui.Button(w, ButtonVariant.Outline, ButtonSize.IconSm).Key(InboxKey).AriaLabel("Inbox")
                 .OnClick(this, static (b, _) => b.LastAction = "Inbox")
                 .Child(DashboardIcons.Draw(w, DashboardIcons.MailPath)));
 

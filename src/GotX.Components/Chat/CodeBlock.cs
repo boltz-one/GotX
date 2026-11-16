@@ -120,7 +120,7 @@ public sealed class CodeBlock : View
             header.Child(w.Div().Class(bad ? "min-w-0 truncate font-medium text-destructive" : "min-w-0 truncate font-medium text-foreground").Child(title));
         if (Title is not null && Language is { } lang) header.Child(w.Div().Class("shrink-0 text-xs").Child(lang));
         header.Child(w.Div().Class("flex-1"));
-        header.Child(Ui.Button(w, ButtonVariant.Ghost, ButtonSize.IconXs).Key("gotx-code-copy-" + Id.Value)
+        header.Child(Ui.Button(w, ButtonVariant.Ghost, ButtonSize.IconXs).AriaLabel(_copied ? "Copied" : "Copy code").Key("gotx-code-copy-" + Id.Value)
             .OnClick(this, static (c, _) => c.Copy())
             .Child((_copied ? Icon.Check(w) : Icon.Copy(w)).Class("size-3")));
         root.Child(header);

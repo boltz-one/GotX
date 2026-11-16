@@ -91,7 +91,7 @@ public abstract partial class AuthBlock
     /// <summary>Nút mạng xã hội; <paramref name="label"/> = null là nút chỉ có logo (chữ <c>sr-only</c> của bản gốc không có chỗ hiện).</summary>
     protected Div Social(Window w, AuthAction action, VectorPath logo, string? label = null)
     {
-        var button = Wire(Ui.Button(w, ButtonVariant.Outline), action).Child(w.Path(logo).Class("size-4 shrink-0"));
+        var button = Wire(Ui.Button(w, ButtonVariant.Outline), action).AriaLabel(label ?? action.ToString()).Child(w.Path(logo).Class("size-4 shrink-0"));
         return label is null ? button : button.Child(label);
     }
 

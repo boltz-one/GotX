@@ -86,7 +86,8 @@ public sealed class AlertDialog : View
         var s = _sheet;
         using var _ = ComponentStyles.Use(s); // nút và Media/Body do người dùng dựng
         int size = (int)Size;
-        var panel = w.Div().Class(s.AlertDialogPanel[size]);
+        var panel = w.Div().Class(s.AlertDialogPanel[size]).Role(SemanticRole.Alert).AriaState(SemanticState.Modal)
+            .AriaLabel(Title.Length > 0 ? Title : null).AriaDescription(Description.Length > 0 ? Description : null);
 
         var header = w.Div().Class(s.AlertDialogHeader[size]);
         if (Media is { } media)

@@ -42,7 +42,7 @@ public sealed class Collapsible : View
     public override Div Render(Window w)
     {
         var root = w.Div().Class("flex flex-col gap-2");
-        var trigger = w.Div().Key(TriggerKey).Class("cursor-pointer rounded-md " + FocusRing.RingOnly).Focusable()
+        var trigger = w.Div().Key(TriggerKey).Class("cursor-pointer rounded-md " + FocusRing.RingOnly).Focusable().Role(SemanticRole.Button).AriaState(SemanticState.Expanded, _open)
             .OnClick(this, static (c, _) => c.Toggle());
         if (Trigger is { } t) trigger.Child(t(w));
         root.Child(trigger);

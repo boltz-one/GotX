@@ -15,7 +15,7 @@ static class SidebarBlockParts
             .Child(w.Div().Class("hidden md:flex").Child(Icon.ChevronRight(w).Class("size-3.5")))
             .Child(w.Div().Class("font-normal text-foreground").Child("Data Fetching"));
     /// <summary>SidebarTrigger của new-york-v4: Button ghost size-7 với PanelLeftIcon (không có active:translate của kiểu mới).</summary>
-    public static Div Trigger(Window w) => Ui.Button(w, ButtonVariant.Ghost, ButtonSize.Icon).Class("size-7").Child(Icon.PanelLeft(w));
+    public static Div Trigger(Window w) => Ui.Button(w, ButtonVariant.Ghost, ButtonSize.Icon).Class("size-7").AriaLabel("Toggle sidebar").Child(Icon.PanelLeft(w));
 
     /// <summary>Đường kẻ dọc cao 16px giữa nút trigger và breadcrumb (Separator orientation="vertical" className="mr-2 h-4").</summary>
     public static Div HeaderSeparator(Window w) =>

@@ -84,9 +84,10 @@ static class DataTableParts
     public static Div ColumnsIcon(Window w) => w.Path(Columns).Class("size-4 shrink-0");
 
     /// <summary>Ô đánh dấu: 0 = trống, 1 = đã chọn, 2 = chọn một phần (gạch ngang, <c>indeterminate</c>).</summary>
-    public static Div CheckBox(Window w, int state)
+    public static Div CheckBox(Window w, int state, string? label = null)
     {
-        var box = w.Div().Class(state == 0 ? BoxOff : BoxOn).Focusable();
+        var box = w.Div().Class(state == 0 ? BoxOff : BoxOn).Focusable().Role(SemanticRole.Checkbox)
+            .AriaState(SemanticState.Checked, state == 1).AriaState(SemanticState.Mixed, state == 2).AriaLabel(label);
         if (state == 1) box.Child(Icon.Check(w).Class("size-3.5"));
         else if (state == 2) box.Child(Icon.Minus(w).Class("size-3.5"));
         return box;

@@ -11,7 +11,8 @@ public abstract class TextEntry : View
 {
     TextInput? _box;
     string _text = "", _placeholder = "";
-    bool _invalid;
+    bool _invalid, _required;
+    string? _ariaLabel;
     Window? _window;
 
     /// <summary>Bảng class của style đang hiệu lực lúc tạo ô (xem <see cref="ComponentStyles"/>).</summary>
@@ -42,11 +43,17 @@ public abstract class TextEntry : View
     /// <summary>Vô hiệu hoá: vẽ hộp tĩnh mờ thay cho ô nhập, nên không nhận focus và không gõ được.</summary>
     public bool Disabled { get; set { field = value; Notify(); } }
 
+    /// <summary>Tên truy cập (aria-label); không đặt thì dùng <see cref="Placeholder"/>.</summary>
+    public string? AriaLabel { get => _ariaLabel; set { _ariaLabel = value; if (_box is not null) _box.AriaLabel = value; } }
+
+    /// <summary>Bắt buộc nhập (aria-required) – chỉ báo cho công cụ hỗ trợ.</summary>
+    public bool Required { get => _required; set { _required = value; if (_box is not null) _box.AriaRequired = value; } }
+
     /// <summary>Trạng thái lỗi (aria-invalid của shadcn): viền và vòng đỏ.</summary>
     public bool Invalid
     {
         get => _invalid;
-        set { _invalid = value; ApplyClass(); }
+        set { _invalid = value; if (_box is not null) _box.AriaInvalid = value; ApplyClass(); }
     }
 
     /// <summary>
@@ -87,7 +94,7 @@ public abstract class TextEntry : View
         _box = App.New(new TextInput
         {
             Multiline = Multiline, MinHeight = MinTextHeight, Text = _text, Placeholder = _placeholder,
-            BoxClass = CurrentBoxClass,
+            BoxClass = CurrentBoxClass, AriaLabel = _ariaLabel, AriaInvalid = _invalid, AriaRequired = _required,
         });
         App.Subscribe<TextInput.TextChanged>(_box, e => { _text = e.Text; Emit(new TextChanged(e.Text)); });
         App.Subscribe<TextInput.Submitted>(_box, e => Emit(new Submitted(e.Text)));
@@ -109,7 +116,7 @@ public abstract class TextEntry : View
         if (Disabled)
         {
             string text = Text;
-            return w.Div().Class(DisabledClass).Disabled(true)
+            return w.Div().Class(DisabledClass).Disabled(true).Role(SemanticRole.Textbox).AriaLabel(_ariaLabel ?? (_placeholder.Length > 0 ? _placeholder : null)).AriaValue(text)
                 .Child(w.Div().Class(text.Length > 0 ? "truncate" : "truncate text-muted-foreground").Child(text.Length > 0 ? text : _placeholder));
         }
         var box = Box;

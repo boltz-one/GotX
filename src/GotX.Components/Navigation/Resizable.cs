@@ -116,7 +116,7 @@ public sealed class Resizable : View
         if (First is { } a) first.Child(a(w));
 
         bool focused = w.FocusVisible && w.IsFocused(HandleKey);
-        var handle = w.Div().Key(HandleKey).Class(HandleClasses[d]).Focusable()
+        var handle = w.Div().Key(HandleKey).Class(HandleClasses[d]).Focusable().Role(SemanticRole.Separator).AriaLabel("Resize")
             .OnDrag(this, static (r, e) => r.Drag(e))
             .OnKey(this, static (r, e) => r.KeyDown(e))
             .Child(w.Div().Class(focused ? FocusLineClasses[d] : LineClasses[d]));

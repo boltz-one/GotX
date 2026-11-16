@@ -30,7 +30,7 @@ public sealed class PaymentsCard : View
         using var _ = HomeStyle.Use();
         _menu = App.New(new DropdownMenu
         {
-            TriggerClass = MenuTrigger, TriggerOpenClass = "bg-muted text-foreground",
+            AriaLabel = "Payment options", TriggerClass = MenuTrigger, TriggerOpenClass = "bg-muted text-foreground",
             Trigger = static w => HugeIcons.MoreHorizontalCircle01(w),
             Items = [MenuItem.Action("Profile", key: "payments-menu-profile"), MenuItem.Action("Statements"), MenuItem.Action("Documents")],
         });

@@ -19,7 +19,7 @@ public sealed class Sheet : SidePanel
     {
         var s = StyleSheet;
         using var _ = ComponentStyles.Use(s); // Body/Footer và nút × theo cùng style
-        var panel = w.Div().Class(s.SheetPanel[(int)Side]).TakeFocus(ContentKey);
+        var panel = w.Div().Class(s.SheetPanel[(int)Side]).TakeFocus(ContentKey).Role(SemanticRole.Dialog).AriaState(SemanticState.Modal).AriaLabel(Title.Length > 0 ? Title : null);
         if (PanelClass.Length > 0) panel.Class(PanelClass);
         if (Header(w, s.SheetHeader) is { } header) panel.Child(header);
         BodyAndFooter(w, panel, Horizontal ? "px-4" : "flex-1 px-4", s.SheetFooter);

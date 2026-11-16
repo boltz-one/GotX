@@ -14,7 +14,7 @@ public static partial class UiLint
     public static readonly string[] Rules =
     [
         "duplicate-key", "unknown-class", "zero-size", "offscreen", "subpixel", "misaligned", "overlap",
-        "overflow", "text-overflow", "clipped", "small-target", "occluded", "low-contrast",
+        "overflow", "text-overflow", "clipped", "small-target", "occluded", "low-contrast", "unnamed-control",
     ];
 
     /// <summary>Luật <c>low-contrast</c> cần ảnh đã dựng; thiếu <paramref name="canvas"/> thì luật đó được bỏ qua.</summary>
@@ -33,6 +33,7 @@ public static partial class UiLint
         if (ctx.On("small-target")) SmallTarget(ctx);
         if (ctx.On("occluded")) Occluded(ctx);
         if (ctx.On("low-contrast") && canvas is not null) LowContrast(ctx);
+        if (ctx.On("unnamed-control")) UnnamedControl(ctx);
         return ctx.Issues;
     }
 

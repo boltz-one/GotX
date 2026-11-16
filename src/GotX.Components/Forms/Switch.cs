@@ -35,6 +35,9 @@ public sealed class Switch : View
     /// <summary>Vô hiệu hoá: mờ đi và bỏ qua click.</summary>
     public bool Disabled { get; set; }
 
+    /// <summary>Tên truy cập (aria-label) khi không có <see cref="Label"/>.</summary>
+    public string? AriaLabel { get; set; }
+
     /// <summary>Cỡ công tắc.</summary>
     public SwitchSize Size { get; set; }
 
@@ -55,7 +58,7 @@ public sealed class Switch : View
         int i = (int)Size * 2 + (_checked ? 1 : 0);
         bool ring = w.FocusVisible && w.IsFocused(_key);
         // Space/Enter đổi trạng thái: Core gọi OnClick của phần tử đang focus.
-        var row = w.Div().Class(Size == SwitchSize.Sm ? RowSm : Row)
+        var row = w.Div().Class(Size == SwitchSize.Sm ? RowSm : Row).Role(SemanticRole.Switch).AriaLabel(AriaLabel).AriaState(SemanticState.Checked, _checked)
             .Key(_key).Focusable()
             .Disabled(Disabled)
             .OnClick(this, static (s, _) => s.Toggle())

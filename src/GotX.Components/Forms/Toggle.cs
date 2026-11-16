@@ -40,13 +40,16 @@ public sealed class Toggle : View
     /// <summary>Vô hiệu hoá: mờ đi và bỏ qua click.</summary>
     public bool Disabled { get; set; }
 
+    /// <summary>Tên truy cập (aria-label) khi nút chỉ có icon.</summary>
+    public string? AriaLabel { get; set; }
+
     /// <summary>Đảo trạng thái (không làm gì khi bị vô hiệu hoá).</summary>
     public void Flip() { if (!Disabled) Pressed = !Pressed; }
 
     public override Div Render(Window w)
     {
         // Space/Enter đảo trạng thái: Core gọi OnClick của phần tử đang focus.
-        var button = w.Div().Class(ToggleStyles.Get(_sheet, Variant, Size, _pressed, ToggleStyles.Solo))
+        var button = w.Div().Class(ToggleStyles.Get(_sheet, Variant, Size, _pressed, ToggleStyles.Solo)).Role(SemanticRole.Button).AriaLabel(AriaLabel).AriaState(SemanticState.Checked, _pressed)
             .Focusable()
             .Disabled(Disabled)
             .OnClick(this, static (t, _) => t.Flip());

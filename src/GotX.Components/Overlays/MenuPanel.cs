@@ -58,7 +58,7 @@ public sealed partial class MenuPanel : View
         var items = Items;
         var refs = Indexed<MenuPanel>.Ensure(ref _refs, this, items.Count);
         var list = w.Div().Key(ContentKey)
-            .Class(sheet.MenuPanel)
+            .Class(sheet.MenuPanel).Role(SemanticRole.Menu)
             .Focusable().AutoFocus(_takeFocus)
             .OnKey(this, static (p, e) => p.HandleKey(e))
             .OnHover(this, static (p, inside) => p._pointerInside = inside);
@@ -70,7 +70,7 @@ public sealed partial class MenuPanel : View
             switch (item.Kind)
             {
                 case MenuItemKind.Separator:
-                    list.Child(w.Div().Class(sheet.MenuSeparator));
+                    list.Child(w.Div().Class(sheet.MenuSeparator).Role(SemanticRole.Separator));
                     continue;
                 case MenuItemKind.Custom:
                     if (item.Content is { } content) list.Child(content(w));
@@ -82,7 +82,8 @@ public sealed partial class MenuPanel : View
             // Dòng đang mở menu con giữ nền sáng (data-open:bg-accent) dù con trỏ đã sang panel con.
             bool on = !item.Disabled && (i == _active || i == subOpen);
             var row = w.Div().Class(sheet.MenuRow[item.Disabled ? 4 : (item.Destructive ? 2 : 0) + (on ? 1 : 0)])
-                .Disabled(item.Disabled)
+                .Disabled(item.Disabled).Role(SemanticRole.MenuItem)
+                .AriaState(SemanticState.Checked, item.Kind == MenuItemKind.Checkbox && item.Checked).AriaState(SemanticState.Expanded, i == subOpen)
                 .OnClick(refs[i], static (r, _) => r.Owner._owner.Activate(r.Owner, r.Index, keyboard: false))
                 .OnHover(refs[i], static (r, inside) => r.Owner.HoverRow(r.Index, inside));
             if (item.Key is { } key) row.Key(key);

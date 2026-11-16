@@ -145,7 +145,7 @@ public sealed class Toaster : View
 
     Div Card(Window w, Toast t, Indexed<Toaster> r)
     {
-        var card = w.Div().Key(t.Key)
+        var card = w.Div().Key(t.Key).Role(t.Variant is ToastVariant.Error or ToastVariant.Warning ? SemanticRole.Alert : SemanticRole.Status)
             .Class("flex items-center gap-3 rounded-2xl border border-border bg-popover p-4 text-popover-foreground shadow-lg");
         if (ToastIcons.For(w, t.Variant) is { } icon) card.Child(icon);
         var text = w.Div().Class("flex min-w-0 flex-1 flex-col gap-1");

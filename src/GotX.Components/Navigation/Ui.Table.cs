@@ -30,7 +30,7 @@ public static partial class Ui
     ];
 
     /// <summary>Khung bảng: các phần (header/body/footer/caption) xếp dọc, chữ cỡ sm.</summary>
-    public static Div Table(Window w) => w.Div().Class("flex w-full flex-col text-sm");
+    public static Div Table(Window w) => w.Div().Class("flex w-full flex-col text-sm").Role(SemanticRole.Table);
 
     /// <summary>Nhóm hàng tiêu đề.</summary>
     public static Div TableHeader(Window w) => w.Div().Class("flex flex-col");
@@ -43,14 +43,14 @@ public static partial class Ui
 
     /// <summary>Một hàng (lưới); <paramref name="selected"/> tô nền muted như <c>data-state=selected</c>.</summary>
     public static Div TableRow(Window w, bool selected = false) =>
-        w.Div().Class(selected ? RowSelected : RowBase);
+        w.Div().Class(selected ? RowSelected : RowBase).Role(SemanticRole.Row).AriaState(SemanticState.Selected, selected);
 
     /// <summary>Ô tiêu đề cột.</summary>
     public static Div TableHead(Window w, string text, TableAlign align = TableAlign.Left) =>
-        w.Div().Class(HeadClasses[(int)align]).Child(text);
+        w.Div().Class(HeadClasses[(int)align]).Role(SemanticRole.Cell).Child(text);
 
     /// <summary>Ô dữ liệu rỗng – tự thêm nội dung (badge, nút…).</summary>
-    public static Div TableCell(Window w, TableAlign align = TableAlign.Left) => w.Div().Class(CellClasses[(int)align]);
+    public static Div TableCell(Window w, TableAlign align = TableAlign.Left) => w.Div().Class(CellClasses[(int)align]).Role(SemanticRole.Cell);
 
     /// <summary>Ô dữ liệu chữ.</summary>
     public static Div TableCell(Window w, string text, TableAlign align = TableAlign.Left) => TableCell(w, align).Child(text);

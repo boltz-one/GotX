@@ -128,11 +128,11 @@ public sealed class Tabs : View
             w.FocusKey(keys[_index]);
 
         int o = (int)Orientation, v = (int)Variant;
-        var list = w.Div().Class(ListClasses[o * 2 + v]).OnKey(this, static (t, e) => t.KeyDown(e));
+        var list = w.Div().Class(ListClasses[o * 2 + v]).Role(SemanticRole.TabList).OnKey(this, static (t, e) => t.KeyDown(e));
         for (int i = 0; i < _items.Count; i++)
         {
             bool active = i == _index;
-            var trigger = w.Div().Key(keys[i]).Class(TriggerClasses[o * 4 + v * 2 + (active ? 1 : 0)]).Focusable()
+            var trigger = w.Div().Key(keys[i]).Class(TriggerClasses[o * 4 + v * 2 + (active ? 1 : 0)]).Focusable().Role(SemanticRole.Tab).AriaState(SemanticState.Selected, active)
                 .OnClick(refs[i], static (r, _) => r.Owner.SelectedIndex = r.Index)
                 .Child(_items[i]);
             if (active && Variant == TabsVariant.Line) trigger.Child(w.Div().Class(IndicatorClasses[o]));
@@ -140,7 +140,7 @@ public sealed class Tabs : View
         }
         var root = w.Div().Class(o == 0 ? "flex flex-col items-start gap-2" : "flex items-start gap-2").Child(list);
         if (Content is { } build && _index < _items.Count)
-            root.Child(w.Div().Key(keys[_items.Count]).Class(o == 0 ? "self-stretch text-sm" : "min-w-0 flex-1 text-sm").Child(build(w, _index)));
+            root.Child(w.Div().Key(keys[_items.Count]).Role(SemanticRole.TabPanel).AriaLabel(_items[_index]).Class(o == 0 ? "self-stretch text-sm" : "min-w-0 flex-1 text-sm").Child(build(w, _index)));
         return root;
     }
 }

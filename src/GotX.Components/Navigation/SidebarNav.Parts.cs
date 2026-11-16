@@ -108,7 +108,7 @@ public sealed partial class SidebarNav
     /// SidebarTrigger: nút ghost 28px có icon panel-left, là điểm dừng Tab (Enter/Space = bấm) – thay cho Ctrl+B của
     /// shadcn vì Core chưa có phím tắt toàn cục. Nơi dùng nối <c>.Key(...).OnClick(...)</c>.
     /// </summary>
-    public static Div Trigger(Window w) => Ui.Button(w, ButtonVariant.Ghost, ButtonSize.IconSm).Child(Icon.PanelLeft(w));
+    public static Div Trigger(Window w) => Ui.Button(w, ButtonVariant.Ghost, ButtonSize.IconSm).AriaLabel("Toggle sidebar").Child(Icon.PanelLeft(w));
 
     /// <summary>Icon thay thế khi thu gọn mà nút không có icon: chữ cái đầu trong ô viền 16px.</summary>
     static Div InitialIcon(Window w, string initial) =>

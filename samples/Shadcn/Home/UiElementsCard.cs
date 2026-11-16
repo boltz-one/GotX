@@ -35,9 +35,9 @@ public sealed class UiElementsCard : View
         _name = App.New(new Input { Placeholder = "Name", InGroup = true });
         _message = App.New(new Textarea { Placeholder = "Message" });
         // Hai nút radio không nhãn (bản gốc chỉ có aria-label Apple / Banana).
-        _fruit = App.New(new RadioGroup { Items = ["", ""], SelectedIndex = 0, Horizontal = true });
-        _alerts = App.New(new Checkbox { Checked = true });
-        _compact = App.New(new Switch { Checked = true });
+        _fruit = App.New(new RadioGroup { Items = ["", ""], AriaLabels = ["Apple", "Banana"], SelectedIndex = 0, Horizontal = true });
+        _alerts = App.New(new Checkbox { Checked = true, AriaLabel = "Alerts" });
+        _compact = App.New(new Switch { Checked = true, AriaLabel = "Compact mode" });
         _dialog = App.New(new AlertDialog
         {
             Title = "Allow accessory to connect?",
@@ -47,7 +47,7 @@ public sealed class UiElementsCard : View
         _actions = App.New(new DropdownMenu
         {
             Placement = Placement.TopEnd, MenuClass = "w-40",
-            TriggerClass = ActionsTrigger, TriggerOpenClass = "bg-muted text-foreground",
+            AriaLabel = "More actions", TriggerClass = ActionsTrigger, TriggerOpenClass = "bg-muted text-foreground",
             Trigger = static w => HugeIcons.ArrowUp01(w),
             Items =
             [

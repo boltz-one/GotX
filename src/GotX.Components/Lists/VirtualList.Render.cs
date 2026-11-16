@@ -56,13 +56,13 @@ public sealed partial class VirtualList
             for (int i = _start; i < _end; i++)
             {
                 string key = _renderedKeys[i - _start] = keyOf(i);
-                var row = render(w, i, i == _active).Key(key).Class(_variable ? "shrink-0" : _rowClass);
+                var row = render(w, i, i == _active).Key(key).Class(_variable ? "shrink-0" : _rowClass).Role(SemanticRole.ListItem).AriaState(SemanticState.Selected, i == _active);
                 area.Child(_variable ? row.Anchor(key) : row);
             }
         Spacer(w, area, index.Total - index.Offset(_end));
         _after?.Request();
         return w.Div().Class("relative flex min-h-0 flex-col rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50")
-            .Class(Class).Key(FocusKey).Focusable()
+            .Class(Class).Key(FocusKey).Focusable().Role(SemanticRole.List)
             .OnKey(this, static (l, e) => l.OnKey(e))
             .Child(area);
     }

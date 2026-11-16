@@ -39,6 +39,9 @@ public sealed class Select : View
     public string ContentClass { get; set; } = "";
     public bool Disabled { get; set; }
 
+    /// <summary>Tên truy cập (aria-label); không đặt thì dùng <see cref="Placeholder"/>.</summary>
+    public string? AriaLabel { get; set; }
+
     public int SelectedIndex
     {
         get => _index;
@@ -128,7 +131,8 @@ public sealed class Select : View
         if (TriggerClass.Length > 0) trigger.Class(TriggerClass);
         return trigger
             .Disabled(Disabled)
-            .Key(TriggerKey).Anchor(_anchor).Focusable()
+            .Key(TriggerKey).Anchor(_anchor).Focusable().Role(SemanticRole.ComboBox).AriaState(SemanticState.Expanded, IsOpen)
+            .AriaLabel(AriaLabel ?? Placeholder).AriaValue(Value)
             .OnClick(this, static (s, _) => { if (s.IsOpen) s.Close(); else s.Open(); })
             .OnKey(this, static (s, e) => s.TriggerKeyDown(e))
             .Child(w.Div().Class(_index >= 0 ? "truncate" : "truncate text-muted-foreground").Child(Value ?? Placeholder))
@@ -147,13 +151,14 @@ public sealed class Select : View
             var sheet = owner._sheet;
             var list = w.Div().Key(owner._listKey ??= "gotx-select-list-" + owner.Id.Value).Class(sheet.SelectList);
             if (owner.ContentClass.Length > 0) list.Class(owner.ContentClass);
-            list
+            list.Role(SemanticRole.List)
                 .Focusable().AutoFocus()
                 .OnKey(owner, static (s, e) => s.ListKeyDown(e));
             for (int i = 0; i < items.Count; i++)
             {
                 string key = owner.ItemKey(i);
                 var row = w.Div().Key(key).Anchor(key).Class(sheet.SelectRow[i == owner._active ? 1 : 0])
+                    .Role(SemanticRole.ListItem).AriaState(SemanticState.Selected, i == owner._index)
                     .OnClick(refs[i], static (r, _) => r.Owner.Pick(r.Index))
                     // Rời mục thì tắt sáng (Radix trả focus về danh sách), nên chuột và phím dùng chung một dòng sáng.
                     .OnHover(refs[i], static (r, inside) => { if (inside) r.Owner.SetActive(r.Index, false); else if (r.Owner._active == r.Index) r.Owner.SetActive(-1, false); })

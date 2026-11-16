@@ -21,7 +21,7 @@ public sealed class Drawer : SidePanel
     /// <summary>Vẽ tấm (được gọi trong lớp overlay).</summary>
     public override Div Render(Window w)
     {
-        var panel = w.Div().Class(PanelClasses[(int)Side]).TakeFocus(ContentKey);
+        var panel = w.Div().Class(PanelClasses[(int)Side]).TakeFocus(ContentKey).Role(SemanticRole.Dialog).AriaState(SemanticState.Modal).AriaLabel(Title.Length > 0 ? Title : null);
         if (PanelClass.Length > 0) panel.Class(PanelClass);
 
         var content = w.Div().Class(Horizontal ? "flex flex-col pb-4" : "flex flex-1 flex-col pb-4");

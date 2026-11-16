@@ -90,12 +90,12 @@ public sealed class ToggleGroup : View
         if (roving.Sync(w, n, Math.Min(_home, n - 1)) is >= 0 and var at) _home = at;
         var refs = Indexed<ToggleGroup>.Ensure(ref _refs, this, n);
         var sheet = _sheet;
-        var group = w.Div().Class(sheet.ToggleGroup);
+        var group = w.Div().Class(sheet.ToggleGroup).Role(SemanticRole.Group);
         for (int i = 0; i < n; i++)
         {
             var item = w.Div().Class(ToggleStyles.Get(sheet, Variant, Size, _on[i], ToggleStyles.Position(i, n)));
             if (sheet.ToggleGroupItem.Length > 0) item.Class(sheet.ToggleGroupItem);
-            group.Child(item
+            group.Child(item.Role(SemanticRole.Button).AriaState(SemanticState.Checked, _on[i])
                 .Key(roving.Key(i)).Focusable()
                 .OnKey(refs[i], static (r, e) => r.Owner.OnItemKey(r.Index, e))
                 .Disabled(Disabled)

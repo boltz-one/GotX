@@ -19,7 +19,7 @@ static partial class HomeCards
 
     /// <summary>Nút "×" nền muted ở góc thẻ (Button ghost icon-sm + bg-muted).</summary>
     internal static Div Dismiss(Window w, string key) =>
-        Ui.Button(w, ButtonVariant.Ghost, ButtonSize.IconSm).Class("bg-muted").Key(key).Child(HugeIcons.Cancel01(w));
+        Ui.Button(w, ButtonVariant.Ghost, ButtonSize.IconSm).Class("bg-muted").Key(key).AriaLabel("Dismiss").Child(HugeIcons.Cancel01(w));
 
     /// <summary>dividend-income.tsx: danh sách mã cổ phiếu, mỗi dòng có biểu đồ cột mini theo quý (ẩn dưới md như bản gốc).</summary>
     public static Div DividendIncome(Window w)

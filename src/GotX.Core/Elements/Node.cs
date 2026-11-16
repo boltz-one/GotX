@@ -46,6 +46,7 @@ internal struct Node
     public bool IsGroup;          // class "group": con có thể dùng group-hover:
     public bool Disabled;
     public int FirstChild, LastChild, NextSibling;
+    public int Sem;                // chỉ số vào bảng ngữ nghĩa của ElementTree (0 = không có); chỉ ghi khi đang dựng cây ngữ nghĩa
     public StyleRefiner? Hover;
     public Delegate? Click;
     public object? ClickState;

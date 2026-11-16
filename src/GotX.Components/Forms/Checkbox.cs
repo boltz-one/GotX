@@ -24,6 +24,9 @@ public sealed class Checkbox : View
 
     public bool Disabled { get; set; }
 
+    /// <summary>Tên truy cập (aria-label) khi không có <see cref="Label"/>.</summary>
+    public string? AriaLabel { get; set; }
+
     /// <summary>Nhãn bên phải ô; bấm vào nhãn cũng đổi trạng thái. null = chỉ có ô.</summary>
     public string? Label { get; set; }
 
@@ -45,7 +48,7 @@ public sealed class Checkbox : View
         if (_checked) box.Child(Icon.Check(w).Class(_sheet.CheckboxIcon));
 
         // Space/Enter đổi trạng thái: Core gọi OnClick của phần tử đang focus.
-        var row = w.Div().Class("inline-flex items-center gap-2 cursor-pointer disabled:opacity-50")
+        var row = w.Div().Class("inline-flex items-center gap-2 cursor-pointer disabled:opacity-50").Role(SemanticRole.Checkbox).AriaLabel(AriaLabel).AriaState(SemanticState.Checked, _checked)
             .Key(_key).Focusable()
             .Disabled(Disabled)
             .OnClick(this, static (c, _) => c.Toggle())

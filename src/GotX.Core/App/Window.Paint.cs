@@ -108,6 +108,7 @@ public sealed partial class Window
             _keyScope = _hitboxes.Count; // 1-based: các phần tử con nổi phím lên mục này
         }
         if (_inspect is not null) InspectBegin(id, ref n, s, ts, lb, clip, nodeXf);
+        if (_sem is not null) SemBegin(ref n, focusKey, lb, clip, nodeXf);
 
         // ---- Vùng cắt + cuộn cho các con ----
         var childClip = clip;
@@ -139,6 +140,7 @@ public sealed partial class Window
         _keyScope = outerKeyScope;
         _scrollScope = outerScrollScope;
         if (_inspect is not null) InspectEnd();
+        if (_sem is not null) SemEnd();
     }
 
     /// <summary>

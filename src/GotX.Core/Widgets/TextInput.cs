@@ -33,6 +33,11 @@ public sealed partial class TextInput : View
     }
 
     public string Placeholder { get; set; } = "";
+
+    /// <summary>Tên truy cập của ô (cho công cụ hỗ trợ); không đặt thì dùng <see cref="Placeholder"/>.</summary>
+    public string? AriaLabel { get; set; }
+    public bool AriaInvalid { get; set; }
+    public bool AriaRequired { get; set; }
     public bool Multiline { get; set; } = true;
     public int Caret { get; private set; }
     public int Anchor { get; private set; }
@@ -85,7 +90,8 @@ public sealed partial class TextInput : View
     public override Div Render(Window w)
     {
         var box = w.Div().Class(BoxClass);
-        return box.FocusTarget(this).Child(w.InputArea(this).MinH(Multiline ? MinHeight : 0));
+        return box.FocusTarget(this).AriaState(SemanticState.Invalid, AriaInvalid).AriaState(SemanticState.Required, AriaRequired)
+            .Child(w.InputArea(this).MinH(Multiline ? MinHeight : 0));
     }
 
     // ---------- Chỉnh sửa ----------

@@ -35,7 +35,7 @@ public sealed partial class SidebarNav
         bool action = !_collapsed && item.HasAction;
         bool active = row.Flat == _activeRow && _activeSub < 0;
 
-        var button = w.Div().Key(row.Key).Focusable().Class(ButtonClass(_collapsed, active, action, item))
+        var button = w.Div().Key(row.Key).Focusable().Role(SemanticRole.Button).AriaLabel(item.Title).Class(ButtonClass(_collapsed, active, action, item))
             .OnClick(self, static (r, _) => r.Owner.Activate(r.Index));
         if (collapsible) button.OnKey(self, static (r, e) => r.Owner.ItemKeyDown(r.Index, e));
         if (item.Icon is { } icon) button.Child(icon(w));
@@ -58,7 +58,7 @@ public sealed partial class SidebarNav
         var list = w.Div().Class(SubListClass);
         for (int s = 0; s < item.SubItems.Count; s++)
         {
-            var sub = w.Div().Key(row.SubKeys[s]).Focusable()
+            var sub = w.Div().Key(row.SubKeys[s]).Focusable().Role(SemanticRole.Button)
                 .Class(row.Flat == _activeRow && s == _activeSub ? SubActiveClass : SubClass)
                 .OnClick(subRefs[row.SubStart + s], static (r, _) => r.Owner.ActivateSub(r.Index))
                 .Child(w.Div().Class("min-w-0 truncate").Child(item.SubItems[s]));
@@ -75,7 +75,7 @@ public sealed partial class SidebarNav
         var item = row.Data;
         // Menu đang mở thì nút phụ luôn hiện (data-[state=open]:opacity-100) dù con trỏ đã sang menu.
         bool hidden = item.ActionOnHover && _menuRow != row.Flat;
-        return w.Div().Key(row.ActionKey).Anchor(row.ActionKey).Focusable().Class(hidden ? ActionHoverClass : ActionClass)
+        return w.Div().Key(row.ActionKey).Anchor(row.ActionKey).Focusable().Role(SemanticRole.Button).AriaLabel("More actions").Class(hidden ? ActionHoverClass : ActionClass)
             .OnClick(self, static (r, _) => r.Owner.ActionClicked(r.Index))
             .OnDrag(self, static (r, e) => r.Owner.ActionPressed(r.Index, e))
             .OnKey(self, static (r, e) => r.Owner.ActionKeyDown(r.Index, e))

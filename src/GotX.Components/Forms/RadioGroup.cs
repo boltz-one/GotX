@@ -50,6 +50,9 @@ public sealed class RadioGroup : View
     /// <summary>Vô hiệu hoá cả nhóm.</summary>
     public bool Disabled { get; set; }
 
+    /// <summary>Tên truy cập từng mục khi nhãn hiển thị rỗng (mục chỉ có nút tròn); theo chỉ số.</summary>
+    public IReadOnlyList<string>? AriaLabels { get; set; }
+
     /// <summary>Xếp các mục theo hàng ngang thay vì cột.</summary>
     public bool Horizontal { get; set; }
 
@@ -72,13 +75,13 @@ public sealed class RadioGroup : View
         var roving = _roving ??= new RovingFocus("gotx-radio-" + Id.Value);
         roving.Sync(w, _items.Count, Math.Max(_index, 0));
         var refs = Indexed<RadioGroup>.Ensure(ref _refs, this, _items.Count);
-        var group = w.Div().Class(_sheet.RadioGroup[Horizontal ? 1 : 0]);
+        var group = w.Div().Class(_sheet.RadioGroup[Horizontal ? 1 : 0]).Role(SemanticRole.Group);
         for (int i = 0; i < _items.Count; i++)
         {
             bool on = i == _index;
             var ring = w.Div().Class(_sheet.RadioRing[(on ? 2 : 0) + (roving.ShowsRing(w, i) ? 1 : 0)]);
             if (on) ring.Child(w.Div().Class(_sheet.RadioDot));
-            var row = w.Div().Class(Row).Disabled(Disabled)
+            var row = w.Div().Class(Row).Disabled(Disabled).Role(SemanticRole.Radio).AriaState(SemanticState.Checked, on).AriaLabel(AriaLabels is { } al && i < al.Count ? al[i] : null)
                 .Key(roving.Key(i)).Focusable()
                 .OnKey(refs[i], static (r, e) => r.Owner.OnItemKey(r.Index, e))
                 .OnClick(refs[i], static (r, _) => r.Owner.Pick(r.Index))

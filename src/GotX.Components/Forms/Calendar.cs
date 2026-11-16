@@ -135,9 +135,9 @@ public sealed class Calendar : View
         _nextKey ??= "gotx-calendar-" + Id.Value + "-next";
         var refs = Indexed<Calendar>.Ensure(ref _refs, this, Cells);
         var header = w.Div().Class("flex h-8 items-center justify-between")
-            .Child(Ui.Button(w, ButtonVariant.Ghost, ButtonSize.Icon).Key(_prevKey).OnClick(this, static (c, _) => c.PreviousMonth()).Child(Icon.ChevronLeft(w)))
+            .Child(Ui.Button(w, ButtonVariant.Ghost, ButtonSize.Icon).Key(_prevKey).AriaLabel("Previous month").OnClick(this, static (c, _) => c.PreviousMonth()).Child(Icon.ChevronLeft(w)))
             .Child(w.Div().Class("text-sm font-medium").Child(_caption))
-            .Child(Ui.Button(w, ButtonVariant.Ghost, ButtonSize.Icon).Key(_nextKey).OnClick(this, static (c, _) => c.NextMonth()).Child(Icon.ChevronRight(w)));
+            .Child(Ui.Button(w, ButtonVariant.Ghost, ButtonSize.Icon).Key(_nextKey).AriaLabel("Next month").OnClick(this, static (c, _) => c.NextMonth()).Child(Icon.ChevronRight(w)));
 
         var names = w.Div().Class("grid grid-cols-7");
         foreach (var name in DayNames)

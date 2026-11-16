@@ -32,6 +32,9 @@ public sealed class DropdownMenu : MenuOwner
     /// <summary>Chữ của nút mở mặc định (nút viền) khi không đặt <see cref="Trigger"/>.</summary>
     public string TriggerText { get; set; } = "Mở menu";
 
+    /// <summary>Tên truy cập của nút mở khi nó chỉ có icon (aria-label).</summary>
+    public string? AriaLabel { get; set; }
+
     /// <summary>
     /// Hình dáng nút mở tự vẽ. Phần tử bọc ngoài mới là nút (nhận click, focus, phím), nên nội dung ở đây chỉ để nhìn:
     /// dùng <c>w.Div().Class(Ui.ButtonClasses(…))</c> thay vì một nút tự focus được, kẻo có hai điểm dừng Tab.
@@ -103,7 +106,8 @@ public sealed class DropdownMenu : MenuOwner
             : w.Div().Class(DefaultTrigger).Child(TriggerText).Child(Icon.ChevronDown(w));
         if (IsOpen && TriggerOpenClass.Length > 0) trigger.Class(TriggerOpenClass);
         // Lớp "flex" ngoài cùng giữ nút co theo nội dung dù view được đặt trong khối dọc.
-        return w.Div().Class("flex").Child(trigger.Key(TriggerKey).Anchor(AnchorName).Focusable()
+        return w.Div().Class("flex").Child(trigger.Key(TriggerKey).Anchor(AnchorName).Focusable().Role(SemanticRole.Button)
+            .AriaState(SemanticState.Expanded, IsOpen).AriaLabel(AriaLabel)
             .OnClick(this, static (m, _) => { if (m.IsOpen) m.Close(); else m.Open(); })
             .OnKey(this, static (m, e) => m.TriggerKeyDown(e)));
     }

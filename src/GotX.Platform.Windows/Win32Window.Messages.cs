@@ -10,6 +10,7 @@ internal sealed unsafe partial class Win32Window
 {
     nint Handle(uint msg, nint wp, nint lp)
     {
+        if (msg == WM_GETOBJECT || msg == WM_GOTX_UIA) return HandleUia(msg, wp, lp); // trợ năng: xem Win32Window.Uia.cs
         switch (msg)
         {
             case WM_PAINT:
@@ -143,6 +144,7 @@ internal sealed unsafe partial class Win32Window
                 return 0;
             }
             case WM_DESTROY:
+                UiaDestroy();
                 _gpu?.Dispose();
                 s_windows.Remove(_hwnd);
                 Closed?.Invoke();

@@ -70,7 +70,8 @@ public sealed class Dialog : View
     {
         var s = _sheet;
         using var _ = ComponentStyles.Use(s); // Body/Footer và nút × theo cùng style
-        var panel = w.Div().Class(s.DialogPanel).TakeFocus(ContentKey);
+        var panel = w.Div().Class(s.DialogPanel).TakeFocus(ContentKey).Role(SemanticRole.Dialog).AriaState(SemanticState.Modal)
+            .AriaLabel(Title.Length > 0 ? Title : null).AriaDescription(Description.Length > 0 ? Description : null);
         if (PanelClass.Length > 0) panel.Class(PanelClass);
 
         if (Title.Length > 0 || Description.Length > 0)

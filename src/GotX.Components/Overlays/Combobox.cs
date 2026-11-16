@@ -28,6 +28,9 @@ public sealed class Combobox : View
     }
 
     public string Placeholder { get; set; } = "Chọn…";
+
+    /// <summary>Tên truy cập (aria-label); không đặt thì dùng <see cref="Placeholder"/>.</summary>
+    public string? AriaLabel { get; set; }
     public string SearchPlaceholder { get; set; } = "Tìm…";
     public string EmptyText { get; set; } = "Không tìm thấy.";
 
@@ -117,7 +120,8 @@ public sealed class Combobox : View
         var button = w.Div().Class(
                 "flex h-8 items-center justify-between gap-1.5 rounded-lg border border-input bg-transparent pl-2.5 pr-2 text-sm " +
                 "whitespace-nowrap cursor-pointer transition-colors hover:bg-muted/50 dark:bg-input/30 dark:hover:bg-input/50 " + FocusRing.Ring)
-            .Key(TriggerKey).Anchor(AnchorName).Focusable()
+            .Key(TriggerKey).Anchor(AnchorName).Focusable().Role(SemanticRole.ComboBox).AriaState(SemanticState.Expanded, IsOpen)
+            .AriaLabel(AriaLabel ?? Placeholder).AriaValue(Value)
             .OnClick(this, static (c, _) => { if (c.IsOpen) c.Close(); else c.Open(); })
             // Enter/Space đi qua OnClick; ↑/↓ cũng mở như ô chọn thường.
             .OnKey(this, static (c, e) => { if (e.Key is not (Key.Up or Key.Down)) return false; c.Open(); return true; })

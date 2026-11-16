@@ -28,7 +28,7 @@ public static partial class Ui
     /// Description; <see cref="AlertAction"/> thêm cuối cùng (nếu <paramref name="hasAction"/>, chừa lề phải cho nó).
     /// </summary>
     public static Div Alert(Window w, AlertVariant variant = AlertVariant.Default, bool hasIcon = false, bool hasAction = false) =>
-        w.Div().Class(AlertClassTable[(int)variant * 4 + (hasIcon ? 2 : 0) + (hasAction ? 1 : 0)]);
+        w.Div().Class(AlertClassTable[(int)variant * 4 + (hasIcon ? 2 : 0) + (hasAction ? 1 : 0)]).Role(SemanticRole.Alert);
 
     /// <summary>Ô icon cột trái, trải hai hàng (tiêu đề + mô tả); icon lấy màu chữ của alert.</summary>
     public static Div AlertIcon(Window w, Div icon) => w.Div().Class("row-span-2 translate-y-0.5").Child(icon);

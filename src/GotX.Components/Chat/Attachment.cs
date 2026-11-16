@@ -142,7 +142,7 @@ public sealed class Attachment : View
             _removeKey ??= "gotx-attachment-remove-" + Id.Value;
             // focus-within:ring-1 của bản gốc: nút gỡ đang focus (kể cả do bấm chuột) thì cả thẻ có vòng mảnh.
             if (w.IsFocused(_removeKey)) card.Class("ring-1 ring-ring/50");
-            var remove = Ui.Button(w, ButtonVariant.Ghost, ButtonSize.IconXs).Key(_removeKey)
+            var remove = Ui.Button(w, ButtonVariant.Ghost, ButtonSize.IconXs).AriaLabel("Remove attachment").Key(_removeKey)
                 .OnClick(this, static (a, _) => a.RequestRemove())
                 .Child(Icon.X(w).Class("size-3"));
             // Dọc: nút nổi ở góc ô media như bản gốc (actions absolute top/right); ngang: nằm cuối hàng.

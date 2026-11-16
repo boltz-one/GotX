@@ -73,7 +73,7 @@ public sealed class InputOtp : View
 
     protected override void OnCreated()
     {
-        _input = App.New(new TextInput { Multiline = false, MinHeight = 0, Text = _value, BoxClass = "h-8 w-full cursor-text" });
+        _input = App.New(new TextInput { Multiline = false, MinHeight = 0, Text = _value, BoxClass = "h-8 w-full cursor-text", AriaLabel = "One-time code" });
         App.Subscribe<TextInput.TextChanged>(_input, e =>
         {
             if (_syncing) return;

@@ -68,6 +68,31 @@ public sealed class ElementTree
         for (int c = 0; c * ChunkSize < _count; c++)
             Array.Clear(_chunks[c], 0, Math.Min(ChunkSize, _count - c * ChunkSize));
         _count = 0;
+        _sem.Clear();
+    }
+
+    // ---- Ngữ nghĩa: chỉ ghi khi Window dựng cây ngữ nghĩa theo yêu cầu (SemanticsOn); bình thường không tốn gì ----
+    readonly List<SemanticData> _sem = new();
+    internal bool SemanticsOn;
+
+    internal ref SemanticData SemOf(int id)
+    {
+        ref var n = ref this[id];
+        if (n.Sem == 0)
+        {
+            if (_sem.Count == 0) _sem.Add(default);
+            _sem.Add(default);
+            n.Sem = _sem.Count - 1;
+        }
+        return ref System.Runtime.InteropServices.CollectionsMarshal.AsSpan(_sem)[n.Sem];
+    }
+
+    internal ref readonly SemanticData SemAt(int index) => ref System.Runtime.InteropServices.CollectionsMarshal.AsSpan(_sem)[index];
+
+    internal void CopyKeyNames(Dictionary<int, string> into)
+    {
+        into.Clear();
+        foreach (var kv in _keyIds) into[kv.Value.Id] = kv.Key;
     }
 
     internal int Alloc(NodeKind kind)

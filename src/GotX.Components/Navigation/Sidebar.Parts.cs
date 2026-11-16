@@ -42,7 +42,7 @@ public sealed partial class Sidebar
     /// </summary>
     public Div Trigger(Window w) =>
         Ui.Button(w, ButtonVariant.Ghost, ButtonSize.IconSm).Class(FocusRing.Ring)
-            .Key(_triggerKey ??= Key + "-trigger").Focusable()
+            .Key(_triggerKey ??= Key + "-trigger").Focusable().AriaLabel("Toggle sidebar")
             .OnClick(this, static (s, _) => s.Toggle())
             .Child(Icon.PanelLeft(w));
 

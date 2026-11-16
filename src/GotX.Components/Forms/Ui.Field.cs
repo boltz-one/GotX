@@ -32,7 +32,7 @@ public static partial class Ui
 
     /// <summary>Nhãn gắn với ô nhập của field như <c>htmlFor</c>: bấm nhãn thì ô nhận focus.</summary>
     public static Div FieldLabel(Window w, string text, TextEntry control) =>
-        FieldLabel(w, text).OnClick(control, static (c, _) => c.Focus());
+        FieldLabel(w, text.Named(control)).OnClick(control, static (c, _) => c.Focus());
 
     /// <summary>
     /// Nhãn dạng thẻ chọn: khung viền bọc cả một field (radio/checkbox kèm mô tả); <paramref name="selected"/> tô nền

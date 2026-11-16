@@ -84,7 +84,7 @@ public sealed class Tooltip : View
         // Hiện/ẩn (mở, đóng overlay) thì để sau frame, không làm giữa lúc cây đang dựng.
         bool focused = FocusRing.Within(w, AnchorName);
         if (focused != _focused) { _focused = focused; _afterFrame.Request(); }
-        return w.Div().Class("flex").Anchor(AnchorName)
+        return w.Div().Class("flex").Anchor(AnchorName).AriaDescription(Text)
             .OnHover(this, static (t, inside) => { t._hovered = inside; t.Sync(); })
             .Child(Trigger is { } t ? t(w) : w.Div().Child(Text));
     }
@@ -93,7 +93,7 @@ public sealed class Tooltip : View
     {
         // Mũi tên: ô vuông xoay 45° cùng màu nền, đặt ở cạnh hướng về phần tử theo placement thực tế (sau khi lật).
         int side = (int)(_slot.Current?.ActualPlacement ?? Placement) / 3;
-        return w.Div().Class(_sheet.TooltipPanel)
+        return w.Div().Class(_sheet.TooltipPanel).Role(SemanticRole.Tooltip)
             .Child(w.Div().Class(_sheet.TooltipArrow[Math.Min(side, 3)]))
             .Child(Text);
     }

@@ -44,7 +44,7 @@ public sealed class ChatCard : View
         _attach = App.New(new DropdownMenu
         {
             Placement = Placement.TopStart, MenuClass = "w-44",
-            TriggerClass = AttachTrigger, TriggerOpenClass = "bg-muted text-foreground",
+            AriaLabel = "Attach", TriggerClass = AttachTrigger, TriggerOpenClass = "bg-muted text-foreground",
             Trigger = static w => Icon.Plus(w),
             Items =
             [
@@ -58,7 +58,7 @@ public sealed class ChatCard : View
         _reset = App.New(new Tooltip
         {
             Text = "Reset",
-            Trigger = w => Ui.Button(w, ButtonVariant.Outline, ButtonSize.Icon).Key("chat-reset").Disabled(_busy)
+            Trigger = w => Ui.Button(w, ButtonVariant.Outline, ButtonSize.Icon).Key("chat-reset").AriaLabel("Reset chat").Disabled(_busy)
                 .OnClick(this, static (c, _) => c.Reset()).Child(HomeIcons.RotateCw(w)),
         });
     }
@@ -140,7 +140,7 @@ public sealed class ChatCard : View
                 .Child(Ui.InputGroupAddon(w, InputGroupAlign.BlockEnd).Class("pt-1")
                     .Child(w.View(_attach))
                     .Child(w.Div().Class("flex-1")) // ml-auto của nút gửi
-                    .Child(Ui.Button(w, ButtonVariant.Default, ButtonSize.Icon).Key("chat-send").Disabled(next is null || _busy)
+                    .Child(Ui.Button(w, ButtonVariant.Default, ButtonSize.Icon).Key("chat-send").AriaLabel("Send message").Disabled(next is null || _busy)
                         .OnClick(this, static (c, _) => c.Send()).Child(Icon.ArrowUp(w))))));
     }
 }

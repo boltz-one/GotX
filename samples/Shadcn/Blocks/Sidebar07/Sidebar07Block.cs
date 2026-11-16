@@ -49,8 +49,8 @@ public sealed class Sidebar07Block : View
         // Mục con là liên kết href="#": bấm không tô (Selectable = false), như bản gốc.
         _nav = App.New(new SidebarNav { Groups = Sidebar07Data.Groups, Selectable = false, KeyPrefix = "nav" });
         // side="right": menu luôn mở sang phải nút, nên vẫn dùng được khi sidebar chỉ còn cột icon.
-        _teamMenu = App.New(new DropdownMenu { Items = Sidebar07Data.TeamMenu, Trigger = TeamTrigger, Placement = Placement.RightStart });
-        _userMenu = App.New(new DropdownMenu { Items = Sidebar07Data.UserMenu, Trigger = UserTrigger, Placement = Placement.RightEnd });
+        _teamMenu = App.New(new DropdownMenu { AriaLabel = "Switch team", Items = Sidebar07Data.TeamMenu, Trigger = TeamTrigger, Placement = Placement.RightStart });
+        _userMenu = App.New(new DropdownMenu { AriaLabel = "User menu", Items = Sidebar07Data.UserMenu, Trigger = UserTrigger, Placement = Placement.RightEnd });
         App.Subscribe<MenuItemSelected>(_teamMenu, e =>
         {
             int team = Array.IndexOf(Sidebar07Data.TeamMenu, e.Item) - 1;

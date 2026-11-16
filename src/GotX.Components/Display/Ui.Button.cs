@@ -22,7 +22,7 @@ public static partial class Ui
     /// <c>OnClick</c>. <c>.Disabled()</c> bỏ nó khỏi thứ tự Tab. Trong danh sách động nên đặt thêm <c>.Key(...)</c>.
     /// </summary>
     public static Div Button(Window w, ButtonVariant variant = ButtonVariant.Default, ButtonSize size = ButtonSize.Default) =>
-        w.Div().Class(ButtonClasses(variant, size)).Focusable();
+        w.Div().Class(ButtonClasses(variant, size)).Focusable().Role(SemanticRole.Button);
 
     public static Div Button(Window w, string label, ButtonVariant variant = ButtonVariant.Default, ButtonSize size = ButtonSize.Default) =>
         Button(w, variant, size).Child(label);

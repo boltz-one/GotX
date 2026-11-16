@@ -53,7 +53,7 @@ public abstract partial class AuthBlock : View
         _fields = new AuthField[spec.Length];
         for (int i = 0; i < spec.Length; i++)
         {
-            var field = _fields[i] = new AuthField(spec[i].Id, spec[i].Label, spec[i].Kind, App.New(new Input { Placeholder = spec[i].Placeholder }));
+            var field = _fields[i] = new AuthField(spec[i].Id, spec[i].Label, spec[i].Kind, App.New(new Input { Placeholder = spec[i].Placeholder, AriaLabel = spec[i].Label }));
             App.Subscribe<TextEntry.TextChanged>(field.Input, _ => OnTextChanged(field));
             // Enter trong ô nào cũng gửi form, như submit ngầm định của <form>.
             App.Subscribe<TextEntry.Submitted>(field.Input, _ => Submit());

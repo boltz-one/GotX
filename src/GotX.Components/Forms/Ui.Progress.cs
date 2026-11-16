@@ -10,7 +10,7 @@ public static partial class Ui
     {
         float f = Math.Clamp(value, 0, 100) / 100f;
         var s = ComponentStyles.S;
-        return w.Div().Class(s.ProgressTrack).Child(w.Div().Class(s.ProgressIndicator).W(Length.Fraction(f)));
+        return w.Div().Class(s.ProgressTrack).Role(SemanticRole.ProgressBar).AriaRange(0, 100, Math.Clamp(value, 0, 100)).Child(w.Div().Class(s.ProgressIndicator).W(Length.Fraction(f)));
     }
 
     /// <summary>Thanh tiến độ kèm nhãn bên trái và số phần trăm bên phải (ProgressLabel + ProgressValue).</summary>
@@ -19,5 +19,5 @@ public static partial class Ui
             .Child(w.Div().Class("flex items-center justify-between gap-3")
                 .Child(w.Div().Class("text-sm font-medium").Child(label))
                 .Child(w.Div().Class("text-sm text-muted-foreground").Child(valueText)))
-            .Child(Progress(w, value));
+            .Child(Progress(w, value).AriaLabel(label));
 }
