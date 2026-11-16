@@ -17,8 +17,8 @@ internal sealed unsafe partial class D3D11Renderer
             ByteWidth = (uint)(cap * sizeof(Instance)), Usage = USAGE_DYNAMIC, BindFlags = BIND_SHADER_RESOURCE,
             CPUAccessFlags = CPU_ACCESS_WRITE, MiscFlags = MISC_BUFFER_STRUCTURED, StructureByteStride = (uint)sizeof(Instance),
         };
-        void* buf; Check(CreateBuffer(_device, &bd, null, &buf), "CreateBuffer(instances)"); _instBuf = buf;
-        void* srv; Check(CreateShaderResourceView(_device, _instBuf, null, &srv), "CreateSRV(instances)"); _instSrv = srv;
+        void* buf; CheckDev(CreateBuffer(_device, &bd, null, &buf), "CreateBuffer(instances)"); _instBuf = buf;
+        void* srv; CheckDev(CreateShaderResourceView(_device, _instBuf, null, &srv), "CreateSRV(instances)"); _instSrv = srv;
         _instCap = cap;
         if (_staging.Length < cap) _staging = new Instance[cap];
     }
@@ -33,8 +33,8 @@ internal sealed unsafe partial class D3D11Renderer
             ByteWidth = (uint)(cap * sizeof(ShapeData)), Usage = USAGE_DYNAMIC, BindFlags = BIND_SHADER_RESOURCE,
             CPUAccessFlags = CPU_ACCESS_WRITE, MiscFlags = MISC_BUFFER_STRUCTURED, StructureByteStride = (uint)sizeof(ShapeData),
         };
-        void* buf; Check(CreateBuffer(_device, &bd, null, &buf), "CreateBuffer(shapes)"); _shapeBuf = buf;
-        void* srv; Check(CreateShaderResourceView(_device, _shapeBuf, null, &srv), "CreateSRV(shapes)"); _shapeSrv = srv;
+        void* buf; CheckDev(CreateBuffer(_device, &bd, null, &buf), "CreateBuffer(shapes)"); _shapeBuf = buf;
+        void* srv; CheckDev(CreateShaderResourceView(_device, _shapeBuf, null, &srv), "CreateSRV(shapes)"); _shapeSrv = srv;
         _shapeCap = cap;
         if (_shapeStaging.Length < cap) _shapeStaging = new ShapeData[cap];
     }
@@ -49,18 +49,22 @@ internal sealed unsafe partial class D3D11Renderer
             Array.Resize(ref _glyphX, n); Array.Resize(ref _glyphY, n);
             _glyphX.AsSpan(old).Fill(-1);
         }
-        if (_glyphX[index] >= 0) return (_glyphX[index], _glyphY[index]);
+        if (_glyphX[index] >= 0) { GpuCounters.Last.AtlasHits++; return (_glyphX[index], _glyphY[index]); }
 
         var m = atlas[index];
-        if (_shelfX + m.Width + 1 > AtlasSize) { _shelfY += _shelfH + 1; _shelfX = 0; _shelfH = 0; }
-        if (_shelfY + m.Height + 1 > AtlasSize)
+        // Mask lớn hơn atlas: UpdateSubresource ngoài biên là hành vi không xác định (WARP báo mất thiết bị) → nở atlas cho vừa; quá AtlasMax thì bỏ qua glyph.
+        if (m.Width + 1 > AtlasMax || m.Height + 1 > AtlasMax) return (-1, -1);
+        while (m.Width + 1 > _atlasSide || m.Height + 1 > _atlasSide) { CreateAtlas(_atlasSide * 2); _atlasWrapped = true; }
+        if (_shelfX + m.Width + 1 > _atlasSide) { _shelfY += _shelfH + 1; _shelfX = 0; _shelfH = 0; }
+        if (_shelfY + m.Height + 1 > _atlasSide)
         {
-            // Atlas đầy: xoá hết và xếp lại từ đầu (đơn giản; đủ cho UI thông thường).
+            // Atlas đầy: nở gấp đôi tới AtlasMax; ở mức tối đa thì xoá hết và xếp lại (đơn giản; đủ cho UI thông thường).
             // Các instance đã dựng trong frame này còn trỏ vào vị trí cũ → Render phải dựng lại.
-            _glyphX.AsSpan().Fill(-1);
-            _shelfX = _shelfY = _shelfH = 0;
+            if (_atlasSide < AtlasMax) CreateAtlas(_atlasSide * 2);
+            else { _glyphX.AsSpan().Fill(-1); _shelfX = _shelfY = _shelfH = 0; }
             _atlasWrapped = true;
         }
+        GpuCounters.Last.AtlasMisses++;
         int x = _shelfX, y = _shelfY;
         var box = new BOX { left = (uint)x, top = (uint)y, front = 0, right = (uint)(x + m.Width), bottom = (uint)(y + m.Height), back = 1 };
         fixed (byte* p = m.Alpha) UpdateSubresource(_ctx, _atlas, 0, &box, p, (uint)m.Width, 0);
@@ -76,7 +80,7 @@ internal sealed unsafe partial class D3D11Renderer
 
     void BuildInstances(Scene scene, ReadOnlySpan<Primitive> prims)
     {
-        float inv = 1f / AtlasSize;
+        float inv = 1f / _atlasSide;
         for (int i = 0; i < prims.Length; i++)
         {
             ref readonly var p = ref prims[i];
@@ -93,6 +97,7 @@ internal sealed unsafe partial class D3D11Renderer
             if (p.Kind == PrimitiveKind.Glyph)
             {
                 var (gx, gy) = GlyphSlot(scene.Atlas, p.Glyph);
+                if (gx < 0) { it.Bounds = default; it.Uv = default; continue; }
                 it.Uv = new Vector4(gx * inv, gy * inv, p.Bounds.Width * inv, p.Bounds.Height * inv);
             }
             else if (p.Kind == PrimitiveKind.Image) BuildImage(p, ref it);
@@ -102,7 +107,7 @@ internal sealed unsafe partial class D3D11Renderer
     }
 
     // Texture của từng ImageSource đang được vẽ (theo Id), kèm frame dùng gần nhất để dọn ảnh không còn hiển thị.
-    struct ImageTexture { public nint Texture, View; public int Frame; }
+    struct ImageTexture { public nint Texture, View; public int Frame; public long Bytes; }
     readonly Dictionary<int, ImageTexture> _images = new();
     readonly List<int> _stale = new();
     int _frame;
@@ -130,13 +135,14 @@ internal sealed unsafe partial class D3D11Renderer
             Width = (uint)image.Width, Height = (uint)image.Height, MipLevels = 1, ArraySize = 1,
             Format = DXGI_FORMAT_B8G8R8A8_UNORM, SampleCount = 1, Usage = USAGE_DEFAULT, BindFlags = BIND_SHADER_RESOURCE,
         };
-        void* tex; Check(CreateTexture2D(_device, &td, null, &tex), "CreateTexture2D(image)");
+        void* tex; CheckDev(CreateTexture2D(_device, &td, null, &tex), "CreateTexture2D(image)");
         void* srv;
         int hr = CreateShaderResourceView(_device, tex, null, &srv);
-        if (hr < 0) { Release(ref tex); Check(hr, "CreateSRV(image)"); }
+        if (hr < 0) { Release(ref tex); CheckDev(hr, "CreateSRV(image)"); }
         fixed (byte* px = image.Pixels) UpdateSubresource(_ctx, tex, 0, null, px, (uint)(image.Width * 4), 0);
         UploadBytes += image.Pixels.Length;
-        _images[image.Id] = new ImageTexture { Texture = (nint)tex, View = (nint)srv, Frame = _frame };
+        _images[image.Id] = new ImageTexture { Texture = (nint)tex, View = (nint)srv, Frame = _frame, Bytes = image.Pixels.Length };
+        _imageBytes += image.Pixels.Length;
         return srv;
     }
 
@@ -153,6 +159,7 @@ internal sealed unsafe partial class D3D11Renderer
     void ReleaseImage(int id)
     {
         if (!_images.Remove(id, out var entry)) return;
+        _imageBytes -= entry.Bytes;
         void* view = (void*)entry.View, tex = (void*)entry.Texture;
         Release(ref view); Release(ref tex);
     }

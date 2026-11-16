@@ -136,15 +136,18 @@ public static partial class SoftwareRenderer
         if (w <= 0) return 0;
         if (style == BorderStyle.Dashed)
         {
-            float period = len / MathF.Max(1, MathF.Round(len / (4 * w)));
-            float u = t - MathF.Round(t / period) * period;
+            float period = len / MathF.Max(1, Snap(len / (4 * w)));
+            float u = t - Snap(t / period) * period;
             return band * Math.Clamp(period / 4 - MathF.Abs(u) + 0.5f, 0, 1);
         }
         else // Dotted
         {
-            float period = len / MathF.Max(1, MathF.Round(len / (2 * w)));
-            float u = t - MathF.Round(t / period) * period, v = across - w / 2;
+            float period = len / MathF.Max(1, Snap(len / (2 * w)));
+            float u = t - Snap(t / period) * period, v = across - w / 2;
             return Math.Clamp(w / 2 - MathF.Sqrt(u * u + v * v) + 0.5f, 0, 1);
         }
     }
+
+    /// <summary>Làm tròn nửa lên (như floor(x + 0.5) trong HLSL): MathF.Round chẵn-gần-nhất còn GPU lệch ở đúng điểm .5 (vd 150/12) nên chu kỳ gạch/chấm lệch giữa hai renderer.</summary>
+    static float Snap(float x) => MathF.Floor(x + 0.5f);
 }

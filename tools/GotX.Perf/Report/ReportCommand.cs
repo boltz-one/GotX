@@ -35,6 +35,9 @@ public static class ReportCommand
         if (s.Submit.Count > 0) Row(sb, " submit", s.Submit);
         if (s.Flip.Count > 0) Row(sb, " vsync flip", s.Flip);
         if (s.Gpu.Count > 0) Row(sb, " gpu", s.Gpu);
+        if (s.GpuFrames > 0)
+            sb.AppendLine($"gpu counters/frame (median over {s.GpuFrames}): draw calls {s.Draws:0}, pipeline switches {s.Pipe:0}, texture switches {s.TexSw:0}, " +
+                $"instance bytes {Stat.Bytes(s.InstB)}, atlas hit {100 * s.AtlasHit:0.#}%, cpu encode {Stat.Fmt(s.Enc)} ms");
         if (s.Interval.Count > 0) Row(sb, "frame interval", s.Interval);
         if (s.Latency.Count > 0) Row(sb, "input->frame", s.Latency);
 

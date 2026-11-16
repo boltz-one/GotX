@@ -1,3 +1,4 @@
+using GotX.Platform.Windows;
 using GotX.Raster;
 using GotX.Text;
 
@@ -13,16 +14,18 @@ public sealed class PerfSession
     double _now = 1000;
     readonly Canvas _canvas = new();
     readonly bool _raster;
+    readonly D3D11Renderer? _gpu; // --gpu: D3D11 WARP offscreen thay cho raster CPU để lấy bộ đếm GPU (không phụ thuộc card đồ hoạ)
     readonly PerfLog _log;
 
     public App App { get; }
     public Window Window { get; }
     public Size Size { get; set; }
 
-    public PerfSession(TextSystem text, Func<App, View> root, PerfLog log, Size size, bool raster = true)
+    public PerfSession(TextSystem text, Func<App, View> root, PerfLog log, Size size, bool raster = true, bool gpu = false)
     {
         _log = log;
-        _raster = raster;
+        _raster = raster && !gpu;
+        if (gpu) _gpu = D3D11Renderer.TryCreateOffscreen((int)size.Width, (int)size.Height, warp: true) ?? throw new InvalidOperationException("D3D11/WARP không khả dụng cho --gpu");
         App = new App { Clock = () => _now };
         Window = new Window(App, text) { Clock = () => _now, Log = log };
         Window.Root = root(App);
@@ -38,6 +41,14 @@ public sealed class PerfSession
         App.RunTimers();
         var scene = Window.Draw(Size, 1);
         App.Flush();
+        if (_gpu is not null)
+        {
+            long g0 = System.Diagnostics.Stopwatch.GetTimestamp();
+            _gpu.Render(scene, (int)Size.Width, (int)Size.Height);
+            Window.LogPresent((System.Diagnostics.Stopwatch.GetTimestamp() - g0) * 1000.0 / System.Diagnostics.Stopwatch.Frequency,
+                _gpu.BuildMs, _gpu.SubmitMs, 0, _gpu.GpuMs, _gpu.UploadBytes, _gpu.InstMs, _gpu.MapMs);
+            return;
+        }
         if (!_raster) return;
         long t0 = System.Diagnostics.Stopwatch.GetTimestamp();
         _canvas.Resize((int)Size.Width, (int)Size.Height);

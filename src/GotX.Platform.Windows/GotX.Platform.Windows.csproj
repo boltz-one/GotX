@@ -3,4 +3,9 @@
     <ProjectReference Include="../GotX.Core/GotX.Core.csproj" />
     <ProjectReference Include="../GotX.Raster/GotX.Raster.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- Test GPU (parity, mất thiết bị, rò rỉ) dùng renderer nội bộ. -->
+    <InternalsVisibleTo Include="GotX.Tests" />
+    <InternalsVisibleTo Include="GotX.Perf" />
+  </ItemGroup>
 </Project>

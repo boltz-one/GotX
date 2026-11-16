@@ -18,6 +18,8 @@ public sealed class FrameRec
     public bool HasPresent;
     public double Present, Build, Submit, Flip, Gpu, Inst, Map;
     public long UpBytes;
+    /// <summary>GPU counters of the frame (D3D11 only): draw calls, pipeline switches, texture switches, instance bytes, atlas hit rate, CPU encode ms.</summary>
+    public double Draws, Pipe, TexSw, InstB, AtlasHit, Enc;
     /// <summary>Name of the last "mark" before this frame (scenario phase), empty if none.</summary>
     public string Phase = "";
 }
@@ -66,6 +68,7 @@ public sealed class LogData
                         {
                             pf.HasPresent = true; pf.Present = Dbl(r, "ms"); pf.Build = Dbl(r, "build"); pf.Submit = Dbl(r, "submit");
                             pf.Flip = Dbl(r, "flip"); pf.Gpu = Dbl(r, "gpu"); pf.Inst = Dbl(r, "inst"); pf.Map = Dbl(r, "map"); pf.UpBytes = (long)Dbl(r, "upBytes");
+                            pf.Draws = Dbl(r, "draws"); pf.Pipe = Dbl(r, "pipe"); pf.TexSw = Dbl(r, "texsw"); pf.InstB = Dbl(r, "instB"); pf.AtlasHit = Dbl(r, "atlasHit"); pf.Enc = Dbl(r, "enc");
                         }
                         break;
                     case "warn": data.Warns.Add(new WarnRec(Dbl(r, "wall"), Str(r, "kind"), Str(r, "msg"), Int(r, "n"))); break;

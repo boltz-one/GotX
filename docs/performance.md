@@ -88,3 +88,24 @@ Chưa làm (đã đo là còn đáng kể): giữ cây element qua frame để �
 
 Giới hạn khi đo GPU: máy chạy thử không có GPU thật (Microsoft Basic Display Adapter), nên `gpu` ~13–18 ms/frame ở 1440×900 là thời gian của bộ raster phần mềm của driver (quad ≈ 8 ms, bóng ≈ 5 ms,
 glyph < 1 ms); số này chỉ hữu ích để so sánh tương đối, không đại diện cho GPU rời/tích hợp.
+
+## 5. GPU: độ bền, parity, bộ đếm, vùng hỏng
+
+**Mất thiết bị** (`D3D11Renderer.Render`): `DXGI_ERROR_DEVICE_REMOVED/RESET/HUNG/DRIVER_INTERNAL_ERROR` ở `Present`, `ResizeBuffers`, `Map`, tạo buffer, hoặc `GetDeviceRemovedReason` sau mỗi frame (draw/copy không trả HRESULT)
+→ dựng lại thiết bị + swap chain + shader + buffer + atlas, vẽ lại đúng Scene, cửa sổ vẫn sống. Quá 3 lần liên tiếp không có frame thành công → `Failed` và `Win32Window` chuyển sang `SoftwareRenderer`.
+Atlas glyph/ảnh GPU trống sau khi dựng lại và nạp theo nhu cầu; mask nằm ở `GlyphAtlas` CPU nên chỉ số glyph của cache view vẫn đúng (không phải đổi `Generation` của atlas CPU).
+Test (`tests/GotX.Tests/GpuRobustnessTests.cs`): HRESULT lỗi được tiêm qua seam `InjectHr/InjectCount` (driver thật không thể bị rút theo ý muốn), còn dựng lại và pixel sau đó là thật (WARP).
+
+**Parity CPU↔GPU** (`GpuParityTests.cs`): cùng Scene vẽ bằng `SoftwareRenderer` và D3D11 WARP offscreen (`D3D11Renderer.TryCreateOffscreen` + `ReadPixels`), lệch kênh ≤ 3 trên ≥ 99.5 % pixel.
+Scene dựng tay (viền từng cạnh / gạch / chấm, viền trong suốt, gradient, bóng + vùng loại trừ, vùng cắt hình, biến đổi, ảnh) + chữ thật + các trang gallery. Thực tế ≥ 99.99 % pixel trong ngưỡng, lệch tối đa ≤ 2 trừ vài pixel ở mép gạch/chấm.
+
+**Bộ đếm GPU** (`GpuCounters.Last`, ghi vào `present` của `GOTX_LOG` và `bench --gpu`): `draws` lệnh vẽ, `pipe` lần đổi state, `texsw` lần đổi texture ảnh, `instB` byte instance/vùng cắt/gradient, `atlasHit` tỉ lệ trúng atlas, `enc` ms encode CPU,
+`gpu` ms GPU (nếu đo được). `bench --gpu` dùng WARP offscreen thay raster CPU; `--gpu --update-baseline` chỉ ghi các trường `gpu*` (thông tin) vào baseline, không đụng số đo thời gian và cổng hồi quy.
+
+**Bộ nhớ có trần**: atlas glyph bắt đầu 512² (256 KB) và nở gấp đôi tới 2048² (4 MB) khi đầy (glyph lớn hơn atlas làm nở atlas; lớn hơn trần thì bỏ qua – trước đây ghi ngoài biên làm WARP mất thiết bị);
+buffer instance co về gấp đôi mức cần sau 120 frame dùng dưới 1/4; texture ảnh bị đuổi sau 600 frame không vẽ hoặc khi tổng vượt 64 MB. `D3D11Renderer.GpuBytes` (ước tính tài nguyên) và `VideoMemory` (DXGI `QueryVideoMemoryInfo`).
+
+**Vùng hỏng** (prototype, **mặc định tắt**; `GOTX_DAMAGE=1` hoặc `D3D11Renderer.Damage = new SceneDamage()`): `SceneDamage` (Core/Scene) so hash + hộp nhìn thấy (gồm blur bóng, vùng cắt, biến đổi) của frame trước với frame này, đánh dấu ô 64² hỏng; đổi thứ tự vẽ → vẽ cả frame.
+CPU: `SoftwareRenderer.RenderDamaged` vẽ lại các ô hỏng vào canvas giữ lại. D3D11: vẽ có scissor vào texture đích giữ lại rồi `CopyResource` sang back buffer – **ràng buộc flip-model**: `FLIP_DISCARD` xoay back buffer và nội dung sau Present không xác định nên không thể chỉ vẽ phần đổi thẳng vào back buffer.
+Frame không đổi: không vẽ, không Present. `GpuDamageTests.cs`: chuỗi hover / nháy / cuộn / animation cho ảnh giống từng pixel vẽ cả frame (CPU và GPU).
+

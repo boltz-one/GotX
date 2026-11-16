@@ -88,6 +88,8 @@ internal sealed unsafe partial class D3D11Renderer
             return s * y;
         }
 
+        float snap(float x) { return floor(x + 0.5); } // nửa lên, cùng SoftwareRenderer.Snap
+
         float4 premul(float4 c) { return float4(c.rgb * c.a, c.a); }
 
         // Độ phủ của vùng cắt theo hình (bo góc, xoay) tại điểm màn hình pd
@@ -124,12 +126,12 @@ internal sealed unsafe partial class D3D11Renderer
             if (wd <= 0) return 0;
             if (style == 1)
             {
-                float period = len / max(1, round(len / (4 * wd)));
-                float u = t - round(t / period) * period;
+                float period = len / max(1, snap(len / (4 * wd)));
+                float u = t - snap(t / period) * period;
                 return band * saturate(period / 4 - abs(u) + 0.5);
             }
-            float period2 = len / max(1, round(len / (2 * wd)));
-            float u2 = t - round(t / period2) * period2, v2 = across - wd / 2;
+            float period2 = len / max(1, snap(len / (2 * wd)));
+            float u2 = t - snap(t / period2) * period2, v2 = across - wd / 2;
             return saturate(wd / 2 - sqrt(u2 * u2 + v2 * v2) + 0.5);
         }
 

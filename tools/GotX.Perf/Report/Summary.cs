@@ -9,6 +9,9 @@ public sealed class Summary
     public long TotalAlloc, WrapMiss, GlyphN, UpBytes;
     public int Slow, SlowLatency, ZeroAllocFrames, Gc0, Gc1, Gc2;
     public double TotalDraw;
+    /// <summary>GPU counters over frames that have them (D3D11): medians per frame; AtlasHit is the mean hit rate. GpuFrames = 0 → CPU renderer.</summary>
+    public int GpuFrames;
+    public double Draws, Pipe, TexSw, InstB, AtlasHit, Enc;
 
     public static Summary Of(IReadOnlyList<FrameRec> frames)
     {
@@ -36,6 +39,14 @@ public sealed class Summary
         s.Wrap = Stat.Of(wrap); s.Glyph = Stat.Of(glyph); s.Present = Stat.Of(present); s.Gpu = Stat.Of(gpu); s.Flip = Stat.Of(flip); s.Build = Stat.Of(build); s.Submit = Stat.Of(submit); s.Inst = Stat.Of(inst); s.Map = Stat.Of(map);
         s.Alloc = Stat.Of(alloc); s.Interval = Stat.Of(dt); s.Latency = Stat.Of(lat);
         s.TotalDraw = s.Draw.Sum;
+        var g = frames.Where(f => f.HasPresent && f.Draws > 0).ToList();
+        s.GpuFrames = g.Count;
+        if (g.Count > 0)
+        {
+            s.Draws = Stat.MedianOf(g.Select(f => f.Draws).ToList()); s.Pipe = Stat.MedianOf(g.Select(f => f.Pipe).ToList());
+            s.TexSw = Stat.MedianOf(g.Select(f => f.TexSw).ToList()); s.InstB = Stat.MedianOf(g.Select(f => f.InstB).ToList());
+            s.Enc = Stat.MedianOf(g.Select(f => f.Enc).ToList()); s.AtlasHit = g.Average(f => f.AtlasHit);
+        }
         s.RendPerFrame = rend / (double)frames.Count; s.ReplPerFrame = repl / (double)frames.Count;
         s.WrapMiss = wrapMiss;
         s.WrapHitRate = wrapHit + wrapMiss == 0 ? 1 : wrapHit / (double)(wrapHit + wrapMiss);

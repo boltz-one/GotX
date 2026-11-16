@@ -202,6 +202,12 @@ public sealed partial class Window
         if (instMs > 0) log.Dbl("inst", instMs);
         if (mapMs > 0) log.Dbl("map", mapMs);
         if (uploadBytes > 0) log.Int("upBytes", uploadBytes);
+        var g = GpuCounters.Last; // renderer CPU để 0 → không ghi
+        if (g.DrawCalls > 0)
+        {
+            log.Int("draws", g.DrawCalls); log.Int("pipe", g.PipelineSwitches); log.Int("texsw", g.TextureSwitches);
+            log.Int("instB", g.InstanceBytes); log.Dbl("atlasHit", g.AtlasHitRate); log.Dbl("enc", g.EncodeMs);
+        }
         log.End();
     }
 }

@@ -23,7 +23,7 @@ public static class ChildRun
         var fonts = Targets.Fonts();
         log.Startup("fonts", Ms(t0));
         long t1 = Stopwatch.GetTimestamp();
-        var session = new PerfSession(fonts, target.Root, log, target.Size, raster);
+        var session = new PerfSession(fonts, target.Root, log, target.Size, raster, args.Contains("--gpu"));
         log.Startup("create", Ms(t1));
         if (cold)
         {

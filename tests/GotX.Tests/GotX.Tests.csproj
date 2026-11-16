@@ -7,6 +7,7 @@
     <ProjectReference Include="../../src/GotX.Test/GotX.Test.csproj" />
     <ProjectReference Include="../../src/GotX.Components/GotX.Components.csproj" />
     <ProjectReference Include="../../tools/GotX.Port/GotX.Port.csproj" />
+    <ProjectReference Include="../../src/GotX.Platform.Windows/GotX.Platform.Windows.csproj" />
     <Compile Include="../../samples/Shadcn/**/*.cs" Exclude="../../samples/Shadcn/Program.cs" LinkBase="Shadcn" />
     <Compile Include="../../samples/Components/GalleryView.cs;../../samples/Components/Demo.cs;../../samples/Components/Pages/**/*.cs" LinkBase="Shared" />
   </ItemGroup>

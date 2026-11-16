@@ -19,14 +19,7 @@ public static partial class SoftwareRenderer
     {
         foreach (ref readonly var p in scene.Primitives)
         {
-            var clip = Shape.Of(scene, p.ClipShape);
-            switch (p.Kind)
-            {
-                case PrimitiveKind.Quad: Quad(canvas, scene, p, clip); break;
-                case PrimitiveKind.Shadow: Shadow(canvas, p, clip); break;
-                case PrimitiveKind.Glyph: Glyph(canvas, scene, p, clip); break;
-                case PrimitiveKind.Image: Image(canvas, p, clip); break;
-            }
+            DrawOne(canvas, scene, p);
         }
     }
 

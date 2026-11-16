@@ -4,7 +4,7 @@ const string Usage = """
     GotX.Perf - perf log reader and benchmark runner
       report <log.jsonl> [--top N] [--phases]     summary of one log (GOTX_LOG=<path> produces it)
       compare <a.jsonl> <b.jsonl>                 what changed between two logs
-      bench [--repeat N] [--only a,b] [--update-baseline] [--baseline file] [--out dir] [--raster] [--verbose]
+      bench [--repeat N] [--only a,b] [--update-baseline] [--baseline file] [--out dir] [--raster] [--gpu] [--verbose]
                                                   scripted headless scenarios vs tools/GotX.Perf/perf-baseline.json
       profile-raster <target> [--scroll N]        per-primitive CPU raster cost of the final scene
       real <shadcn|gallery|path-to.exe> [--seconds N] [--out dir]

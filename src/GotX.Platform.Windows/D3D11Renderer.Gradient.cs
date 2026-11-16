@@ -41,7 +41,7 @@ internal sealed unsafe partial class D3D11Renderer
         }
         if (grads.Length == 0) return;
         MAPPED_SUBRESOURCE m;
-        Check(Map(_ctx, _gradBuf, 0, MAP_WRITE_DISCARD, 0, &m), "Map(gradients)");
+        CheckDev(Map(_ctx, _gradBuf, 0, MAP_WRITE_DISCARD, 0, &m), "Map(gradients)");
         fixed (GradData* src = _gradStaging)
             Buffer.MemoryCopy(src, m.pData, (long)_gradCap * sizeof(GradData), (long)grads.Length * sizeof(GradData));
         Unmap(_ctx, _gradBuf, 0);
@@ -57,8 +57,8 @@ internal sealed unsafe partial class D3D11Renderer
             ByteWidth = (uint)(cap * sizeof(GradData)), Usage = USAGE_DYNAMIC, BindFlags = BIND_SHADER_RESOURCE,
             CPUAccessFlags = CPU_ACCESS_WRITE, MiscFlags = MISC_BUFFER_STRUCTURED, StructureByteStride = (uint)sizeof(GradData),
         };
-        void* buf; Check(CreateBuffer(_device, &bd, null, &buf), "CreateBuffer(gradients)"); _gradBuf = buf;
-        void* srv; Check(CreateShaderResourceView(_device, _gradBuf, null, &srv), "CreateSRV(gradients)"); _gradSrv = srv;
+        void* buf; CheckDev(CreateBuffer(_device, &bd, null, &buf), "CreateBuffer(gradients)"); _gradBuf = buf;
+        void* srv; CheckDev(CreateShaderResourceView(_device, _gradBuf, null, &srv), "CreateSRV(gradients)"); _gradSrv = srv;
         _gradCap = cap;
         if (_gradStaging.Length < cap) _gradStaging = new GradData[cap];
     }
