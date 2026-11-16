@@ -10,7 +10,7 @@ public sealed class Win(Window window)
     public Window Window { get; } = window;
     public readonly Canvas Canvas = new();
     /// <summary>Retained-canvas damage, as Win32Window does (the real software path rasterises only dirty tiles).</summary>
-    public readonly SceneDamage Damage = new();
+    public readonly SceneDamage Damage = new() { AcceptShift = Window.ScrollBlitDefault };
     public Size Size;
     public float Scale = 1;
 }
@@ -72,6 +72,7 @@ public sealed class Rig
             var dr = win.Damage.Update(scene, win.Canvas.Width, win.Canvas.Height);
             kind = dr.Empty ? 0 : dr.Full ? 1 : 2;
             cover = SoftwareRenderer.RenderDamaged(scene, win.Canvas, dr) / Math.Max(1.0, (double)win.Canvas.Width * win.Canvas.Height);
+            if (Verify.On) Verify.Check(scene, win.Canvas, dr, "win");
         }
         long t2 = Stopwatch.GetTimestamp();
         double ms = 1000.0 / Stopwatch.Frequency;

@@ -29,7 +29,7 @@ internal sealed unsafe partial class Win32Window : IPlatformWindow, IFrameTiming
     // GOTX_DAMAGE=hash dùng so hash cả scene như prototype cũ. Xem SceneDamage / FrameDamage; parity trong tests (perf/damage, gpu/damage).
     static readonly string? s_damageMode = Environment.GetEnvironmentVariable("GOTX_DAMAGE");
     static readonly bool s_damageOn = s_damageMode != "0";
-    static SceneDamage NewDamage() => new() { UseHint = s_damageMode != "hash" };
+    static SceneDamage NewDamage(bool cpu = false) => new() { UseHint = s_damageMode != "hash", AcceptShift = cpu && Window.ScrollBlitDefault };
     SceneDamage? _damage;
     bool _trackingLeave;
     char _highSurrogate;
@@ -132,7 +132,7 @@ internal sealed unsafe partial class Win32Window : IPlatformWindow, IFrameTiming
         }
         long t0 = System.Diagnostics.Stopwatch.GetTimestamp();
         _canvas.Resize(r.right, r.bottom);
-        if (s_damageOn) SoftwareRenderer.RenderDamaged(scene, _canvas, (_damage ??= NewDamage()).Update(scene, r.right, r.bottom));
+        if (s_damageOn) SoftwareRenderer.RenderDamaged(scene, _canvas, (_damage ??= NewDamage(cpu: true)).Update(scene, r.right, r.bottom));
         else SoftwareRenderer.Render(scene, _canvas);
         BuildMs = (System.Diagnostics.Stopwatch.GetTimestamp() - t0) * 1000.0 / System.Diagnostics.Stopwatch.Frequency;
         SubmitMs = PresentMs = 0; UploadBytes = 0;

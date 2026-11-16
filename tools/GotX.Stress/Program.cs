@@ -48,6 +48,8 @@ foreach (var sc in Scenarios.All.Where(s => only is null || only.Contains(s.Name
 }
 
 if (results.Count > 0) { Report.Table(results); Report.HotSpots(results); }
+Console.WriteLine($"scroll-blit: tried {GotX.SceneDamage.ShiftTried}, ok {GotX.SceneDamage.ShiftOk} dict {GotX.SceneDamage.ShiftDict} lost {GotX.SceneDamage.ShiftLost} prims {GotX.SceneDamage.ShiftPrims}, {GotX.SceneDamage.ShiftTicks * 1000.0 / System.Diagnostics.Stopwatch.Frequency:0.0} ms total");
+if (Verify.On) { Console.WriteLine($"verify: {Verify.Frames} frames, {Verify.Shifted} scroll-blit, {Verify.Bad} mismatches; shift frames: mean cover {Verify.ShiftCover / Math.Max(1, Verify.Shifted):0.00}, mean region {Verify.RegionSum / Math.Max(1, Verify.Shifted):0.00}"); if (Verify.Bad > 0) Environment.ExitCode = 3; }
 
 if (soakMin > 0)
 {

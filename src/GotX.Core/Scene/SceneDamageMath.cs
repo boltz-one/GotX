@@ -16,7 +16,7 @@ public static class SceneDamageMath
     /// Hash theo từng từ 8 byte của chính struct Primitive (blittable; byte đệm luôn bằng 0 vì primitive dựng từ default/object initializer).
     /// Byte đệm khác 0 chỉ làm hash khác đi (thừa vùng hỏng, không bao giờ thiếu). Nhanh hơn trộn từng trường ~10 lần.
     /// </summary>
-    public static ulong Hash(Scene scene, in Primitive p)
+    public static ulong Hash(Scene scene, in Primitive p, float shapeUnshift = 0)
     {
         ulong h = 14695981039346656037UL;
         var words = System.Runtime.InteropServices.MemoryMarshal.Cast<byte, ulong>(
@@ -34,7 +34,7 @@ public static class SceneDamageMath
         for (; i < words.Length; i++) h = (h ^ words[i]) * 0x9E3779B97F4A7C15UL + (h >> 32);
         h = ((h * 31 + h1) * 31 + h2) * 31 + h3;
         Mix(ref h, (uint)p.Gradient); // đuôi struct có thể nằm ngoài các từ 8 byte; cờ vùng loại trừ của bóng nằm ở đây
-        if (p.ClipShape != 0) { var s = scene.Shape(p.ClipShape); Mix(ref h, 1u); Mix(ref h, s.Rect); Mix(ref h, s.Corners); Mix(ref h, s.Transform); }
+        if (p.ClipShape != 0) { var s = scene.Shape(p.ClipShape); Mix(ref h, 1u); Mix(ref h, shapeUnshift == 0 ? s.Rect : s.Rect.Offset(0, -shapeUnshift)); Mix(ref h, s.Corners); Mix(ref h, s.Transform); }
         if (p.Kind == PrimitiveKind.Quad && p.Gradient != 0)
         {
             var g = scene.Gradient(p.Gradient);
@@ -42,6 +42,13 @@ public static class SceneDamageMath
             Mix(ref h, g.C0); Mix(ref h, g.C1); Mix(ref h, g.C2); Mix(ref h, g.P0); Mix(ref h, g.P1); Mix(ref h, g.P2);
         }
         return h;
+    }
+
+    /// <summary>Như <see cref="Visual"/> nhưng chưa cắt theo Clip / vùng cắt hình: hộp bao của riêng primitive (độc lập với vùng cắt, dời được bằng phép tịnh tiến).</summary>
+    public static Bounds Reach(in Primitive p)
+    {
+        float margin = p.Kind == PrimitiveKind.Shadow ? p.Blur * 1.5f + 3 : 2;
+        return Expand(p.Bounds.Inflate(margin), p.Transform);
     }
 
     /// <summary>Hộp pixel mà primitive có thể chạm tới: Bounds + lề (khử răng cưa, blur của bóng, viền), mở theo biến đổi, cắt theo Clip và vùng cắt hình.</summary>

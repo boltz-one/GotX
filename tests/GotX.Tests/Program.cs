@@ -67,6 +67,7 @@ RasterFastPathTests.Register(suite);
 PerfBudgetTests.Register(suite);
 ZeroAllocTests.Register(suite);
 PartialParityTests.Register(suite);
+ScrollBlitTests.Register(suite);
 IsolationTests.Register(suite);
 WrapSpanTests.Register(suite);
 

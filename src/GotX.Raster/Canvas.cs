@@ -18,7 +18,13 @@ public sealed class Canvas
         if (need > Pixels.Length) { Pixels = new uint[need + need / 4]; _underused = 0; }
         else if (need * 4 < Pixels.Length && Pixels.Length > 1 << 16)
         {
-            if (++_underused >= ShrinkAfter) { Pixels = new uint[need + need / 4]; _underused = 0; }
+            if (++_underused >= ShrinkAfter)
+            {
+                // Cùng kích thước thì canvas đang giữ ảnh frame trước (vẽ theo vùng hỏng): chép sang mảng mới, không để lại nền trống.
+                var next = new uint[need + need / 4];
+                if (w == Width && h == Height) Array.Copy(Pixels, next, need);
+                Pixels = next; _underused = 0;
+            }
         }
         else _underused = 0;
         Width = w; Height = h;

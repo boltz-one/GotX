@@ -124,6 +124,7 @@ public sealed partial class Window
             // Lượng cuộn được làm tròn theo pixel thiết bị → chữ không bị rung, phát lại chính xác
             float px = nodeXf.S * _scale;
             childXf = nodeXf.Then(Xf.Translation(-MathF.Round(scroll.X * px) / px, -MathF.Round(scroll.Y * px) / px));
+            NoteScroller(key, scroll, nodeXf, childClip, px);
         }
 
         bool groupHovered = n.IsGroup && inside;

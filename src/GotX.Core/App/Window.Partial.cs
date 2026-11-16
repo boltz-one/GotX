@@ -59,6 +59,7 @@ public sealed partial class Window
         {
             if (!_cache.ContainsKey(v) || !_snaps.TryGetValue(v, out var snap) || App.Find(v) is not global::GotX.View) return Fail("no-cache");
             if (snap.Style.ScrollX || snap.Style.ScrollY) return Fail("scroller");
+            if (_cache[v].OuterShape < 0) return Fail("culled-shape");
             if (IsLarge(v)) return Fail("large-view");
             bool top = true;
             for (int p = ParentOf(v), guard = 0; p > 0 && guard < 512; p = ParentOf(p), guard++)
@@ -104,7 +105,7 @@ public sealed partial class Window
         for (int p = ParentOf(view), guard = 0; p > 0 && guard < 512; p = ParentOf(p), guard++)
         {
             if (!_cache.ContainsKey(p) || !_snaps.TryGetValue(p, out var snap) || App.Find(p) is not global::GotX.View) continue;
-            if (snap.Style.ScrollX || snap.Style.ScrollY || IsLarge(p)) continue;
+            if (snap.Style.ScrollX || snap.Style.ScrollY || IsLarge(p) || _cache[p].OuterShape < 0) continue;
             return p;
         }
         return -1;

@@ -33,6 +33,7 @@ public static partial class SoftwareRenderer
             Render(scene, canvas);
             return (long)canvas.Width * canvas.Height;
         }
+        if (damage.HasShift) ApplyShift(canvas, damage);
         var s = t_scratch ??= new DamageScratch();
         int count = BuildRects(s, damage, canvas.Width, canvas.Height, out long pixels);
         for (int r = 0; r < count; r++)
@@ -60,6 +61,23 @@ public static partial class SoftwareRenderer
                 }
         }
         return pixels;
+    }
+
+    /// <summary>Cuộn bằng blit: chép các hàng của vùng cuộn lên/xuống <c>ShiftDy</c> hàng trong canvas giữ lại (hàng đích sau hàng nguồn khi đi xuống, và ngược lại, nên không đè nhầm).</summary>
+    static void ApplyShift(Canvas c, in SceneDamage.Result d)
+    {
+        int x0 = Math.Max(0, (int)d.ShiftRect.X), x1 = Math.Min(c.Width, (int)(d.ShiftRect.X + d.ShiftRect.Width));
+        int y0 = Math.Max(0, (int)d.ShiftRect.Y), y1 = Math.Min(c.Height, (int)(d.ShiftRect.Y + d.ShiftRect.Height)), dy = d.ShiftDy, w = x1 - x0, W = c.Width;
+        if (w <= 0 || Math.Abs(dy) >= y1 - y0) return;
+        var px = c.Pixels;
+        if (w == W) // cả bề ngang: một lần memmove (Span.CopyTo an toàn khi chồng lấn)
+        {
+            if (dy > 0) px.AsSpan(y0 * W, (y1 - dy - y0) * W).CopyTo(px.AsSpan((y0 + dy) * W));
+            else px.AsSpan((y0 - dy) * W, (y1 + dy - y0) * W).CopyTo(px.AsSpan(y0 * W));
+            return;
+        }
+        if (dy > 0) for (int y = y1 - 1 - dy; y >= y0; y--) px.AsSpan(y * W + x0, w).CopyTo(px.AsSpan((y + dy) * W + x0));
+        else for (int y = y0 - dy; y < y1; y++) px.AsSpan(y * W + x0, w).CopyTo(px.AsSpan((y + dy) * W + x0));
     }
     /// <summary>Gộp lưới ô hỏng thành hình chữ nhật (dải ngang rồi nối dọc nếu cùng cột đầu/cuối); ghi danh sách theo hàng vào <paramref name="s"/>.</summary>
     static int BuildRects(DamageScratch s, in SceneDamage.Result d, int width, int height, out long pixels)

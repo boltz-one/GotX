@@ -100,6 +100,9 @@ public sealed class Scene
 
     public void Clear() { _count = 0; _shapeCount = 0; _gradientCount = 0; }
 
+    /// <summary>Cắt cụt về trạng thái trước đó (bỏ primitive, vùng cắt hình, gradient thêm sau): loại view nằm ngoài vùng cắt.</summary>
+    internal void TruncateTo(int prims, int shapes, int gradients) { _count = prims; _shapeCount = shapes; _gradientCount = gradients; }
+
     /// <summary>Đảm bảo chứa được n primitive bằng MỘT lần cấp phát (nở dần gấp đôi tốn tổng ~2 lần và giật frame đầu tiên dùng scene này).</summary>
     public void Reserve(int n)
     {
@@ -158,7 +161,6 @@ public sealed class Scene
     public void OverwriteShapes(int start, Scene src, int srcStart, int count) => Array.Copy(src._shapes, srcStart, _shapes, start, count);
 
     public void OverwriteGradients(int start, Scene src, int srcStart, int count) => Array.Copy(src._gradients, srcStart, _gradients, start, count);
-
     public void Add(in Primitive p)
     {
         if (_count == _items.Length) Array.Resize(ref _items, _count * 2);

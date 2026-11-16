@@ -19,7 +19,7 @@ public sealed partial class Window
         if (dV != 0 && _hoverFloor >= old.HoverStart && _hoverFloor <= old.HoverEnd) return Fail("hover-floor");
 
         int outer = old.OuterShape, sOff = outer != 0 ? 1 : 0, gradBase = old.GradStart;
-        int MapShape(int s) => s == 0 ? 0 : sOff == 1 && s == 1 ? outer : old.ShapeStart + s - sOff;
+        int MapShape(int s) => s <= 0 ? s : sOff == 1 && s == 1 ? outer : old.ShapeStart + s - sOff;
         int MapScope(int x, int outerScope) => x == 0 ? outerScope : x + old.HitStart;
 
         bool track = SnapshotOldSegment(old);

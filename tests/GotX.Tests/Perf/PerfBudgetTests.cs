@@ -47,7 +47,8 @@ static class PerfBudgetTests
             t.Settle();
             t.Perf.ExpectIdle();
             var report = t.Perf.Measure(frames: 30, raster: false);
-            t.Assert.True(report.Primitives > 5000, $"trang đủ lớn để phép đo có nghĩa ({report.Primitives} primitive)");
+            // Primitive của view ngoài tầm nhìn bị loại khỏi scene (Window.Cull.cs) nên đo độ lớn bằng số node.
+            t.Assert.True(report.Nodes > 800, $"trang đủ lớn để phép đo có nghĩa ({report.Nodes} node, {report.Primitives} primitive)");
             t.Assert.Equal((long)report.AllocatedBytes.Max, 0L, "frame rảnh trên trang lớn không cấp phát byte nào");
             t.Perf.ExpectFrameBudget(40, frames: 30);
         });

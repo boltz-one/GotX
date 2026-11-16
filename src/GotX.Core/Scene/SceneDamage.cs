@@ -19,6 +19,10 @@ public sealed partial class SceneDamage
         public bool Empty { get; } = empty;
         /// <summary>Hộp nhìn thấy của từng primitive frame này (nếu đã tính khi so hash), chỉ hợp lệ tới lần Update kế tiếp: renderer khỏi tính lại.</summary>
         public Bounds[]? Boxes { get; init; }
+        /// <summary>Vùng cuộn (px thiết bị, nguyên) và số hàng nội dung đã dời: renderer chép canvas cũ lên trước, rồi vẽ lại các ô hỏng (đã gồm dải mới lộ ra).</summary>
+        public Bounds ShiftRect { get; init; }
+        public int ShiftDy { get; init; }
+        public bool HasShift => ShiftDy != 0;
         public int TilesX { get; } = tx;
         public int TilesY { get; } = ty;
         /// <summary>Lưới ô hỏng (TilesX × TilesY, hàng trước); null nếu Full.</summary>
@@ -62,12 +66,13 @@ public sealed partial class SceneDamage
 
     Result UpdateFromHint(Scene scene, FrameDamage source, int width, int height)
     {
-        if (_consumer is null || !ReferenceEquals(_consumerOf, source)) { _consumer = source.Attach(); _consumerOf = source; }
+        if (_consumer is null || !ReferenceEquals(_consumerOf, source)) { _consumer = source.Attach(AcceptShift); _consumerOf = source; }
         var hint = _consumer;
         bool sameFrame = _has && width == _w && height == _h && scene.ClearColor == _clear && scene.Atlas.Generation == _gen && scene.ClearColor.A >= 1;
         int tx = (width + Tile - 1) / Tile, ty = (height + Tile - 1) / Tile;
         Result result;
-        if (hint.Full || !sameFrame) result = FullHint(scene, sameFrame, tx, ty);
+        if (hint.Full || !sameFrame)
+            result = sameFrame && hint.Shift is { } shift && TryShift(scene, shift, width, height, tx, ty) is { } shifted ? shifted : FullHint(scene, sameFrame, tx, ty);
         else
         {
             if (_dirty.Length < tx * ty) _dirty = new bool[tx * ty];

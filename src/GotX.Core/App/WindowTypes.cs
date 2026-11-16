@@ -66,6 +66,13 @@ internal struct ViewCache
     // Ngữ cảnh lúc vào view để vẽ lại RIÊNG view này (khung một phần, Window.Partial.cs). KeyScope/ScrollScope: chỉ số hitbox 1-based.
     public int KeyScope, ScrollScope, GroupHover;
     public bool BlockHover;
+    /// <summary>Hộp bao (px thiết bị, chưa cắt) của mọi primitive trong view, kể cả view con: để loại view nằm ngoài vùng cắt khỏi scene (Window.Cull.cs).</summary>
+    public Bounds Extent;
+    public bool ExtentKnown; // Extent chỉ tính khi cần (view ≥ ngưỡng dưới vùng cắt hữu hạn): tính lười lúc phát lại hoặc lúc loại view
+    /// <summary>Primitive của view đã bị bỏ vì nằm hẳn ngoài vùng cắt (đoạn rỗng): khi vào lại tầm nhìn phải dựng lại thay vì phát lại.</summary>
+    public bool Culled;
+    /// <summary>Có view con bị loại ngoài tầm nhìn bên trong: phát lại cả view chỉ được nếu chúng vẫn nằm ngoài vùng cắt sau khi dời.</summary>
+    public bool HasCulled;
 }
 
 /// <summary>Node View như layout đã thấy (Style của hộp bọc view) + kiểu chữ đã tinh chỉnh: đủ để đo/đặt/vẽ lại ruột view mà không cần cha.</summary>

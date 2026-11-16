@@ -61,4 +61,5 @@ Soak (30 min, 3 windows, roots replaced every 1500 frames): ws +0.39 MB/min, pri
 ## Known gaps
 
 - Arena sizes (scene / tree / layout buffers) have no public counters; soak uses GC heap after a full collection as proxy.
-- Raster of scroll-heavy pages is near full-frame by nature (cover ~0.8): a scrolled quad / glyph still has to be blended; the remaining lever is cheaper per-pixel blending (glyph mask blit) or a scroll-blit (copy the retained canvas up/down) in the renderer.
+- Raster of scroll-heavy pages: see `docs/performance.md` §8 (view culling made tree-100k ~6x faster; scroll-blit is implemented, verified pixel-exact (`STRESS_VERIFY=1`) but off by default - no win on this machine).
+`STRESS_VERIFY=1` compares the retained canvas against a whole-frame raster after every frame (prints mismatches, exits 3 on any); `GOTX_SCROLLBLIT=1` / `GOTX_CULL=0` toggle the scroll-blit / offscreen-view culling A/B. Prints a `scroll-blit: tried / ok` line at the end.

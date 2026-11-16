@@ -189,6 +189,7 @@ public sealed partial class Window
         _scene.Reserve(_prevScene.Count); // hai scene thay phiên nhau: scene chưa dùng (khung một phần không đổi chỗ) không được nở dần ở frame đầy đủ kế tiếp
         _scene.ClearColor = _clearColor;
         _hitboxes.Clear(); _hovers.Clear(); _viewOrder.Clear(); _cache.Clear();
+        BeginScrollRecs();
         _viewStack.Clear(); _keyCounters.Clear(); _clipAcc.Clear();
         if (_pre.Count == 0) _tree.Reset(); // sau lần thử một phần hỏng, giữ cây để tái dùng Render của view đó
         _rendered = _replayed = 0;
@@ -208,7 +209,7 @@ public sealed partial class Window
         PaintOverlays(logicalSize);
         _prevScene.Reserve(_scene.Count); // cấp sẵn chỗ cho scene thay phiên ngay trong frame đầy đủ này, không để dồn vào frame đầy đủ kế tiếp
         _pre.Clear();
-        Damage.MarkFull();
+        EndFullFrameDamage();
         _lastRoot = Root; _lastRem = RemSize; _lastBase = BaseTextStyle; _lastOverlayStamp = _overlayStamp;
         if (_snaps.Count > _cache.Count * 2 + 256) PruneSnaps();
     }
