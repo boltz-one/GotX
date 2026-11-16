@@ -15,7 +15,7 @@ public static class BenchCommand
         int repeat = ReportCommand.ArgInt(args, "--repeat", 3);
         string[] only = (Arg(args, "--only") ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
         string[] scenarios = (Arg(args, "--scenarios") ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
-        bool update = args.Contains("--update-baseline"), verbose = args.Contains("--verbose"), raster = args.Contains("--raster"), gpu = args.Contains("--gpu");
+        bool improved = args.Contains("--update-improved"), update = args.Contains("--update-baseline") || improved, verbose = args.Contains("--verbose"), raster = args.Contains("--raster"), gpu = args.Contains("--gpu");
         string baselinePath = Arg(args, "--baseline") ?? DefaultBaseline();
         string outDir = Path.GetFullPath(Arg(args, "--out") ?? Path.Combine(Path.GetTempPath(), "gotx-perf-" + DateTime.Now.ToString("yyyyMMdd-HHmmss")));
         Directory.CreateDirectory(outDir);
@@ -76,6 +76,11 @@ public static class BenchCommand
             {
                 // --gpu --update-baseline chỉ ghi các trường gpu* vào entry sẵn có: số đo thời gian của baseline giữ nguyên.
                 if (gpu) { if (baseline.Entries.TryGetValue(k, out var old)) foreach (var (m, x) in v) if (m.StartsWith("gpu", StringComparison.Ordinal)) old[m] = x; }
+                else if (improved && baseline.Entries.TryGetValue(k, out var cur0))
+                {
+                    // --update-improved: chỉ siết baseline (số đo tốt hơn thay số cũ); số đo xấu hơn không bao giờ được ghi để che hồi quy.
+                    foreach (var (m, x) in v) if (!cur0.TryGetValue(m, out double was) || x < was) cur0[m] = x;
+                }
                 else baseline.Entries[k] = baseline.Entries.TryGetValue(k, out var prevE) ? Merge(v, prevE) : v;
             }
             baseline.Save(baselinePath);

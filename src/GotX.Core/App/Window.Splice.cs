@@ -46,7 +46,12 @@ public sealed partial class Window
         }
 
         // ---- thay đoạn ----
-        for (int i = old.OrderStart; i < old.OrderEnd; i++) _cache.Remove(_viewOrder[i]);
+        for (int i = old.OrderStart; i < old.OrderEnd; i++)
+        {
+            int gone = _viewOrder[i];
+            _cache.Remove(gone);
+            if (!_sCache.ContainsKey(gone)) _snaps.Remove(gone); // view không còn (danh sách ảo thay dòng khi cuộn): không để bảng snap phình mãi
+        }
         _scene.ReplaceRange(old.PrimStart, old.PrimEnd, sc, 0, n);
         if (track) RecordSegmentDamage(old, n);
         else Damage.MarkFull();

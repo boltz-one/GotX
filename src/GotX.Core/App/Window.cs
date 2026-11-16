@@ -187,6 +187,7 @@ public sealed partial class Window
         (_viewOrder, _prevViewOrder) = (_prevViewOrder, _viewOrder);
         (_cache, _prevCache) = (_prevCache, _cache);
         _scene.Clear();
+        _scene.Reserve(_prevScene.Count); // hai scene thay phiên nhau: scene chưa dùng (khung một phần không đổi chỗ) không được nở dần ở frame đầy đủ kế tiếp
         _scene.ClearColor = _clearColor;
         _hitboxes.Clear(); _hovers.Clear(); _viewOrder.Clear(); _cache.Clear();
         _viewStack.Clear(); _keyCounters.Clear(); _innerClip.Clear();
@@ -206,6 +207,7 @@ public sealed partial class Window
             _paintTicks += Stopwatch.GetTimestamp() - t2;
         }
         PaintOverlays(logicalSize);
+        _prevScene.Reserve(_scene.Count); // cấp sẵn chỗ cho scene thay phiên ngay trong frame đầy đủ này, không để dồn vào frame đầy đủ kế tiếp
         _preChild = -1;
         Damage.MarkFull();
         _lastRoot = Root; _lastRem = RemSize; _lastBase = BaseTextStyle; _lastOverlayStamp = _overlayStamp;

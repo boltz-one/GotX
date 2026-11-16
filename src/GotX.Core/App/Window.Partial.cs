@@ -56,6 +56,9 @@ public sealed partial class Window
         {
             if (!_cache.ContainsKey(v) || !_snaps.TryGetValue(v, out var snap) || App.Find(v) is not global::GotX.View) return Fail("no-cache");
             if (snap.Style.ScrollX || snap.Style.ScrollY) return Fail("scroller");
+            // View phủ phần lớn scene: dựng riêng + ghép tốn hơn một lần phát lại cả frame (sao chép hai lần) mà không bớt việc gì.
+            var span = _cache[v];
+            if (_scene.Count > 512 && (long)(span.PrimEnd - span.PrimStart) * 10 > (long)_scene.Count * 6) return Fail("large-view");
             bool top = true;
             for (int p = ParentOf(v), guard = 0; p > 0 && guard < 512; p = ParentOf(p), guard++)
                 if (_self.Contains(p)) { top = false; break; }
@@ -72,7 +75,7 @@ public sealed partial class Window
         var snap = _snaps[vid];
         var view = (global::GotX.View)App.Find(vid)!;
         var sc = _scratch ??= new Scene(Text.Atlas);
-        sc.Clear(); _sHit.Clear(); _sHov.Clear(); _sOrd.Clear(); _sCache.Clear();
+        sc.Clear(); sc.Reserve(old.PrimEnd - old.PrimStart + 64); _sHit.Clear(); _sHov.Clear(); _sOrd.Clear(); _sCache.Clear();
 
         var (liveScene, liveHit, liveHov, liveOrd, liveCache) = (_scene, _hitboxes, _hovers, _viewOrder, _cache);
         var (prevScene, prevHit, prevHov, prevOrd, prevCache) = (_prevScene, _prevHitboxes, _prevHovers, _prevViewOrder, _prevCache);

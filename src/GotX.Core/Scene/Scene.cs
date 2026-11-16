@@ -100,6 +100,12 @@ public sealed class Scene
 
     public void Clear() { _count = 0; _shapeCount = 0; _gradientCount = 0; }
 
+    /// <summary>Đảm bảo chứa được n primitive bằng MỘT lần cấp phát (nở dần gấp đôi tốn tổng ~2 lần và giật frame đầu tiên dùng scene này).</summary>
+    public void Reserve(int n)
+    {
+        if (n > _items.Length) Array.Resize(ref _items, n + n / 8);
+    }
+
     /// <summary>Bỏ primitive nhưng giữ vùng cắt / gradient (công cụ đo từng primitive một).</summary>
     public void ClearPrimitives() => _count = 0;
 

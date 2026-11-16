@@ -14,6 +14,7 @@ public sealed partial class TextSystem
         float spaceW = font.AdvanceWidth(font.GlyphIndex(' ')) * (size / font.UnitsPerEm) + spacing;
         int n = text.Length, lineStart = 0, i = 0;
         float lineW = 0, lineVisible = 0;
+        _whi = float.PositiveInfinity; _wexact = false; // khoảng bề rộng cho cùng kết quả: [max bề rộng dòng, nhỏ nhất bề rộng làm một từ ngắt dòng lọt vào dòng trước)
 
         while (i < n)
         {
@@ -47,11 +48,13 @@ public sealed partial class TextSystem
 
             if (lineW > 0 && lineW + wordW > maxWidth)
             {
+                _whi = MathF.Min(_whi, lineW + wordW);
                 lines.Add(new TextLine(lineStart, i - lineStart, lineVisible));
                 lineStart = i; lineW = lineVisible = 0;
             }
             if (wordW > maxWidth && lineW == 0)
             {
+                _wexact = true; // từ dài hơn cả dòng bị cắt theo ký tự: kết quả phụ thuộc đúng bề rộng này
                 if (gn < 0) gn = Shape(text, i, j, style, false);
                 float x = 0;
                 for (int q = 0; q < gn;)
@@ -80,7 +83,14 @@ public sealed partial class TextSystem
             i = e;
         }
         lines.Add(new TextLine(lineStart, n - lineStart, lineVisible));
+        float lo = 0;
+        for (int q = 0; q < lines.Count; q++) lo = MathF.Max(lo, lines[q].Width);
+        _wlo = lo;
+        if (_wexact) { _wlo = maxWidth; _whi = float.BitIncrement(maxWidth); }
     }
+
+    float _wlo, _whi;
+    bool _wexact;
 
     /// <summary>
     /// Đường nhanh cho từ ASCII in được mà font không có glyph cần định hình (ligature): cộng advance + kerning thẳng,

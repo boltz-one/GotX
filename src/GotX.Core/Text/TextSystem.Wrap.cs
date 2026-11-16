@@ -31,6 +31,18 @@ public sealed partial class TextSystem
             PerfCounters.WrapHit++;
             return;
         }
+        // Tầng khoảng: cùng chuỗi/font/cỡ, bề rộng nằm trong khoảng cho cùng kết quả (kéo giãn cửa sổ gần như không ngắt dòng lại).
+        uint sh = (uint)System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(text) * 2654435761u ^ (uint)font.Id * 40503u ^ BitConverter.SingleToUInt32Bits(style.FontSize) * 2246822519u
+            ^ BitConverter.SingleToUInt32Bits(style.Tracking) * 668265263u ^ (style.TabularNums ? 0x9E3779B9u : 0);
+        ref var span = ref _wrapSpan[(int)(sh >> 22)];
+        if (ReferenceEquals(span.Text, text) && span.Font == font.Id && span.FontSize == style.FontSize && span.Tracking == style.Tracking
+            && span.Tnum == style.TabularNums && span.Gen == _wrapGen && maxWidth >= span.Lo && (maxWidth < span.Hi || float.IsPositiveInfinity(span.Hi)))
+        {
+            for (int c = 0; c < span.Count; c++) lines.Add(_wrapLines[span.Start + c]);
+            fast = new WrapFast(text, font.Id, style.FontSize, maxWidth, style.Tracking, style.TabularNums, span.Start, span.Count, _wrapGen);
+            PerfCounters.WrapHit++;
+            return;
+        }
         var key = new WrapKey(text, font.Id, style.FontSize, maxWidth, style.Tracking, style.TabularNums);
         if (_wrapIndex.TryGetValue(key, out var hit))
         {
@@ -49,10 +61,14 @@ public sealed partial class TextSystem
             _wrapIndex.Clear(); _wrapLines.Clear(); _wrapChars = 0; _wrapGen++;
         }
         _wrapIndex[key] = (_wrapLines.Count, lines.Count);
+        span = new WrapSpan(text, font.Id, style.FontSize, style.Tracking, style.TabularNums, _wlo, _whi, _wrapLines.Count, lines.Count, _wrapGen);
         fast = new WrapFast(text, font.Id, style.FontSize, maxWidth, style.Tracking, style.TabularNums, _wrapLines.Count, lines.Count, _wrapGen);
         _wrapLines.AddRange(lines);
         _wrapChars += text.Length;
     }
+
+    readonly record struct WrapSpan(string? Text, int Font, float FontSize, float Tracking, bool Tnum, float Lo, float Hi, int Start, int Count, int Gen);
+    readonly WrapSpan[] _wrapSpan = new WrapSpan[1024];
 
     readonly record struct WrapKey(string Text, int Font, float FontSize, float MaxWidth, float Tracking, bool Tnum);
 
