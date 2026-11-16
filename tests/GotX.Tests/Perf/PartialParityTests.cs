@@ -208,17 +208,20 @@ static class PartialParityTests
 
     public static void Register(TestSuite suite)
     {
+        // Mặc định chạy ngắn (mỗi bước so cả khung với dựng đầy đủ nên đắt: bản dài mất ~17 phút); GOTX_PARITY_FULL=1 chạy đủ.
+        bool full = Environment.GetEnvironmentVariable("GOTX_PARITY_FULL") == "1";
+        int damageSteps = full ? 50 : 10, partialSteps = full ? 90 : 20;
         foreach (var (name, root, size) in Targets)
             suite.Add($"perf/damage/parity-random-{name}", t =>
             {
-                DamageSequence(t, name, root, size, 3, 50);
-                if (size.Width < 1400) DamageSequence(t, name, root, size, 4321, 50);
+                DamageSequence(t, name, root, size, 3, damageSteps);
+                if (full && size.Width < 1400) DamageSequence(t, name, root, size, 4321, damageSteps);
             });
         foreach (var (name, root, size) in Targets)
             suite.Add($"perf/partial/parity-random-{name}", t =>
             {
-                RandomSequence(t, name, root, size, 7, 90);
-                RandomSequence(t, name, root, size, 1234, 90);
+                RandomSequence(t, name, root, size, 7, partialSteps);
+                if (full) RandomSequence(t, name, root, size, 1234, partialSteps);
             });
     }
 }
