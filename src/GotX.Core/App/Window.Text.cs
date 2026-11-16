@@ -78,7 +78,11 @@ public sealed partial class Window
         AddRect(new Bounds(x, MathF.Round(top), width, thick), color, deviceClip, xf);
     }
 
-    /// <summary>Vẽ một đoạn chữ trên một dòng, gốc trái-trên (x, y) toạ độ layout; xf phóng cả cỡ chữ.</summary>
+    /// <summary>
+    /// Vẽ một đoạn chữ trên một dòng, gốc trái-trên (x, y) toạ độ layout; xf phóng cả cỡ chữ.
+    /// Glyph đến từ TextSystem.Shape (thứ tự hiển thị: bidi, ligature, font dự phòng, dấu kết hợp); mỗi glyph có font riêng
+    /// nên mặt chữ atlas (font, cỡ) được đổi khi font đổi. Đường gốc / chiều cao dòng theo font chính của kiểu chữ.
+    /// </summary>
     void PaintRun(string text, int start, int end, float x, float y, in TextStyle ts, Rgba color, Bounds deviceClip, Xf xf)
     {
         var font = Text.FontFor(ts);
@@ -86,30 +90,28 @@ public sealed partial class Window
         float spacing = ts.LetterSpacing * xf.S * _scale;
         // Không có font nghiêng thật cho họ này → nghiêng giả bằng phép trượt ngang quanh đường gốc.
         bool fauxItalic = ts.Italic && !font.Italic;
-        float k = px / font.UnitsPerEm;
-        float ascent = font.Ascender * k, descent = -font.Descender * k;
-        if (!xf.IsSimple) { PaintRunRotated(text, start, end, x, y, ts, color, deviceClip, xf, font, px, k, ascent, descent, spacing); return; }
+        float k0 = px / font.UnitsPerEm, ascent = font.Ascender * k0, descent = -font.Descender * k0;
+        if (!xf.IsSimple) { PaintRunRotated(text, start, end, x, y, ts, color, deviceClip, xf, font, px, ascent, descent, spacing); return; }
         var o = xf.Apply(new Point(x, y));
         float baseline = MathF.Round(o.Y * _scale + (ts.LineHeight * xf.S * _scale - (ascent + descent)) / 2 + ascent);
         float dx = o.X * _scale;
         var atlas = Text.Atlas;
-        var face = atlas.Face(font, px);
-        bool kern = font.HasKerning;
-        ushort prev = 0;
+        int count = Text.Shape(text, start, end, ts, true);
+        var glyphs = Text.Glyphs;
+        Font? cur = null;
+        GlyphFace face = null!;
+        float k = 0;
 
-        for (int i = start; i < end;)
+        for (int i = 0; i < count; i++)
         {
-            Rune.DecodeFromUtf16(text.AsSpan(i, end - i), out var r, out int len);
-            i += len;
-            if (r.Value == '\n') continue;
-            ushort g = font.Glyph(r.Value, ts.TabularNums);
-            if (kern) dx += font.Kern(prev, g) * k;
-            prev = g;
-            int gi = face.Get(g);
+            ref var s = ref glyphs[i];
+            if (s.Font != cur) { cur = s.Font; face = atlas.Face(cur, px); k = px / cur.UnitsPerEm; }
+            dx += s.Pre * k;
+            int gi = face.Get(s.Id);
             var mask = atlas[gi];
             if (mask.Width > 0)
             {
-                var gb = new Bounds(MathF.Round(dx) + mask.Left, baseline + mask.Top, mask.Width, mask.Height);
+                var gb = new Bounds(MathF.Round(dx + s.XOff * k) + mask.Left, baseline - MathF.Round(s.YOff * k) + mask.Top, mask.Width, mask.Height);
                 Mat2 slant = default;
                 if (fauxItalic)
                 {
@@ -119,38 +121,37 @@ public sealed partial class Window
                 }
                 Add(new Primitive { Kind = PrimitiveKind.Glyph, Bounds = gb, Transform = slant, Glyph = gi, Color = color, Clip = deviceClip });
             }
-            dx += font.AdvanceWidth(g) * k + spacing;
+            dx += s.Advance * k + (s.IsMark ? 0 : spacing);
         }
     }
 
     /// <summary>Chữ bị xoay: tính vị trí từng glyph trong toạ độ layout rồi đặt theo phép biến đổi (không làm tròn pixel).</summary>
     void PaintRunRotated(string text, int start, int end, float x, float y, in TextStyle ts, Rgba color, Bounds deviceClip,
-        Xf xf, Text.Font font, float px, float k, float ascent, float descent, float spacing)
+        Xf xf, Text.Font font, float px, float ascent, float descent, float spacing)
     {
         float unit = xf.S * _scale; // số pixel thiết bị trên 1 đơn vị layout
         float baseline = y + ((ts.LineHeight * unit - (ascent + descent)) / 2 + ascent) / unit;
         float pen = x;
         var atlas = Text.Atlas;
-        var face = atlas.Face(font, px);
-        bool kern = font.HasKerning;
-        ushort prev = 0;
-        for (int i = start; i < end;)
+        int count = Text.Shape(text, start, end, ts, true);
+        var glyphs = Text.Glyphs;
+        Font? cur = null;
+        GlyphFace face = null!;
+        float k = 0;
+        for (int i = 0; i < count; i++)
         {
-            Rune.DecodeFromUtf16(text.AsSpan(i, end - i), out var r, out int len);
-            i += len;
-            if (r.Value == '\n') continue;
-            ushort g = font.Glyph(r.Value, ts.TabularNums);
-            if (kern) pen += font.Kern(prev, g) * k / unit;
-            prev = g;
-            int gi = face.Get(g);
+            ref var s = ref glyphs[i];
+            if (s.Font != cur) { cur = s.Font; face = atlas.Face(cur, px); k = px / cur.UnitsPerEm; }
+            pen += s.Pre * k / unit;
+            int gi = face.Get(s.Id);
             var mask = atlas[gi];
             if (mask.Width > 0)
             {
-                var local = new Bounds(pen + mask.Left / unit, baseline + mask.Top / unit, mask.Width / unit, mask.Height / unit);
+                var local = new Bounds(pen + (s.XOff * k + mask.Left) / unit, baseline + (mask.Top - s.YOff * k) / unit, mask.Width / unit, mask.Height / unit);
                 var bounds = Place(local, xf, out Mat2 rot);
                 Add(new Primitive { Kind = PrimitiveKind.Glyph, Bounds = bounds, Transform = rot, Glyph = gi, Color = color, Clip = deviceClip });
             }
-            pen += (font.AdvanceWidth(g) * k + spacing) / unit;
+            pen += (s.Advance * k + (s.IsMark ? 0 : spacing)) / unit;
         }
     }
 }

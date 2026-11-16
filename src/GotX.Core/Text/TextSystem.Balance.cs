@@ -35,7 +35,7 @@ public sealed partial class TextSystem
     int ProbeLines(string text, Font font, in TextStyle style, float width)
     {
         _probe.Clear();
-        WrapUncached(text, font, style.FontSize, width, style.LetterSpacing, style.TabularNums, _probe);
+        WrapUncached(text, style, width, _probe);
         return _probe.Count;
     }
 

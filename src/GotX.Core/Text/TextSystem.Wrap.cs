@@ -40,7 +40,7 @@ public sealed partial class TextSystem
             return;
         }
         long t0 = System.Diagnostics.Stopwatch.GetTimestamp();
-        WrapUncached(text, font, style.FontSize, maxWidth, style.LetterSpacing, style.TabularNums, lines);
+        WrapUncached(text, style, maxWidth, lines);
         PerfCounters.WrapMiss++;
         PerfCounters.WrapTicks += System.Diagnostics.Stopwatch.GetTimestamp() - t0;
         if (MaxCachedWraps <= 0) return;
@@ -68,66 +68,9 @@ public sealed partial class TextSystem
     /// <summary>Số kết quả ngắt dòng được nhớ (0 = tắt cache). Chạm ngưỡng thì xoá hết.</summary>
     public int MaxCachedWraps { get; set; } = 4096;
 
+    /// <summary>Số kết quả ngắt dòng đang được nhớ (chẩn đoán / báo cáo bộ nhớ).</summary>
+    public int WrapCacheCount => _wrapIndex.Count;
+
     /// <summary>Tổng số ký tự của các chuỗi được cache giữ lại; vượt quá thì xoá hết (chặn văn bản dài bị giữ nhiều bản).</summary>
     public long MaxCachedWrapChars { get; set; } = 1 << 20;
-
-    static void WrapUncached(string text, Font font, float fontSize, float maxWidth, float spacing, bool tnum, List<TextLine> lines)
-    {
-        float k = fontSize / font.UnitsPerEm;
-        float spaceW = font.AdvanceWidth(font.GlyphIndex(' ')) * k + spacing;
-        bool kern = font.HasKerning;
-        int n = text.Length, lineStart = 0, i = 0;
-        float lineW = 0, lineVisible = 0;
-
-        while (i < n)
-        {
-            if (text[i] == '\n')
-            {
-                lines.Add(new TextLine(lineStart, i - lineStart, lineVisible));
-                lineStart = ++i; lineW = lineVisible = 0;
-                continue;
-            }
-            int j = i; float wordW = 0;
-            ushort prev = 0;
-            while (j < n && text[j] != ' ' && text[j] != '\n')
-            {
-                Rune.DecodeFromUtf16(text.AsSpan(j), out var r, out int len);
-                ushort g = font.Glyph(r.Value, tnum);
-                wordW += font.AdvanceWidth(g) * k + spacing + (kern ? font.Kern(prev, g) * k : 0); // khớp với lúc đo/vẽ
-                prev = g;
-                j += len;
-            }
-            int e = j; float spaces = 0;
-            while (e < n && text[e] == ' ') { spaces += spaceW; e++; }
-
-            if (lineW > 0 && lineW + wordW > maxWidth)
-            {
-                lines.Add(new TextLine(lineStart, i - lineStart, lineVisible));
-                lineStart = i; lineW = lineVisible = 0;
-            }
-            if (wordW > maxWidth && lineW == 0)
-            {
-                float x = 0;
-                ushort before = 0;
-                for (int p = i; p < j;)
-                {
-                    Rune.DecodeFromUtf16(text.AsSpan(p), out var r, out int len);
-                    ushort g = font.Glyph(r.Value, tnum);
-                    float a = font.AdvanceWidth(g) * k + spacing + (kern && p > lineStart ? font.Kern(before, g) * k : 0);
-                    before = g;
-                    if (x + a > maxWidth && p > lineStart)
-                    {
-                        lines.Add(new TextLine(lineStart, p - lineStart, x));
-                        lineStart = p; x = 0;
-                    }
-                    x += a; p += len;
-                }
-                lineW = lineVisible = x;
-            }
-            else { lineW += wordW; lineVisible = lineW; }
-            lineW += spaces;
-            i = e;
-        }
-        lines.Add(new TextLine(lineStart, n - lineStart, lineVisible));
-    }
 }

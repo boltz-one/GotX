@@ -12,7 +12,7 @@ static partial class TextInputEditTests
     {
         public TextInput Field = null!;
         protected override void OnCreated() =>
-            Field = App.New(new TextInput { Multiline = multiline, Text = text, BoxClass = boxClass, Blink = blink });
+            Field = App.New(new TextInput { Multiline = multiline, Text = text, BoxClass = boxClass, Blink = blink, AriaLabel = "field" });
         public override Div Render(Window w) => Fx.Page(w).Child(w.Div().Key("field").Child(w.View(Field)));
     }
 
@@ -161,7 +161,7 @@ static partial class TextInputEditTests
             for (int i = 0; i < 12; i++) t.Press(Key.Right);
             t.Type("!");
             t.Assert.Equal(h.Field.Text[..13], "abcdefghijkl!", "gõ giữa chữ dài vẫn đúng chỗ");
-            // NoLint chưa dùng được: LayoutEngine.MeasureInput vẫn xuống dòng ô một dòng (cần Wrap với NaN khi !Multiline)
+            t.Assert.NoLint();
         });
 
         suite.Add("core/text-input/drag-select-past-edges", t =>

@@ -45,25 +45,32 @@ public static class Vietnamese
             while (q < s.Length && IsMark(s[q])) q++;
             if (q == p + 1) { sb.Append(c); p++; continue; }
 
-            char b = c;
-            int tone = -1;
-            bool ok = true;
-            for (int k = p + 1; k < q && ok; k++)
-            {
-                int t = ToneIndex(s[k]);
-                if (t >= 0) { if (tone >= 0) ok = false; else tone = t; }
-                else { char nb = ApplyModifier(b, s[k]); if (nb == '\0') ok = false; else b = nb; }
-            }
-            if (ok && tone >= 0)
-            {
-                int li = LowerBases.IndexOf(b), ui = UpperBases.IndexOf(b);
-                if (li >= 0) b = Lower[tone][li];
-                else if (ui >= 0) b = Upper[tone][ui];
-                else ok = false;
-            }
-            if (ok) sb.Append(b); else sb.Append(s, p, q - p);
+            char b = ComposeRun(s, p, q);
+            if (b != '\0') sb.Append(b); else sb.Append(s, p, q - p);
             p = q;
         }
         return sb.ToString();
     }
+
+    /// <summary>
+    /// Ghép s[p] (chữ cái gốc) với các dấu s[p+1, q) thành một ký tự dựng sẵn; '\0' nếu không ghép được.
+    /// Dùng riêng khi định hình chữ (TextSystem.Shape): chỉ ghép khi font có glyph dựng sẵn, nếu không thì đặt dấu bằng GPOS.
+    /// </summary>
+    internal static char ComposeRun(string s, int p, int q)
+    {
+        char b = s[p];
+        int tone = -1;
+        for (int k = p + 1; k < q; k++)
+        {
+            int t = ToneIndex(s[k]);
+            if (t >= 0) { if (tone >= 0) return '\0'; tone = t; }
+            else { char nb = ApplyModifier(b, s[k]); if (nb == '\0') return '\0'; b = nb; }
+        }
+        if (tone < 0) return b;
+        int li = LowerBases.IndexOf(b), ui = UpperBases.IndexOf(b);
+        if (li >= 0) return Lower[tone][li];
+        return ui >= 0 ? Upper[tone][ui] : '\0';
+    }
+
+    internal static bool IsComposingMark(char c) => IsMark(c);
 }

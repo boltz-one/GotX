@@ -115,7 +115,7 @@ internal sealed partial class LayoutEngine
     {
         // ô rỗng: chiều cao theo placeholder (nó xuống dòng cùng bề rộng như chữ thật)
         string shown = input.Multiline && input.DisplayText.Length == 0 && input.Placeholder.Length > 0 ? input.Placeholder : input.DisplayText;
-        _text.Wrap(shown, ts, maxWidth, _lines);
+        _text.Wrap(shown, ts, input.Multiline ? maxWidth : float.NaN, _lines); // một dòng: không bao giờ xuống dòng
         float w = float.IsNaN(maxWidth) ? 160 : maxWidth;
         return new Size(w, Math.Max(1, _lines.Count) * ts.LineHeight);
     }
