@@ -42,9 +42,8 @@ public static class ChildRun
         var wanted = Arg(args, "--scenarios")?.Split(',') ?? Scenarios.Names;
         using var alloc = args.Contains("--alloc-types") ? new AllocListener() : null;
         alloc?.Drain();
-        foreach (string scenario in Scenarios.Names)
+        foreach (string scenario in wanted.Where(w => w == "typelong").Concat(Scenarios.Names.Where(n => wanted.Contains(n)))) // typelong: chỉ khi được chọn
         {
-            if (!wanted.Contains(scenario)) continue;
             Scenarios.Run(session, scenario);
             if (alloc is not null) Console.WriteLine(scenario + ":" + Environment.NewLine + alloc.Drain());
         }

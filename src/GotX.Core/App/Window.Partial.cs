@@ -92,6 +92,7 @@ public sealed partial class Window
 
     bool BuildSegment(int vid, in ViewCache old, in ViewSnap snap, global::GotX.View view, Scene live)
     {
+        long tStart = System.Diagnostics.Stopwatch.GetTimestamp();
         _tree.Reset();
         int id = _tree.NewView(view).Id;
         {
@@ -110,6 +111,8 @@ public sealed partial class Window
         }
         if (!float.IsNaN(old.MinContent) && _layout.MinContentOf(id, old.Text, RemSize) != old.MinContent) return Fail("min-content");
         _layout.ArrangeChildren(id);
+        long tPaint = System.Diagnostics.Stopwatch.GetTimestamp();
+        _layoutTicks += tPaint - tStart;
 
         // Ngữ cảnh lúc vào view. Chỉ số hitbox bao ngoài dùng 0 làm "ở ngoài đoạn" (được ánh xạ lại khi ghép).
         for (int k = old.OrderStart; k < old.OrderEnd; k++) _animating.Remove(_prevViewOrder[k]);
@@ -122,6 +125,7 @@ public sealed partial class Window
         _shape = old.OuterShape != 0 ? _scene.AddClipShape(live.Shape(old.OuterShape)) : 0; // bản sao cục bộ: chỉ số 1 trong scene tạm
         _tree[id].Replay = false;
         PaintViewContent(id, snap.Refined, old.Clip, old.Xf);
+        _paintTicks += System.Diagnostics.Stopwatch.GetTimestamp() - tPaint;
 
         var now2 = _cache[vid];
         int outerShapes = old.OuterShape != 0 ? 1 : 0;

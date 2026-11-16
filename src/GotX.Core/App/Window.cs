@@ -142,6 +142,7 @@ public sealed partial class Window
             log?.Warn("atlas-reset", $"{atlas.UsedBytes >> 10} KB > {atlas.MaxBytes >> 10} KB", _frame + 1);
             atlas.Reset();
         }
+        Text.FrameTick++;
         LastFramePartial = _fellBack = false;
         if (CanPartial(logicalSize, scale, bucket, atlas))
         {

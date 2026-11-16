@@ -37,7 +37,7 @@ public sealed partial class TextSystem
     {
         var primary = FontFor(style);
         int cap = (end - start) * 2 + 8;
-        if (_sg.Length < cap) { _sg = new ShapedGlyph[cap]; _sgTmp = new ShapedGlyph[cap]; }
+        if (_sg.Length < cap) { cap = Math.Max(cap, _sg.Length * 2); _sg = new ShapedGlyph[cap]; _sgTmp = new ShapedGlyph[cap]; } // nở gấp đôi: gõ văn bản dài không cấp lại mỗi phím
         bool tnum = style.TabularNums, rtl = visual && Bidi.HasRtl(text, start, end);
         if (rtl)
         {

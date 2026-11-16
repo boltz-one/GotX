@@ -11,7 +11,7 @@ public sealed partial class TextSystem
     struct ShapeSlot
     {
         public string? Text;
-        public int Start, End, Gen, Count;
+        public int Start, End, Gen, Count, Seen;
         public Font? Primary;
         public byte Flags;
         public ShapedGlyph[]? Glyphs;
@@ -19,6 +19,9 @@ public sealed partial class TextSystem
 
     readonly ShapeSlot[] _shapeCache = new ShapeSlot[ShapeCacheSlots];
     int _shapeGen;
+
+    /// <summary>Số thứ tự frame (Window tăng mỗi Draw): một khoá phải được thấy ở frame KHÁC mới được nhận vào bộ đệm, nên chuỗi đang gõ (mới mỗi frame, nhưng được đo + vẽ hai lần trong frame) không cấp phát mảng.</summary>
+    internal int FrameTick;
 
     /// <summary>Số lần trúng / trượt bộ đệm định hình (chẩn đoán, test).</summary>
     public long ShapeHits, ShapeMisses;
@@ -43,13 +46,13 @@ public sealed partial class TextSystem
         _view = null;
         int n = ShapeCore(text, start, end, style, visual);
         // Nhận vào bộ đệm ở lần thứ hai thấy cùng khoá: chuỗi đổi mỗi frame (đang gõ) không bao giờ cấp phát mảng.
-        if (same && n <= ShapeCacheMaxGlyphs)
+        if (same && slot.Seen != FrameTick && n <= ShapeCacheMaxGlyphs)
         {
             if (slot.Glyphs is null || slot.Glyphs.Length < n) slot.Glyphs = new ShapedGlyph[n + 8];
             Array.Copy(_sg, slot.Glyphs, n);
             slot.Count = n;
         }
-        else { slot.Text = text; slot.Start = start; slot.End = end; slot.Flags = flags; slot.Primary = primary; slot.Gen = _shapeGen; slot.Count = -1; }
+        else { slot.Text = text; slot.Start = start; slot.End = end; slot.Flags = flags; slot.Primary = primary; slot.Gen = _shapeGen; slot.Count = -1; slot.Seen = FrameTick; }
         return n;
     }
 }

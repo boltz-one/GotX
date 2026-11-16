@@ -18,6 +18,7 @@ public static class Scenarios
             case "hover": Hover(s); break;
             case "scroll": Scroll(s); break;
             case "type": Type(s); break;
+            case "typelong": for (int i = 0; i < 40; i++) Type(s); break; // gõ nhiều lần: đủ mẫu cho --alloc-types
             case "click": Click(s); break;
             case "resize": Resize(s); break;
             case "dark": Dark(s); break;
