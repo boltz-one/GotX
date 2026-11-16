@@ -60,6 +60,8 @@ PerfLogTests.Register(suite);
 PerfCacheTests.Register(suite);
 PerfRasterTests.Register(suite);
 PerfBudgetTests.Register(suite);
+ZeroAllocTests.Register(suite);
+PartialParityTests.Register(suite);
 
 // 5b. GPU: parity CPU↔D3D11 (WARP), mất thiết bị, rò rỉ, bộ đếm, vùng hỏng (docs/performance.md §5).
 GpuParityTests.Register(suite);

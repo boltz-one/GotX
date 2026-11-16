@@ -108,6 +108,9 @@ public sealed partial class Window
     /// <summary>Phát ra khi cần vẽ lại (một view bị Notify, hover đổi…). Platform nối vào RequestFrame.</summary>
     public event Action? FrameRequested;
 
+    /// <summary>Scene của frame vừa vẽ (cùng đối tượng Draw trả về; khung một phần sửa nó tại chỗ).</summary>
+    public Scene LastScene => _scene;
+
     public long LastFrameAllocatedBytes { get; private set; }
     public int LastFrameRenderedViews { get; private set; }
     public int LastFrameReplayedViews { get; private set; }
@@ -139,6 +142,24 @@ public sealed partial class Window
             log?.Warn("atlas-reset", $"{atlas.UsedBytes >> 10} KB > {atlas.MaxBytes >> 10} KB", _frame + 1);
             atlas.Reset();
         }
+        LastFramePartial = _fellBack = false;
+        if (CanPartial(logicalSize, scale, bucket, atlas))
+        {
+            _tree.Frame = ++_frame;
+            _paintedViews.Clear();
+            _scene.ClearColor = _clearColor;
+            _rendered = _replayed = 0;
+            if (TryPartial()) { LastFramePartial = true; PartialFrameCount++; }
+            else { PartialFallbackCount++; _fellBack = true; }
+        }
+        else _fellBack = false;
+        if (!LastFramePartial) DrawFull(logicalSize, scale, variants, bucket, atlas, log);
+        FinishFrame(logicalSize, t0, before, log);
+        return _scene;
+    }
+
+    void DrawFull(Size logicalSize, float scale, in VariantContext variants, int bucket, GlyphAtlas atlas, PerfLog? log)
+    {
         if (scale != _scale || !CacheEnabled || bucket != _lastBucket || atlas.Generation != _atlasGeneration)
         {
             _cache.Clear(); // qua breakpoint → dựng lại
@@ -167,7 +188,7 @@ public sealed partial class Window
         _scene.ClearColor = _clearColor;
         _hitboxes.Clear(); _hovers.Clear(); _viewOrder.Clear(); _cache.Clear();
         _viewStack.Clear(); _keyCounters.Clear(); _innerClip.Clear();
-        _tree.Reset();
+        if (_preChild < 0) _tree.Reset(); // sau lần thử một phần hỏng, giữ cây để tái dùng Render của view đó
         _rendered = _replayed = 0;
         _animating.Clear();
 
@@ -183,12 +204,19 @@ public sealed partial class Window
             _paintTicks += Stopwatch.GetTimestamp() - t2;
         }
         PaintOverlays(logicalSize);
+        _preChild = -1;
+        _lastRoot = Root; _lastRem = RemSize; _lastBase = BaseTextStyle; _lastOverlayStamp = _overlayStamp;
+        if (_snaps.Count > _cache.Count * 2 + 256) PruneSnaps();
+    }
 
+    void FinishFrame(Size logicalSize, long t0, long before, PerfLog? log)
+    {
         _drawing = false;
         PruneState();
         ResolveFocus();
         ResolvePendingScroll();
         _dirty.Clear();
+        _self.Clear();
         // View còn đang chuyển động sẽ được vẽ lại ở frame kế (platform hẹn ~16ms, không vẽ dồn dập)
         foreach (int v in _animating) MarkViewDirty(v, request: false, DirtyCause.Animation);
         WantsAnimationFrame = _animating.Count > 0;
@@ -207,6 +235,12 @@ public sealed partial class Window
             WriteFrameLog(log, LastFrame, t0, Stopwatch.GetTimestamp(), logicalSize);
             if (_frame == 1) log.Startup("first-frame", LastFrame.TotalMs);
         }
-        return _scene;
+    }
+
+    void PruneSnaps()
+    {
+        List<int>? gone = null;
+        foreach (int id in _snaps.Keys) if (!_cache.ContainsKey(id)) (gone ??= new()).Add(id);
+        if (gone is not null) foreach (int id in gone) _snaps.Remove(id);
     }
 }

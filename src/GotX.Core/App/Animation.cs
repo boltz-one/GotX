@@ -104,7 +104,7 @@ internal sealed class TransitionState : ElementState
         float elapsed = (float)((now - _start) * 1000) - _delay;
         float t = _duration <= 0 ? 1 : Math.Clamp(elapsed / _duration, 0, 1);
         float k = Ease.Apply(_ease, t);
-        Current = AnimVals.Lerp(_from, _to, k);
+        Current = k >= 1 ? _to : AnimVals.Lerp(_from, _to, k); // đích đúng từng bit khi xong (lerp ở k=1 lệch 1 ULP so với lần vẽ đầu)
         ShadowMix = _fromShadow == _toShadow ? 1 : k;
         return t < 1;
     }

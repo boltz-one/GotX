@@ -29,7 +29,7 @@ static class PerfTests
             t.Assert.True(report.Raster.Median > 0 && report.ToString().Contains("30 frame: draw"), "raster CPU đo riêng; có bản in một dòng");
             // Callback mỗi frame: ép một view render lại ở từng frame.
             report = t.Perf.Measure(frames: 10, raster: false, each: _ => host.Counter.Notify());
-            t.Assert.Equal(report.RenderedViews, 20, "mỗi frame render bộ đếm + view cha (10 × 2), khối tĩnh vẫn được phát lại");
+            t.Assert.Equal(report.RenderedViews, 10, "mỗi frame chỉ render bộ đếm (10 × 1): view cha và khối tĩnh không bị chạm");
             t.Assert.True(t.Window.Trace is not null && report.Raster.Median == 0, "đo xong thì Trace được gắn lại; raster tắt theo yêu cầu");
         });
 
@@ -73,14 +73,14 @@ static class PerfTests
         {
             var host = t.Open(new CounterHost());
             int mark = t.Trace.Mark();
-            t.Perf.ExpectRenders(() => t.Click("c-inc"), max: 2, min: 2);
-            t.Assert.Equal(string.Join(",", t.Trace.Names(TraceKind.ViewRender, mark)), "CounterHost,CounterView", "khối tĩnh không render lại khi bấm bộ đếm");
+            t.Perf.ExpectRenders(() => t.Click("c-inc"), max: 1, min: 1);
+            t.Assert.Equal(string.Join(",", t.Trace.Names(TraceKind.ViewRender, mark)), "CounterView", "chỉ bộ đếm render lại khi bấm; view cha và khối tĩnh giữ cache");
             t.Assert.Equal(host.Counter.Count, 1, "thao tác thật sự đã chạy");
-            t.Perf.ExpectRenders(() => t.Hover(new Point(500, 500)), max: 2); // rời nút: view chứa nút hover + view cha, khối tĩnh thì không
+            t.Perf.ExpectRenders(() => t.Hover(new Point(500, 500)), max: 1); // rời nút: chỉ view chứa nút
             t.Assert.Equal(t.Perf.CountRenders(() => t.Frames(3)), 0, "không thao tác gì thì không render");
-            var inner = Kit.Probe(p => { p.Open(new CounterHost()); p.Perf.ExpectRenders(() => p.Click("c-inc"), max: 1); });
-            var f = Kit.ExpectOneFailure(t, inner, "vượt số lượt render", "thao tác làm render 2 lượt view", "≤ 1");
-            t.Assert.True(f is not null && f.Details.Contains("view đã render: CounterHost, CounterView") && f.Details.Contains("view bị đánh dấu bẩn: CounterView"),
+            var inner = Kit.Probe(p => { p.Open(new CounterHost()); p.Perf.ExpectRenders(() => p.Click("c-inc"), max: 0); });
+            var f = Kit.ExpectOneFailure(t, inner, "vượt số lượt render", "thao tác làm render 1 lượt view", "≤ 0");
+            t.Assert.True(f is not null && f.Details.Contains("view đã render: CounterView") && f.Details.Contains("view bị đánh dấu bẩn: CounterView"),
                 $"liệt kê view render và nguyên nhân: {(f is null ? "" : string.Join(" | ", f.Details))}");
         });
 

@@ -33,6 +33,9 @@ internal sealed partial class LayoutEngine
         return Measure(id, text, availW, availH);
     }
 
+    /// <summary>Min-content của một node gốc (khung một phần so với giá trị cũ của view).</summary>
+    public float MinContentOf(int id, in TextStyle text, float rem) { _rem = rem; return MinContent(id, text); }
+
     /// <summary>Dựng layout cho các con của node (dùng khi view buộc phải render lúc paint).</summary>
     public void ArrangeChildren(int id) => ArrangeContent(id, _t[id].Bounds, _t[id].InheritedText);
 
@@ -225,6 +228,7 @@ internal sealed partial class LayoutEngine
 
         if (n.Kind == NodeKind.View && !n.ViewRendered)
         {
+            n.Replay = false;
             if (_w.CanReplay(n.View!, b, parentText)) { n.Replay = true; return; }
             _w.RenderView(id);
         }

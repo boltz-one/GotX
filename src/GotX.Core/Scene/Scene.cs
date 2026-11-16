@@ -133,6 +133,24 @@ public sealed class Scene
         }
     }
 
+    /// <summary>Thay đoạn [start, end) bằng [srcStart, srcEnd) của scene khác tại chỗ (khung một phần): chỉ dịch phần đuôi khi độ dài đổi.</summary>
+    public void ReplaceRange(int start, int end, Scene src, int srcStart, int srcEnd)
+    {
+        int n = srcEnd - srcStart, delta = n - (end - start);
+        if (delta != 0)
+        {
+            if (_count + delta > _items.Length) Array.Resize(ref _items, Math.Max(_items.Length * 2, _count + delta));
+            Array.Copy(_items, end, _items, end + delta, _count - end);
+            _count += delta;
+        }
+        if (n > 0) Array.Copy(src._items, srcStart, _items, start, n);
+    }
+
+    /// <summary>Ghi đè [start, start + count) vùng cắt bằng [srcStart, ...) của scene khác (cùng số lượng, chỉ số không đổi).</summary>
+    public void OverwriteShapes(int start, Scene src, int srcStart, int count) => Array.Copy(src._shapes, srcStart, _shapes, start, count);
+
+    public void OverwriteGradients(int start, Scene src, int srcStart, int count) => Array.Copy(src._gradients, srcStart, _gradients, start, count);
+
     public void Add(in Primitive p)
     {
         if (_count == _items.Length) Array.Resize(ref _items, _count * 2);

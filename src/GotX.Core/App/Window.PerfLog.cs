@@ -123,6 +123,8 @@ public sealed partial class Window
         if (c.ClassMiss > 0) { log.Int("clsMiss", c.ClassMiss); log.Dbl("cls", PerfCounters.TicksToMs(c.ClassMissTicks)); }
         log.Int("meas", c.Measure); log.Int("memo", c.MeasureMemoHit);
         log.Int("rend", f.RenderedViews); log.Int("repl", f.ReplayedViews);
+        if (LastFramePartial) log.Int("part", 1);
+        else if (_fellBack) log.Str("pfb", PartialFallbackReason ?? "?");
         if (_rvCount > 0)
         {
             // Hạng theo thời gian render; Frames ghi top 5, Trace ghi hết (tối đa MaxRenderNames).

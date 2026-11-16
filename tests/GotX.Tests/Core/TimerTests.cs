@@ -75,7 +75,7 @@ static class TimerTests
             t.App.SetTimeout(0.05, () => { host.Counter.Count = 42; host.Counter.Notify(); });
             int renders = t.Perf.CountRenders(() => t.Advance(0.1));
             t.Assert.Text("c-value", "Giá trị: 42");
-            t.Assert.True(renders == 2, $"callback Notify → effect được xử lý, chỉ bộ đếm + view cha render ({renders})");
+            t.Assert.True(renders == 2, $"callback Notify → effect được xử lý: bộ đếm đổi bề rộng nên view cha render lại để layout, khối tĩnh thì không ({renders})");
         });
     }
 }

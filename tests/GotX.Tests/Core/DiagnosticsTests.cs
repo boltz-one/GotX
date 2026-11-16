@@ -111,7 +111,7 @@ static class DiagnosticsTests
             var click = t.Trace.Since(mark).First(e => e.Kind == TraceKind.Click);
             t.Assert.True(click.Message == "CounterView" && click.Bounds == t.Box("c-inc") && click.ViewId == host.Counter.Id.Value, $"Click mang kiểu state, hộp phần tử và id view: {click}");
             t.Assert.True(t.Trace.Since(mark).Any(e => e.Kind == TraceKind.Key && e.Message == "KeyDown Tab"), "Key mang tên phím");
-            t.Assert.Equal(t.Trace.Names(TraceKind.ViewRender, mark).Count > 0 ? t.Trace.Names(TraceKind.ViewRender, mark)[0] : "", "CounterHost ×2", "Names gộp tên trùng (2 frame render do click rồi focus)");
+            t.Assert.Equal(t.Trace.Names(TraceKind.ViewRender, mark).Count > 0 ? t.Trace.Names(TraceKind.ViewRender, mark)[0] : "", "CounterView ×2", "Names gộp tên trùng (2 frame render do click rồi focus; view cha không render lại)");
             t.Assert.True(t.Trace.Tail(50).TrueForAll(line => !line.Contains("Frame: render 0,")), "Tail lược bỏ các frame không render gì");
             int frames = t.Trace.Count(TraceKind.Frame, mark);
             var _ = t.Tree;
@@ -128,10 +128,10 @@ static class DiagnosticsTests
             t.App.Flush();
             t.Draw();
             var busy = t.Window.LastFrame;
-            t.Assert.True(busy is { RenderedViews: 2, ReplayedViews: 1 } && busy.Frame == idle.Frame + 1 && busy.Nodes > 5, $"sau Notify bộ đếm: render 2, phát lại khối tĩnh: {busy}");
+            t.Assert.True(busy is { RenderedViews: 1, ReplayedViews: 0 } && busy.Frame == idle.Frame + 1 && busy.Nodes > 5 && t.Window.LastFramePartial, $"sau Notify bộ đếm (khung một phần): chỉ bộ đếm render, khối tĩnh và view cha không bị chạm: {busy}");
             t.Assert.True(busy.TotalMs > 0 && busy.TotalMs >= busy.LayoutMs && busy.PaintMs >= 0 && busy.AllocatedBytes > 0, "thời gian và cấp phát của frame có render");
             t.Assert.Equal(busy.Primitives, idle.Primitives, "phát lại cho ra đúng số primitive như render");
-            t.Assert.True(t.Window.LastFrameRenderedViews == 2 && t.Window.HitboxCount == busy.Hitboxes, "khớp với các thuộc tính cũ của Window");
+            t.Assert.True(t.Window.LastFrameRenderedViews == 1 && t.Window.HitboxCount == busy.Hitboxes, "khớp với các thuộc tính cũ của Window");
         });
     }
 }

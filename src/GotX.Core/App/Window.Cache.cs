@@ -26,7 +26,7 @@ public sealed partial class Window
 
         int primStart = _scene.Count, hitStart = _hitboxes.Count, hovStart = _hovers.Count, orderStart = _viewOrder.Count;
         int shapeStart = _scene.ShapeCount, outerShape = _shape, gradStart = _scene.GradientCount;
-        int parent = CurrentView;
+        int parent = CurrentView, keyScope = _keyScope, scrollScope = _scrollScope;
         _viewOrder.Add(vid);
         _paintedViews.Add(vid);
         _viewStack.Add(vid);
@@ -39,8 +39,10 @@ public sealed partial class Window
         _innerClip.RemoveAt(_innerClip.Count - 1);
         if (inner && _innerClip.Count > 0) _innerClip[^1] = true;
 
+        _snaps[vid] = new ViewSnap { Style = n.Style, Refined = ts };
         _cache[vid] = new ViewCache
         {
+            KeyScope = keyScope, ScrollScope = scrollScope, GroupHover = _groupHover, BlockHover = _blockHover,
             ParentView = parent,
             Measures = n.Memo, MinContent = n.HasMinContent ? n.MinContent : float.NaN,
             Bounds = n.Bounds, Clip = clip, Xf = xf, InnerClip = inner, Text = n.InheritedText,
@@ -133,6 +135,8 @@ public sealed partial class Window
             c.Xf = c.Xf.Translate(ldx, ldy);
             if (moved && v != vid) c.Clip = MoveClip(c.Clip);
             c.OuterShape = MapShape(c.OuterShape);
+            c.KeyScope = c.KeyScope > prev.HitStart ? c.KeyScope + hitOff : _keyScope;
+            c.ScrollScope = c.ScrollScope > prev.HitStart ? c.ScrollScope + hitOff : _scrollScope;
             c.ShapeStart += shapeBase - prevShapeStart; c.ShapeEnd += shapeBase - prevShapeStart;
             c.GradStart += gradOff; c.GradEnd += gradOff;
             if (v == vid) c.ParentView = parent;

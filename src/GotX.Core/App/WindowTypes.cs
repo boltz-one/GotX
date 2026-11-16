@@ -63,6 +63,16 @@ internal struct ViewCache
     public bool InnerClip;   // bên trong có vùng cắt bị vùng cắt ngoài xén mất → không thể chỉ tịnh tiến khi phát lại
     public TextStyle Text;
     public int PrimStart, PrimEnd, HitStart, HitEnd, HoverStart, HoverEnd, OrderStart, OrderEnd;
+    // Ngữ cảnh lúc vào view để vẽ lại RIÊNG view này (khung một phần, Window.Partial.cs). KeyScope/ScrollScope: chỉ số hitbox 1-based.
+    public int KeyScope, ScrollScope, GroupHover;
+    public bool BlockHover;
+}
+
+/// <summary>Node View như layout đã thấy (Style của hộp bọc view) + kiểu chữ đã tinh chỉnh: đủ để đo/đặt/vẽ lại ruột view mà không cần cha.</summary>
+internal struct ViewSnap
+{
+    public Style Style;
+    public TextStyle Refined;
 }
 
 /// <summary>State của một phần tử giữ qua các frame. Frame = lần vẽ gần nhất còn dùng tới (để dọn state mồ côi).</summary>
@@ -81,6 +91,7 @@ internal sealed class ScrollState : ElementState
     public Size Viewport;
     public float NotifiedX = float.NaN, NotifiedY, NotifiedMaxX, NotifiedMaxY; // giá trị đã báo cho OnScroll
     public double LastTime = double.NaN;
+    public bool Moving;                        // còn đang cuộn mượt về đích sau lần cập nhật gần nhất
     public bool Hovered;                       // con trỏ đang ở trên vùng cuộn (chế độ scrollbar-hover)
     public double ShowUntil = double.NegativeInfinity; // thanh cuộn còn hiện tới lúc này (trễ ẩn 600ms như Radix)
     public float ShownX = float.NaN, ShownY;   // vị trí lúc vẽ lần trước (chế độ scrollbar-scroll)

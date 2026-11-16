@@ -36,10 +36,16 @@ public sealed partial class Window
         ref var n = ref _tree[id];
         if (n.ViewRendered) return;
         n.ViewRendered = true;
-        if (Trace is not null) Emit(TraceKind.ViewRender, n.View!.GetType().Name, viewId: n.View.Id.Value);
-        long t0 = Log is null ? 0 : Stopwatch.GetTimestamp();
-        int child = n.View!.Render(this).Id;
-        if (Log is not null) NoteRender(n.View, Stopwatch.GetTimestamp() - t0);
+        int child;
+        long t0 = 0;
+        if (_preChild >= 0 && n.View!.Id.Value == _preView) { child = _preChild; _preChild = -1; CleanPrerendered(child); } // đã Render ở lần thử một phần
+        else
+        {
+            if (Trace is not null) Emit(TraceKind.ViewRender, n.View!.GetType().Name, viewId: n.View.Id.Value);
+            if (Log is not null) t0 = Stopwatch.GetTimestamp();
+            child = n.View!.Render(this).Id;
+            if (Log is not null) NoteRender(n.View, Stopwatch.GetTimestamp() - t0);
+        }
         _tree.Append(id, child);
         _rendered++;
     }
@@ -48,12 +54,29 @@ public sealed partial class Window
 
     internal void MarkViewDirty(int id) => MarkViewDirty(id, request: true, DirtyCause.Notify);
 
-    void MarkViewDirty(int id, bool request, DirtyCause cause)
+    /// <summary>
+    /// true = như trước đây: Notify một view cũng bắt mọi view cha Render lại (cần nếu cha đọc state của con trong Render mà không Observe).
+    /// Mặc định false: chỉ view bị Notify được Render + vẽ lại, cha giữ kết quả cache (khung một phần). Đặt mặc định bằng <c>GOTX_DIRTY_CHAIN=1</c>.
+    /// </summary>
+    public bool DirtyAncestors { get; set; } = Environment.GetEnvironmentVariable("GOTX_DIRTY_CHAIN") == "1";
+
+    void MarkChainSelf(int id)
+    {
+        for (int v = id, guard = 0; v > 0 && guard < 512; guard++)
+        {
+            _self.Add(v);
+            v = _cache.TryGetValue(v, out var c) ? c.ParentView : -1;
+        }
+    }
+
+    void MarkViewDirty(int id, bool request, DirtyCause cause, bool ancestors = false)
     {
         if (!_cache.ContainsKey(id)) return; // không phải view đang hiển thị
         if (request && Trace is not null && !_dirty.Contains(id))
             Emit(TraceKind.ViewDirty, App.Find(id)?.GetType().Name ?? "?", viewId: id);
         if (Log is not null) NoteDirty(id, cause, first: !_dirty.Contains(id));
+        if (DirtyAncestors || ancestors) MarkChainSelf(id);
+        else _self.Add(id);
         for (int v = id; v > 0 && _dirty.Add(v);)
             v = _cache.TryGetValue(v, out var c) ? c.ParentView : -1;
         if (request) RequestFrame();

@@ -18,6 +18,19 @@ internal struct MeasureMemo
         s = default; return false;
     }
 
+    public readonly int Count => _count;
+
+    public readonly void At(int i, out float w, out float h, out Size s)
+    {
+        switch (i)
+        {
+            case 0: w = _w0; h = _h0; s = _s0; break;
+            case 1: w = _w1; h = _h1; s = _s1; break;
+            case 2: w = _w2; h = _h2; s = _s2; break;
+            default: w = _w3; h = _h3; s = _s3; break;
+        }
+    }
+
     public void Add(float w, float h, Size s)
     {
         switch (_next)

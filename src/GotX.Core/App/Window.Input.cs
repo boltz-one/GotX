@@ -129,9 +129,20 @@ public sealed partial class Window
     {
         if (Focused == input) return;
         if (Trace is not null) Emit(TraceKind.Focus, input is null ? "(none)" : "TextInput#" + input.Id.Value);
-        if (Focused is { } old) { old.FocusedIn = null; old.Notify(); }
+        if (Focused is { } old) { old.FocusedIn = null; old.Notify(); DirtyInputOwners(old); MarkViewDirty(old.Id.Value, true, DirtyCause.Focus, ancestors: true); }
         Focused = input;
-        if (input is not null) { input.FocusedIn = this; input.Notify(); }
+        if (input is not null) { input.FocusedIn = this; input.Notify(); DirtyInputOwners(input); MarkViewDirty(input.Id.Value, true, DirtyCause.Focus, ancestors: true); }
+    }
+
+    /// <summary>
+    /// Phần tử bọc ô nhập (<c>.FocusInput(input)</c>) nằm trong view của CHA và đổi hình theo focus (focus:ring…): focus đổi thì view cha phải vẽ lại.
+    /// Các view cha cũng được coi là bẩn trực tiếp (ancestors: true) vì component cha hay đọc <c>IsFocused</c> của con trong Render (Ui.InputGroup).
+    /// </summary>
+    void DirtyInputOwners(TextInput input)
+    {
+        var span = CollectionsMarshal.AsSpan(_hitboxes);
+        for (int i = 0; i < span.Length; i++)
+            if (ReferenceEquals(span[i].Input, input) && !span[i].IsKey && span[i].ViewId > 0) MarkViewDirty(span[i].ViewId, true, DirtyCause.Focus);
     }
 
     void UpdateHover()

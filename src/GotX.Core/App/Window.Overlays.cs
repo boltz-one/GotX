@@ -26,6 +26,7 @@ public sealed partial class Window
         if (overlay.Options.Modal) Focus(null);
         if (Trace is not null) Emit(TraceKind.Overlay, "mở " + content.GetType().Name, viewId: content.Id.Value);
         _overlays.Add(overlay);
+        _overlayStamp++;
         RequestFrame();
         return overlay;
     }
@@ -33,6 +34,7 @@ public sealed partial class Window
     public void CloseOverlay(Overlay overlay)
     {
         if (!_overlays.Remove(overlay)) return;
+        _overlayStamp++;
         overlay.IsOpen = false;
         if (Trace is not null) Emit(TraceKind.Overlay, "đóng " + overlay.Content.GetType().Name, viewId: overlay.Content.Id.Value);
         // Trả focus về nơi nó ở trước khi mở, nếu overlay là modal hoặc focus đang nằm bên trong nó.

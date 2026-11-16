@@ -120,6 +120,8 @@ public sealed partial class Window
         st.TargetY = Math.Clamp(st.TargetY, 0, st.MaxY);
         // Cuộn mượt: tiến dần về đích theo hàm mũ (hằng số 60ms), độc lập với tốc độ khung hình
         double dt = double.IsNaN(st.LastTime) ? 1 : Math.Clamp(_now - st.LastTime, 0, 0.1);
+        // Cuộn mới bắt đầu sau lúc đứng yên: bước đầu là đúng một frame, không phụ thuộc lần vẽ trước cách bao lâu (view yên không được vẽ lại).
+        if (!st.Moving && !double.IsNaN(st.LastTime)) dt = Math.Min(dt, 0.016);
         float k = 1 - (float)Math.Exp(-dt / 0.06);
         st.X += (st.TargetX - st.X) * k;
         st.Y += (st.TargetY - st.Y) * k;
@@ -130,7 +132,8 @@ public sealed partial class Window
         st.X = Math.Clamp(st.X, 0, st.MaxX);
         st.Y = Math.Clamp(st.Y, 0, st.MaxY);
         st.LastTime = _now;
-        if (st.X != st.TargetX || st.Y != st.TargetY) MarkAnimating();
+        st.Moving = st.X != st.TargetX || st.Y != st.TargetY;
+        if (st.Moving) MarkAnimating();
         return st;
     }
 
