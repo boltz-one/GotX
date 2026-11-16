@@ -22,6 +22,7 @@ public sealed partial class Window
         int MapShape(int s) => s == 0 ? 0 : sOff == 1 && s == 1 ? outer : old.ShapeStart + s - sOff;
         int MapScope(int x, int outerScope) => x == 0 ? outerScope : x + old.HitStart;
 
+        bool track = SnapshotOldSegment(old);
         // ---- primitive ----
         for (int i = 0; i < n; i++)
         {
@@ -33,6 +34,7 @@ public sealed partial class Window
         if (shapes > 0) _scene.OverwriteShapes(old.ShapeStart, sc, sOff, shapes);
         if (sc.GradientCount > 0) _scene.OverwriteGradients(old.GradStart, sc, 0, sc.GradientCount);
 
+        // (vùng cắt / gradient đã ghi đè và chỉ số đã ánh xạ ở trên; hash mới so với hash cũ ở sau khi thay đoạn)
         // ---- hitbox ----
         var hits = CollectionsMarshal.AsSpan(_sHit);
         for (int i = 0; i < hits.Length; i++)
@@ -46,6 +48,8 @@ public sealed partial class Window
         // ---- thay đoạn ----
         for (int i = old.OrderStart; i < old.OrderEnd; i++) _cache.Remove(_viewOrder[i]);
         _scene.ReplaceRange(old.PrimStart, old.PrimEnd, sc, 0, n);
+        if (track) RecordSegmentDamage(old, n);
+        else Damage.MarkFull();
         _hitboxes.RemoveRange(old.HitStart, old.HitEnd - old.HitStart); _hitboxes.InsertRange(old.HitStart, _sHit);
         _hovers.RemoveRange(old.HoverStart, old.HoverEnd - old.HoverStart); _hovers.InsertRange(old.HoverStart, _sHov);
         _viewOrder.RemoveRange(old.OrderStart, old.OrderEnd - old.OrderStart); _viewOrder.InsertRange(old.OrderStart, _sOrd);

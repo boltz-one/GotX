@@ -25,8 +25,11 @@ internal sealed unsafe partial class Win32Window : IPlatformWindow, IFrameTiming
     readonly nint _hwnd;
     readonly Canvas _canvas = new();
     D3D11Renderer? _gpu;
-    // Vùng hỏng (prototype, mặc định tắt): GOTX_DAMAGE=1 bật cho cả renderer GPU lẫn CPU. Xem SceneDamage.
-    static readonly bool s_damageOn = Environment.GetEnvironmentVariable("GOTX_DAMAGE") == "1";
+    // Vùng hỏng (mặc định BẬT, hint của Window: chỉ vẽ lại hộp cũ + mới của đoạn scene bị thay). GOTX_DAMAGE=0 tắt (vẽ cả frame),
+    // GOTX_DAMAGE=hash dùng so hash cả scene như prototype cũ. Xem SceneDamage / FrameDamage; parity trong tests (perf/damage, gpu/damage).
+    static readonly string? s_damageMode = Environment.GetEnvironmentVariable("GOTX_DAMAGE");
+    static readonly bool s_damageOn = s_damageMode != "0";
+    static SceneDamage NewDamage() => new() { UseHint = s_damageMode != "hash" };
     SceneDamage? _damage;
     bool _trackingLeave;
     char _highSurrogate;
@@ -59,7 +62,7 @@ internal sealed unsafe partial class Win32Window : IPlatformWindow, IFrameTiming
             RECT c;
             GetClientRect(_hwnd, &c);
             _gpu = D3D11Renderer.TryCreate(_hwnd, c.right, c.bottom);
-            if (s_damageOn && _gpu is not null) _gpu.Damage = new SceneDamage();
+            if (s_damageOn && _gpu is not null) _gpu.Damage = NewDamage();
             PerfLog.Shared?.Mark("renderer", _gpu is null ? "software" : _gpu.IsWarp ? "d3d11-warp" : "d3d11-hardware");
         }
         ShowWindow(_hwnd, SW_SHOW);
@@ -129,7 +132,7 @@ internal sealed unsafe partial class Win32Window : IPlatformWindow, IFrameTiming
         }
         long t0 = System.Diagnostics.Stopwatch.GetTimestamp();
         _canvas.Resize(r.right, r.bottom);
-        if (s_damageOn) SoftwareRenderer.RenderDamaged(scene, _canvas, (_damage ??= new SceneDamage()).Update(scene, r.right, r.bottom));
+        if (s_damageOn) SoftwareRenderer.RenderDamaged(scene, _canvas, (_damage ??= NewDamage()).Update(scene, r.right, r.bottom));
         else SoftwareRenderer.Render(scene, _canvas);
         BuildMs = (System.Diagnostics.Stopwatch.GetTimestamp() - t0) * 1000.0 / System.Diagnostics.Stopwatch.Frequency;
         SubmitMs = PresentMs = 0; UploadBytes = 0;

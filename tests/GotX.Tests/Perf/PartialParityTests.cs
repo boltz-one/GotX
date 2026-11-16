@@ -27,12 +27,15 @@ static class PartialParityTests
             Step(); Step();
         }
 
+        public Action<Scene>? OnFrame;
+
         public void Step()
         {
             Now += 0.016;
             App.RunTimers();
-            Window.Draw(Size, 1);
+            var scene = Window.Draw(Size, 1);
             App.Flush();
+            OnFrame?.Invoke(scene);
         }
 
         public void Send(in InputEvent e)
@@ -148,8 +151,69 @@ static class PartialParityTests
         t.Notes.Add($"{name} seed {seed}: {steps} bước khớp; khung một phần {a.Window.PartialFrameCount}, lùi {a.Window.PartialFallbackCount}");
     }
 
+    /// <summary>Vùng hỏng từ hint của Window: canvas giữ lại vẽ theo hint == vẽ cả frame, từng pixel, ở mọi frame (có lúc renderer bỏ qua frame); hint phủ kín ô hỏng của so hash.</summary>
+    static void DamageSequence(UiTest t, string name, Func<App, View> root, Size size, int seed, int steps)
+    {
+        var rig = new Rig(root, size, partial: true);
+        int w = (int)size.Width, h = (int)size.Height;
+        var hint = new SceneDamage(); var hash = new SceneDamage { UseHint = false };
+        var retained = new GotX.Raster.Canvas(); retained.Resize(w, h);
+        var full = new GotX.Raster.Canvas(); full.Resize(w, h);
+        var rng = new Random(seed ^ 99);
+        int frames = 0, bad = 0, uncovered = 0, empty = 0, fulls = 0; double cov = 0;
+        string? first = null;
+        rig.OnFrame = scene =>
+        {
+            frames++;
+            var hr = hash.Update(scene, w, h);
+            if (rng.Next(7) == 0) return; // renderer bỏ qua frame này: hint phải tích luỹ cho lần vẽ sau
+            var r = hint.Update(scene, w, h);
+            GotX.Raster.SoftwareRenderer.RenderDamaged(scene, retained, r);
+            GotX.Raster.SoftwareRenderer.Render(scene, full);
+            if (r.Empty) empty++;
+            if (r.Full) fulls++;
+            cov += r.Coverage;
+            if (!retained.Pixels.AsSpan(0, w * h).SequenceEqual(full.Pixels.AsSpan(0, w * h))) { bad++; first ??= $"frame {frames}: ảnh vẽ theo hint khác vẽ cả frame"; }
+            if (!r.Full && !hr.Full && hr.Dirty is { } hd && r.Dirty is { } rd)
+                for (int i = 0; i < hd.Length && i < rd.Length; i++) if (hd[i] && !rd[i]) { uncovered++; break; }
+        };
+        Drive(rig, rng, size, steps);
+        if (bad > 0 || uncovered > 0) t.Fail($"{name} seed {seed}: {bad}/{frames} frame lệch pixel ({first}), {uncovered} frame hint không phủ ô hỏng của so hash");
+        else t.Notes.Add($"{name} seed {seed}: {frames} frame khớp pixel, {empty} rỗng, {fulls} vẽ cả frame, trung bình {cov / Math.Max(1, frames - empty) * 100:F1}% ô vẽ lại");
+    }
+
+    static void Drive(Rig a, Random rng, Size size, int steps)
+    {
+        string chars = "abcdXYZ 0123";
+        for (int i = 0; i < steps; i++)
+        {
+            var w = a.Window;
+            switch (rng.Next(9))
+            {
+                case 0 or 1 or 2 when w.HitboxCount > 0:
+                {
+                    var bx = w.HitboxBounds(rng.Next(w.HitboxCount));
+                    a.Send(new InputEvent(InputKind.MouseMove, bx.IsEmpty ? new Point(rng.Next((int)size.Width), rng.Next((int)size.Height)) : new Point(bx.X + bx.Width / 2, bx.Y + bx.Height / 2)));
+                    break;
+                }
+                case 3: { var p = new Point(rng.Next((int)size.Width), rng.Next((int)size.Height)); foreach (var k in new[] { InputKind.MouseMove, InputKind.MouseDown, InputKind.MouseUp }) a.Send(new InputEvent(k, p)); break; }
+                case 4: a.Send(new InputEvent(InputKind.TextInput, Text: chars[rng.Next(chars.Length)].ToString())); break;
+                case 5: a.Send(new InputEvent(InputKind.Scroll, new Point(size.Width / 2, size.Height / 2), Delta: new Point(0, rng.Next(-120, 120)))); break;
+                case 6: a.Send(new InputEvent(InputKind.KeyDown, Key: new[] { Key.Tab, Key.Escape, Key.Backspace, Key.Left, Key.Right, Key.Down, Key.Enter }[rng.Next(7)])); break;
+                default: a.Send(new InputEvent(InputKind.MouseMove, new Point(rng.Next((int)size.Width), rng.Next((int)size.Height)))); break;
+            }
+            if (rng.Next(3) == 0) a.Frames(rng.Next(1, 40));
+        }
+    }
+
     public static void Register(TestSuite suite)
     {
+        foreach (var (name, root, size) in Targets)
+            suite.Add($"perf/damage/parity-random-{name}", t =>
+            {
+                DamageSequence(t, name, root, size, 3, 50);
+                if (size.Width < 1400) DamageSequence(t, name, root, size, 4321, 50);
+            });
         foreach (var (name, root, size) in Targets)
             suite.Add($"perf/partial/parity-random-{name}", t =>
             {

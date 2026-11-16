@@ -58,6 +58,7 @@ public sealed partial class Window
         _layout = new LayoutEngine(_tree, text, this);
         _scene = new Scene(text.Atlas);
         _prevScene = new Scene(text.Atlas);
+        _scene.Damage = _prevScene.Damage = Damage;
         app.AddWindow(this);
     }
 
@@ -206,6 +207,7 @@ public sealed partial class Window
         }
         PaintOverlays(logicalSize);
         _preChild = -1;
+        Damage.MarkFull();
         _lastRoot = Root; _lastRem = RemSize; _lastBase = BaseTextStyle; _lastOverlayStamp = _overlayStamp;
         if (_snaps.Count > _cache.Count * 2 + 256) PruneSnaps();
     }

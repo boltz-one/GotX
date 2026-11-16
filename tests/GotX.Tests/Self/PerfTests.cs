@@ -22,7 +22,7 @@ static class PerfTests
             var host = t.Open(new CounterHost());
             var report = t.Perf.Measure(frames: 30);
             t.Assert.Equal(report.Frames, 30, "số frame đo");
-            t.Assert.True(report.RenderedViews == 0 && report.ReplayedViews == 30, $"giao diện tĩnh: mỗi frame phát lại view gốc, không render ({report.RenderedViews}/{report.ReplayedViews})");
+            t.Assert.True(report.RenderedViews == 0 && report.ReplayedViews == 0, $"giao diện tĩnh: không view nào bẩn nên frame không render cũng không phát lại gì ({report.RenderedViews}/{report.ReplayedViews})");
             t.Assert.True(report.Primitives > 20 && report.Nodes >= 1, $"số primitive/node của frame cuối ({report.Primitives}, {report.Nodes})");
             t.Assert.Equal((long)report.AllocatedBytes.Median, 0L, "frame phát lại không cấp phát");
             t.Assert.True(report.Total.Min <= report.Total.Median && report.Total.Median <= report.Total.P95 && report.Total.P95 > 0, "min ≤ trung vị ≤ p95");

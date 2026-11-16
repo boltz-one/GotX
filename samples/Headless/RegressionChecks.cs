@@ -64,8 +64,8 @@ static class RegressionChecks
         c.Check("atlas vượt ngân sách → xoá, không phát lại", c.Text.Atlas.Generation == rgGen + 1 && rgWin.LastFrameReplayedViews == 0);
         c.Text.Atlas.MaxBytes = rgBudget;
         SoftwareRenderer.Render(rgWin.Draw(rgSize, 1), rgCanvas);
-        c.Check("sau khi xoá atlas: cache view hoạt động lại",
-            c.Text.Atlas.Generation == rgGen + 1 && rgWin.LastFrameReplayedViews > 0 && c.Text.Atlas.UsedBytes > 0);
+        c.Check($"sau khi xoá atlas: cache view hoạt động lại ",
+            c.Text.Atlas.Generation == rgGen + 1 && rgWin.LastFramePartial && c.Text.Atlas.UsedBytes > 0);
 
         // Subscription bị callback đứng trước huỷ: không được gọi nữa ngay trong lượt Flush đó
         var rgD = rgApp.New(new RegressionModel());
@@ -127,7 +127,7 @@ static class RegressionChecks
         // nên khoá "keep" của nó không được dùng trong các frame đó – nó phải sống sót nhờ còn state.
         rgHost.Spam.Count = 300;
         for (int i = 0; i < 40; i++) { rgHost.Spam.Generation++; rgHost.Spam.Notify(); rgApp2.Flush(); RgFrames(1); }
-        bool rgReplayed = rgWin2.LastFrameReplayedViews > 0;
+        bool rgReplayed = rgWin2.LastFramePartial; // chỉ view bẩn render lại: view chứa vùng cuộn không được chạm
         rgScroll.Notify(); rgApp2.Flush(); RgFrames(1); // render lại: .Key("keep") phải nhận đúng số cũ
         c.Check($"dọn bảng khoá không làm mất state của khoá còn dùng ({RgOffset()})", rgReplayed && Checker.Near(RgOffset(), 90));
         c.Now = rgStartTime; // phần demo bên dưới xuất PNG theo đồng hồ: không để các kiểm tra này làm lệch pha animation

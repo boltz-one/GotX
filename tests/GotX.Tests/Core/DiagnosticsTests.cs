@@ -88,12 +88,11 @@ static class DiagnosticsTests
             var host = t.Open(new CounterHost());
             t.Frames(3);
             int panel = host.Panel.Renders;
-            t.Assert.True(t.Window.FindBounds("c-value") is null, "sau frame phát lại, FindBounds không thấy phần tử trong view đã cache…");
-            t.Assert.True(t.Find("c-value") is not null, "…còn Inspect thì thấy (frame soi tắt cache)");
+            t.Assert.True(t.Find("c-value") is not null, "Inspect thấy phần tử (frame soi tắt cache)");
             t.Assert.Equal(host.Panel.Renders, panel + 1, "frame soi render lại mọi view đúng một lần");
             t.Assert.True(t.Window.CacheEnabled, "Inspect trả lại CacheEnabled như cũ");
             t.Draw();
-            t.Assert.True(t.Window.LastFrame is { RenderedViews: 0, ReplayedViews: 1 }, "frame kế tiếp lại phát lại hoàn toàn từ cache");
+            t.Assert.True(t.Window.LastFrame is { RenderedViews: 0, ReplayedViews: 0 }, "frame kế tiếp không có gì bẩn nên không làm gì (scene giữ nguyên)");
             t.Assert.Equal(host.Panel.Renders, panel + 1, "không render thêm");
         });
 
@@ -123,7 +122,7 @@ static class DiagnosticsTests
             var host = t.Open(new CounterHost());
             t.Draw();
             var idle = t.Window.LastFrame;
-            t.Assert.True(idle is { RenderedViews: 0, ReplayedViews: 1, AllocatedBytes: 0, Animating: false } && idle.Primitives > 20 && idle.Hitboxes >= 2, $"frame rảnh: {idle}");
+            t.Assert.True(idle is { RenderedViews: 0, ReplayedViews: 0, AllocatedBytes: 0, Animating: false } && idle.Primitives > 20 && idle.Hitboxes >= 2, $"frame rảnh: {idle}");
             host.Counter.Notify();
             t.App.Flush();
             t.Draw();

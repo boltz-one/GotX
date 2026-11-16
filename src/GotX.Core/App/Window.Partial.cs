@@ -44,7 +44,7 @@ public sealed partial class Window
     int ParentOf(int view) => _cache.TryGetValue(view, out var c) ? c.ParentView : -1;
 
     bool CanPartial(Size size, float scale, int bucket, GlyphAtlas atlas) =>
-        PartialFrames && CacheEnabled && _frame > 0 && _self.Count > 0 && _inspect is null && _sem is null
+        PartialFrames && CacheEnabled && _frame > 0 && _cache.Count > 0 && _inspect is null && _sem is null
         && scale == _scale && bucket == _lastBucket && atlas.Generation == _atlasGeneration && size == _lastSize
         && ReferenceEquals(Root, _lastRoot) && RemSize == _lastRem && BaseTextStyle == _lastBase && _overlayStamp == _lastOverlayStamp;
 

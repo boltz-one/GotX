@@ -47,8 +47,46 @@ public sealed class SceneDamage
     /// <summary>Quên frame trước: lần Update kế tiếp trả Full (dùng khi renderer mất đích vẽ giữ lại).</summary>
     public void Invalidate() => _has = false;
 
+    /// <summary>Tắt thì luôn so hash cả scene (prototype cũ, GOTX_DAMAGE=hash); mặc định dùng hint của Window khi có.</summary>
+    public bool UseHint { get; set; } = true;
+
+    /// <summary>
+    /// Vùng hỏng từ <see cref="FrameDamage"/> của Window: không hash, không so scene – chỉ đổi các hộp đã tích luỹ sang lưới ô.
+    /// Đúng vì Window chỉ ghi hộp cũ + mới của primitive thật sự đổi và đánh dấu Full ở mọi lần dựng đầy đủ.
+    /// </summary>
+    FrameDamage.Consumer? _consumer;
+    FrameDamage? _consumerOf;
+
+    Result UpdateFromHint(Scene scene, FrameDamage source, int width, int height)
+    {
+        if (_consumer is null || !ReferenceEquals(_consumerOf, source)) { _consumer = source.Attach(); _consumerOf = source; }
+        var hint = _consumer;
+        bool sameFrame = _has && width == _w && height == _h && scene.ClearColor == _clear && scene.Atlas.Generation == _gen && scene.ClearColor.A >= 1;
+        int tx = (width + Tile - 1) / Tile, ty = (height + Tile - 1) / Tile;
+        Result result;
+        if (hint.Full || !sameFrame) result = new Result(true, false, tx, ty, null, tx * ty);
+        else
+        {
+            if (_dirty.Length < tx * ty) _dirty = new bool[tx * ty];
+            Array.Clear(_dirty, 0, tx * ty);
+            foreach (var r in hint.Rects) Mark(r, tx, ty);
+            int count = 0;
+            for (int i = 0; i < tx * ty; i++) if (_dirty[i]) count++;
+            result = count == 0 ? new Result(false, true, tx, ty, null, 0) : new Result(false, false, tx, ty, _dirty, count);
+        }
+        hint.Consume();
+        _prevCount = -1; // trạng thái hash không còn khớp frame hiển thị: lần so hash kế tiếp (nếu có) phải vẽ cả frame
+        _w = width; _h = height; _clear = scene.ClearColor; _gen = scene.Atlas.Generation; _has = true;
+        _hashStale = true;
+        return result;
+    }
+
+    bool _hashStale;
+
     public Result Update(Scene scene, int width, int height)
     {
+        if (UseHint && scene.Damage is { } hint) return UpdateFromHint(scene, hint, width, height);
+        if (_hashStale) { _has = false; _hashStale = false; }
         var prims = scene.Primitives;
         int n = prims.Length;
         if (_curHash.Length < n) { _curHash = new ulong[n * 2]; _curBox = new Bounds[n * 2]; _matchedB = new bool[n * 2]; }

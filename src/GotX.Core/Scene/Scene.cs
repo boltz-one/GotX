@@ -54,6 +54,8 @@ public sealed class Scene
     public Scene(GlyphAtlas atlas) { Atlas = atlas; }
 
     public GlyphAtlas Atlas { get; }
+    /// <summary>Vùng đổi do Window tích luỹ (null nếu scene dựng tay): renderer dùng thay cho so hash cả scene.</summary>
+    public FrameDamage? Damage { get; set; }
     public Rgba ClearColor { get; set; } = Rgba.White;
     public int Count => _count;
     public ReadOnlySpan<Primitive> Primitives => new(_items, 0, _count);
