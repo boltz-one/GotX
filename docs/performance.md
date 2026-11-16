@@ -179,9 +179,10 @@ Working set không đổi đáng kể (home 79 MB, hello 46 MB).
 
 ### 6.4 Còn đỏ trong cổng bench (4 mục) và nút cổ chai còn lại
 
-- `stress/resize allocMed` 808 → ~10 KB: lấp đầy shape cache / từ điển ngắt dòng cho chuỗi mới mỗi lần Render (StressView tạo chuỗi mới mỗi frame). `resizelong` (936 frame) trung bình 4.6 KB/frame, 55 % là `ShapedGlyph[]`
-  của ô cache định hình: hữu hạn (2048 ô), giảm dần, không phải trạng thái ổn định. Chưa gỡ (cần cache định hình theo nội dung hoặc kho mảng dùng chung).
-- `shadcn-home/dark`, `shadcn-sidebar-03/dark` drawP95 (+1.7 / +0.6 ms) và `stress/dark allocMed` (0 → 808): frame dựng đầy đủ đầu tiên sau chuỗi dài frame không làm gì. Suy luận chưa kiểm chứng: cache CPU nguội / GC rơi vào frame đó (frame này không chạy bước mới nào).
+- Đã sửa (vòng tối ưu sau): `stress/resize allocMed` 10 168 → 808 B: glyph của ô cache định hình giờ nằm trong ≤ 6 khối dùng chung 16k glyph (bump allocation, tái dùng vòng tròn, ô trỏ vào khối bị ghi đè hết hiệu lực nhờ số thế hệ) thay vì mảng riêng mỗi ô (`TextSystem.ShapeCache.cs`, đường nóng đọc `Text.GlyphSpan`).
+- Đã sửa: `shadcn-home/dark` drawP95 4.5 → 1.9 ms. Nguyên nhân thật: cache class Tailwind xoá HẾT khi chạm 4096, mà trang có class sinh động dùng một lần (~195 chuỗi mới mỗi frame resize, 8760 chuỗi khác nhau cả phiên) nên tập class đang dùng bị biên dịch lại cùng frame (74 lần trượt ~1 ms ở frame đổi theme, 2.3 ms mỗi frame resize). Nay hai thế hệ (`s_cache`/`s_old`): chạm ngưỡng thì thế hệ hiện tại thành cũ, trúng ở thế hệ cũ thì chuyển lên. `shadcn-home/resize` drawMed 8.5 → 5.1 ms.
+- `shadcn-sidebar-03/dark` drawP95 0.44 → 0.99: chi phí một lần mỗi tiến trình (JIT các đường transition / vẽ lại toàn bộ trong frame đổi theme đầu tiên, paint 0.9 ms; lần đổi thứ hai 0.2 ms), không phải nhiễu và không phải chi phí ổn định. Bench nay đổi theme một vòng trong warm-up (`ChildRun`), phần khởi động vẫn do kịch bản cold đo.
+- Còn lại, shadcn-home/resize (frame ~5 ms): `DashboardAreaChart` tự Notify mỗi frame và Render ~8 ms trong chính component (không phải Core); cấp phát 640 KB/frame cũng từ đó.
 - `stress/resize`: layout còn 2.4 ms với 15 794 Measure / 4181 node (3.8 lần mỗi node), paint 3.1 ms. Cần giữ cây element qua frame để đổi kích thước không Render lại mọi view (chưa làm).
 - Trang có animation nằm thẳng trong view lớn (gallery-display 0.63 ms, 2 view, 1783 Measure mỗi frame): view phủ trên 60 % scene đi đường khung đầy đủ. Tách spinner thành view riêng đưa về 0.03 ms.
 - Cuộn trang chủ shadcn: 33 view render lại + paint 1.07 ms (view có vùng cắt trong bị cắt ở mép khung cuộn không phát lại được).

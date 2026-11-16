@@ -18,7 +18,19 @@ public sealed partial class TextSystem
     ShapedGlyph[]? _view;
 
     /// <summary>Glyph của lần Shape gần nhất (có thể là mảng của bộ đệm: chỉ đọc, hợp lệ tới lần Shape kế tiếp).</summary>
-    public ShapedGlyph[] Glyphs => _view ?? _sg;
+    public ShapedGlyph[] Glyphs
+    {
+        get
+        {
+            if (_view is { } v) { Array.Copy(v, _viewOff, _sg, 0, _viewCount); _view = null; } // trúng bộ đệm: chép sang bộ đệm làm việc cho người cần mảng bắt đầu ở 0
+            return _sg;
+        }
+    }
+
+    int _viewOff;
+
+    /// <summary>Glyph của lần Shape gần nhất không sao chép (chỉ đọc, hợp lệ tới lần Shape kế tiếp). Đường nóng dùng cái này.</summary>
+    public ReadOnlySpan<ShapedGlyph> GlyphSpan => _view is null ? _sg : _view.AsSpan(_viewOff, _viewCount);
 
     static bool Ignorable(int cp) =>
         (cp < 0x20 && cp != '\t') || (cp >= 0x7F && cp <= 0x9F) || cp == 0xAD || cp == 0x034F || (cp >= 0x200B && cp <= 0x200F)

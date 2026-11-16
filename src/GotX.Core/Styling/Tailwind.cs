@@ -10,14 +10,17 @@ namespace GotX;
 /// </summary>
 public static partial class Tailwind
 {
-    static readonly ConcurrentDictionary<string, ClassList> s_cache = new(StringComparer.Ordinal);
+    // Hai thế hệ: chạm ngưỡng thì thế hệ hiện tại thành "cũ" (không xoá hết). Class đang dùng được tìm thấy ở thế hệ cũ rồi chuyển lên,
+    // class sinh động chỉ dùng một lần (vd. w-[123px] theo bề rộng) chết sau hai lần đổi thế hệ. Xoá hết một lần như trước làm cả tập class
+    // đang dùng của trang biên dịch lại cùng một frame (74-196 lần trượt, ~1-2 ms).
+    static ConcurrentDictionary<string, ClassList> s_cache = new(StringComparer.Ordinal), s_old = new(StringComparer.Ordinal);
 
     /// <summary>Gọi khi gặp class không hỗ trợ: (chuỗi class, token).</summary>
     public static Action<string, string>? OnUnknownClass { get; set; }
 
     /// <summary>
     /// Giới hạn số chuỗi class được cache. Chuỗi class ghép động (nội suy giá trị thay đổi liên tục)
-    /// sẽ không làm cache phình mãi: chạm ngưỡng thì xoá hết và biên dịch lại khi cần.
+    /// sẽ không làm cache phình mãi: chạm ngưỡng thì thế hệ cũ bị bỏ (xem s_old), chỉ class không còn dùng mới phải biên dịch lại.
     /// </summary>
     public static int MaxCachedClassLists { get; set; } = 4096;
 
@@ -38,7 +41,8 @@ public static partial class Tailwind
     static ClassList GetSlow(string classes)
     {
         if (s_cache.TryGetValue(classes, out var cached)) return cached;
-        if (s_cache.Count >= MaxCachedClassLists) { s_cache.Clear(); Array.Clear(s_fast); }
+        if (s_cache.Count >= MaxCachedClassLists) { s_old = s_cache; s_cache = new(StringComparer.Ordinal); }
+        if (s_old.TryGetValue(classes, out var older)) { s_cache[classes] = older; return older; }
         long t0 = System.Diagnostics.Stopwatch.GetTimestamp();
         var parsed = s_cache.GetOrAdd(classes, static c => Parse(c));
         PerfCounters.ClassMiss++;

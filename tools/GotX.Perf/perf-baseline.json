@@ -555,10 +555,10 @@
     },
     "shadcn-dashboard-01/dark": {
       "allocMed": 304,
-      "allocTotal": 214912,
-      "drawMed": 0.346,
-      "drawP95": 1.364,
-      "drawTotal": 3.893,
+      "allocTotal": 2576,
+      "drawMed": 0.366,
+      "drawP95": 0.573,
+      "drawTotal": 3.098,
       "frames": 8,
       "rasterMed": 0,
       "rendPerFrame": 6.75
@@ -584,11 +584,11 @@
       "rendPerFrame": 0
     },
     "shadcn-dashboard-01/resize": {
-      "allocMed": 494584,
-      "allocTotal": 81754624,
-      "drawMed": 3.867,
-      "drawP95": 6.88,
-      "drawTotal": 400.104,
+      "allocMed": 3280,
+      "allocTotal": 64075320,
+      "drawMed": 1.393,
+      "drawP95": 6.235,
+      "drawTotal": 278.317,
       "frames": 112,
       "rasterMed": 0,
       "rendPerFrame": 6.8125
@@ -631,10 +631,10 @@
     },
     "shadcn-home/dark": {
       "allocMed": 1872,
-      "allocTotal": 188584,
+      "allocTotal": 7728,
       "drawMed": 1.29,
-      "drawP95": 2.589,
-      "drawTotal": 6.859,
+      "drawP95": 1.826,
+      "drawTotal": 5.796,
       "frames": 8,
       "rasterMed": 0,
       "rendPerFrame": 22.875
@@ -660,11 +660,11 @@
       "rendPerFrame": 0
     },
     "shadcn-home/resize": {
-      "allocMed": 838656,
-      "allocTotal": 256424728,
-      "drawMed": 8.222,
-      "drawP95": 14.886,
-      "drawTotal": 899.409,
+      "allocMed": 661944,
+      "allocTotal": 231900320,
+      "drawMed": 5.383,
+      "drawP95": 13.05,
+      "drawTotal": 709.142,
       "frames": 112,
       "rasterMed": 0,
       "rendPerFrame": 52.5

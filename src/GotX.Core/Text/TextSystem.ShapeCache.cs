@@ -4,9 +4,11 @@ namespace GotX.Text;
 
 public sealed partial class TextSystem
 {
-    // Bộ đệm kết quả định hình theo (chuỗi, khoảng, font chính, cờ): vẽ lại chữ tĩnh mỗi frame chỉ còn sao chép mảng glyph.
-    // Ánh xạ trực tiếp 2048 ô; chỉ giữ đoạn ≤ 128 glyph; ô tự cấp phát theo kích thước thật, ổn định thì không cấp phát.
-    const int ShapeCacheSlots = 2048, ShapeCacheMaxGlyphs = 128;
+    // Bộ đệm kết quả định hình theo (chuỗi, khoảng, font chính, cờ): vẽ lại chữ tĩnh mỗi frame chỉ còn đọc mảng glyph.
+    // Ánh xạ trực tiếp 2048 ô; chỉ giữ đoạn ≤ 128 glyph. Glyph của mọi ô nằm trong vài khối lớn dùng chung (bump allocation) thay vì mảng riêng mỗi ô:
+    // kéo giãn cửa sổ đổi chỗ ngắt dòng liên tục nên liên tục sinh khoá mới; mảng riêng làm mỗi khoá mới tốn một lần cấp phát,
+    // còn khối dùng chung chỉ cấp một lần mỗi ~16k glyph và được tái dùng vòng tròn khi đạt trần (ô trỏ vào khối bị ghi đè tự hết hiệu lực nhờ số thế hệ).
+    const int ShapeCacheSlots = 2048, ShapeCacheMaxGlyphs = 128, ShapeChunkGlyphs = 16384, ShapeMaxChunks = 6;
 
     struct ShapeSlot
     {
@@ -14,19 +16,36 @@ public sealed partial class TextSystem
         public int Start, End, Gen, Count, Seen;
         public Font? Primary;
         public byte Flags;
-        public ShapedGlyph[]? Glyphs;
+        public int Chunk, Offset, ChunkEpoch; // vị trí glyph trong khối dùng chung (hợp lệ khi Count >= 0 và khối còn đúng thế hệ)
     }
 
     readonly ShapeSlot[] _shapeCache = new ShapeSlot[ShapeCacheSlots];
-    int _shapeGen;
+    readonly ShapedGlyph[]?[] _chunks = new ShapedGlyph[ShapeMaxChunks][];
+    readonly int[] _chunkEpoch = new int[ShapeMaxChunks];
+    int _chunkCur = -1, _chunkUsed, _shapeGen, _viewCount;
 
-    /// <summary>Số thứ tự frame (Window tăng mỗi Draw): một khoá phải được thấy ở frame KHÁC mới được nhận vào bộ đệm, nên chuỗi đang gõ (mới mỗi frame, nhưng được đo + vẽ hai lần trong frame) không cấp phát mảng.</summary>
+    /// <summary>Số thứ tự frame (Window tăng mỗi Draw): một khoá phải được thấy ở frame KHÁC mới được nhận vào bộ đệm, nên chuỗi đang gõ (mới mỗi frame, nhưng được đo + vẽ hai lần trong frame) không tốn chỗ.</summary>
     internal int FrameTick;
 
     /// <summary>Số lần trúng / trượt bộ đệm định hình (chẩn đoán, test).</summary>
     public long ShapeHits, ShapeMisses;
 
     void InvalidateShapeCache() => _shapeGen++;
+
+    /// <summary>Cấp n ô glyph trong khối dùng chung: (khối, vị trí, thế hệ của khối).</summary>
+    (int Chunk, int Offset, int Epoch) AllocGlyphs(int n)
+    {
+        if (_chunkCur < 0 || _chunkUsed + n > ShapeChunkGlyphs)
+        {
+            _chunkCur = (_chunkCur + 1) % ShapeMaxChunks;
+            _chunks[_chunkCur] ??= new ShapedGlyph[ShapeChunkGlyphs];
+            _chunkEpoch[_chunkCur]++; // mọi ô đang trỏ vào khối này (nếu có) hết hiệu lực
+            _chunkUsed = 0;
+        }
+        int off = _chunkUsed;
+        _chunkUsed += n;
+        return (_chunkCur, off, _chunkEpoch[_chunkCur]);
+    }
 
     public int Shape(string text, int start, int end, in TextStyle style, bool visual)
     {
@@ -36,21 +55,21 @@ public sealed partial class TextSystem
         ref var slot = ref _shapeCache[(h ^ (h >>> 8)) & (ShapeCacheSlots - 1)];
         bool same = ReferenceEquals(slot.Text, text) && slot.Start == start && slot.End == end && slot.Flags == flags
             && ReferenceEquals(slot.Primary, primary) && slot.Gen == _shapeGen;
-        if (same && slot.Count >= 0)
+        if (same && slot.Count >= 0 && _chunkEpoch[slot.Chunk] == slot.ChunkEpoch)
         {
-            _view = slot.Glyphs; // đọc thẳng từ ô đệm, không sao chép
+            _view = _chunks[slot.Chunk]; _viewOff = slot.Offset; _viewCount = slot.Count; // đọc thẳng từ khối, không sao chép
             ShapeHits++;
             return slot.Count;
         }
         ShapeMisses++;
         _view = null;
         int n = ShapeCore(text, start, end, style, visual);
-        // Nhận vào bộ đệm ở lần thứ hai thấy cùng khoá: chuỗi đổi mỗi frame (đang gõ) không bao giờ cấp phát mảng.
+        // Nhận vào bộ đệm ở lần thứ hai thấy cùng khoá: chuỗi đổi mỗi frame (đang gõ) không bao giờ chiếm chỗ.
         if (same && slot.Seen != FrameTick && n <= ShapeCacheMaxGlyphs)
         {
-            if (slot.Glyphs is null || slot.Glyphs.Length < n) slot.Glyphs = new ShapedGlyph[n + 8];
-            Array.Copy(_sg, slot.Glyphs, n);
-            slot.Count = n;
+            var (chunk, off, epoch) = AllocGlyphs(n);
+            Array.Copy(_sg, 0, _chunks[chunk]!, off, n);
+            slot.Chunk = chunk; slot.Offset = off; slot.ChunkEpoch = epoch; slot.Count = n;
         }
         else { slot.Text = text; slot.Start = start; slot.End = end; slot.Flags = flags; slot.Primary = primary; slot.Gen = _shapeGen; slot.Count = -1; slot.Seen = FrameTick; }
         return n;

@@ -49,6 +49,10 @@ public static class ChildRun
         }
         session.Send(new GotX.InputEvent(GotX.InputKind.MouseMove, new GotX.Point(-10, -10)));
         session.Settle();
+        // Đổi giao diện sáng/tối một vòng: frame đầu sau đổi theme chạy lần đầu các đường transition và vẽ lại toàn bộ (JIT với TieredCompilation=0, ~1 ms):
+        // đó là chi phí một lần mỗi tiến trình (cold lo phần khởi động), không phải chi phí ổn định của kịch bản "dark".
+        session.Window.DarkMode = true; session.Steps(6); session.Window.DarkMode = false; session.Steps(6);
+        session.Settle();
         var wanted = Arg(args, "--scenarios")?.Split(',') ?? Scenarios.Names;
         using var alloc = args.Contains("--alloc-types") ? new AllocListener() : null;
         alloc?.Drain();

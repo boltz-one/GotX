@@ -97,14 +97,14 @@ public sealed partial class Window
         float dx = o.X * _scale;
         var atlas = Text.Atlas;
         int count = Text.Shape(text, start, end, ts, true);
-        var glyphs = Text.Glyphs;
+        var glyphs = Text.GlyphSpan;
         Font? cur = null;
         GlyphFace face = null!;
         float k = 0;
 
         for (int i = 0; i < count; i++)
         {
-            ref var s = ref glyphs[i];
+            ref readonly var s = ref glyphs[i];
             if (s.Font != cur) { cur = s.Font; face = atlas.Face(cur, px); k = px / cur.UnitsPerEm; }
             dx += s.Pre * k;
             int gi = face.Get(s.Id);
@@ -134,13 +134,13 @@ public sealed partial class Window
         float pen = x;
         var atlas = Text.Atlas;
         int count = Text.Shape(text, start, end, ts, true);
-        var glyphs = Text.Glyphs;
+        var glyphs = Text.GlyphSpan;
         Font? cur = null;
         GlyphFace face = null!;
         float k = 0;
         for (int i = 0; i < count; i++)
         {
-            ref var s = ref glyphs[i];
+            ref readonly var s = ref glyphs[i];
             if (s.Font != cur) { cur = s.Font; face = atlas.Face(cur, px); k = px / cur.UnitsPerEm; }
             pen += s.Pre * k / unit;
             int gi = face.Get(s.Id);
