@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Footprint meter: runs scenarios in a fresh child process (real Win32 window, D3D11 or software renderer) and samples CPU / memory / GC / handles.
+       Not shipped. Measurement-only: references the samples read-only. Native AOT: dotnet publish tools/GotX.Footprint -p:PublishAot=true -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsAotCompatible>false</IsAotCompatible>
+    <NoWarn>$(NoWarn);IL2026;IL3050;IL3000</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/GotX.Core/GotX.Core.csproj" />
+    <ProjectReference Include="../../src/GotX.Raster/GotX.Raster.csproj" />
+    <ProjectReference Include="../../src/GotX.Platform.Windows/GotX.Platform.Windows.csproj" />
+    <ProjectReference Include="../../src/GotX.Components/GotX.Components.csproj" />
+    <ProjectReference Include="../../samples/Shadcn/Shadcn.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="footprint-baseline.json" CopyToOutputDirectory="PreserveNewest" Condition="Exists('footprint-baseline.json')" />
+  </ItemGroup>
+</Project>
