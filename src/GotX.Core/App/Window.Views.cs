@@ -38,7 +38,7 @@ public sealed partial class Window
         n.ViewRendered = true;
         int child;
         long t0 = 0;
-        if (_preChild >= 0 && n.View!.Id.Value == _preView) { child = _preChild; _preChild = -1; CleanPrerendered(child); } // đã Render ở lần thử một phần
+        if (_pre.Count > 0 && _pre.Remove(n.View!.Id.Value, out child)) CleanPrerendered(child); // đã Render ở lần thử một phần
         else
         {
             if (Trace is not null) Emit(TraceKind.ViewRender, n.View!.GetType().Name, viewId: n.View.Id.Value);

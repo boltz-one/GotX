@@ -60,7 +60,7 @@ internal struct ViewCache
     public int OuterShape;   // vùng cắt theo hình bao ngoài view (1-based trong scene của frame đó)
     public int ShapeStart, ShapeEnd; // vùng cắt theo hình tạo ra bên trong view
     public int GradStart, GradEnd;   // gradient tạo ra bên trong view
-    public bool InnerClip;   // bên trong có vùng cắt bị vùng cắt ngoài xén mất → không thể chỉ tịnh tiến khi phát lại
+    public ClipAcc Clips;    // vùng cắt overflow-hidden bên trong: có thể chỉ tịnh tiến khi phát lại không (Window.ClipFlags.cs)
     public TextStyle Text;
     public int PrimStart, PrimEnd, HitStart, HitEnd, HoverStart, HoverEnd, OrderStart, OrderEnd;
     // Ngữ cảnh lúc vào view để vẽ lại RIÊNG view này (khung một phần, Window.Partial.cs). KeyScope/ScrollScope: chỉ số hitbox 1-based.

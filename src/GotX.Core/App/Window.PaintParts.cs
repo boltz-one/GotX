@@ -165,8 +165,7 @@ public sealed partial class Window
         var rect = nodeXf.ApplyAabb(local);
         childClip = clip.Intersect(rect);
         // Vùng cắt nằm trọn trong vùng cắt ngoài thì khi phát lại chỉ cần dời theo; nếu bị xén thì không.
-        if (!Within(rect, clip))
-            for (int i = 0; i < _innerClip.Count; i++) _innerClip[i] = true;
+        NoteClipRect(rect, clip, childClip);
 
         var cr = s.CornerRadii;
         if (nodeXf.IsSimple && cr.TopLeft <= 0 && cr.TopRight <= 0 && cr.BottomRight <= 0 && cr.BottomLeft <= 0) return -1;

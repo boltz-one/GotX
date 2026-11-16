@@ -22,7 +22,6 @@ public sealed partial class Window
     readonly HashSet<int> _dirty = new();
     readonly HashSet<int> _animating = new();
     readonly List<int> _viewStack = new(), _keyCounters = new();
-    readonly List<bool> _innerClip = new();
     readonly Dictionary<long, ScrollState> _scrolls = new();
     readonly Dictionary<long, TransitionState> _transitions = new();
     readonly HashSet<int> _paintedViews = new(); // view được vẽ thật (không phát lại) trong frame này
@@ -190,8 +189,8 @@ public sealed partial class Window
         _scene.Reserve(_prevScene.Count); // hai scene thay phiên nhau: scene chưa dùng (khung một phần không đổi chỗ) không được nở dần ở frame đầy đủ kế tiếp
         _scene.ClearColor = _clearColor;
         _hitboxes.Clear(); _hovers.Clear(); _viewOrder.Clear(); _cache.Clear();
-        _viewStack.Clear(); _keyCounters.Clear(); _innerClip.Clear();
-        if (_preChild < 0) _tree.Reset(); // sau lần thử một phần hỏng, giữ cây để tái dùng Render của view đó
+        _viewStack.Clear(); _keyCounters.Clear(); _clipAcc.Clear();
+        if (_pre.Count == 0) _tree.Reset(); // sau lần thử một phần hỏng, giữ cây để tái dùng Render của view đó
         _rendered = _replayed = 0;
         _animating.Clear();
 
@@ -208,7 +207,7 @@ public sealed partial class Window
         }
         PaintOverlays(logicalSize);
         _prevScene.Reserve(_scene.Count); // cấp sẵn chỗ cho scene thay phiên ngay trong frame đầy đủ này, không để dồn vào frame đầy đủ kế tiếp
-        _preChild = -1;
+        _pre.Clear();
         Damage.MarkFull();
         _lastRoot = Root; _lastRem = RemSize; _lastBase = BaseTextStyle; _lastOverlayStamp = _overlayStamp;
         if (_snaps.Count > _cache.Count * 2 + 256) PruneSnaps();

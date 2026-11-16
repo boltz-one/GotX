@@ -139,13 +139,13 @@
     },
     "gallery-chat/scroll": {
       "allocMed": 64,
-      "allocTotal": 233336,
-      "drawMed": 0.099,
-      "drawP95": 0.543,
-      "drawTotal": 86.096,
+      "allocTotal": 70608,
+      "drawMed": 0.119,
+      "drawP95": 0.395,
+      "drawTotal": 74.079,
       "frames": 461,
       "rasterMed": 0,
-      "rendPerFrame": 3.4902
+      "rendPerFrame": 2.6247
     },
     "gallery-chat/type": {
       "allocMed": 64,
@@ -205,23 +205,23 @@
     },
     "gallery-data/resize": {
       "allocMed": 472,
-      "allocTotal": 198216,
-      "drawMed": 0.432,
-      "drawP95": 0.563,
-      "drawTotal": 27.971,
+      "allocTotal": 32576,
+      "drawMed": 0.448,
+      "drawP95": 0.59,
+      "drawTotal": 28.382,
       "frames": 78,
       "rasterMed": 0,
-      "rendPerFrame": 8.4231
+      "rendPerFrame": 7.5256
     },
     "gallery-data/scroll": {
       "allocMed": 472,
-      "allocTotal": 35504,
-      "drawMed": 0.362,
-      "drawP95": 0.432,
-      "drawTotal": 34.424,
+      "allocTotal": 25560,
+      "drawMed": 0.35,
+      "drawP95": 0.477,
+      "drawTotal": 23.857,
       "frames": 86,
       "rasterMed": 0,
-      "rendPerFrame": 5.4419
+      "rendPerFrame": 3.3488
     },
     "gallery-data/type": {
       "allocMed": 0,
@@ -357,23 +357,23 @@
     },
     "gallery-forms/resize": {
       "allocMed": 64,
-      "allocTotal": 89616,
-      "drawMed": 1.084,
-      "drawP95": 1.183,
-      "drawTotal": 65.44,
+      "allocTotal": 26240,
+      "drawMed": 0.895,
+      "drawP95": 1.255,
+      "drawTotal": 58.592,
       "frames": 78,
       "rasterMed": 0,
-      "rendPerFrame": 40.8462
+      "rendPerFrame": 27.1026
     },
     "gallery-forms/scroll": {
       "allocMed": 0,
-      "allocTotal": 1448,
-      "drawMed": 0.047,
-      "drawP95": 0.32,
-      "drawTotal": 13.575,
+      "allocTotal": 2432,
+      "drawMed": 0.058,
+      "drawP95": 0.306,
+      "drawTotal": 12.938,
       "frames": 87,
       "rasterMed": 0,
-      "rendPerFrame": 2.6552
+      "rendPerFrame": 1.7356
     },
     "gallery-forms/type": {
       "allocMed": 0,
@@ -442,14 +442,14 @@
       "rendPerFrame": 9.9053
     },
     "gallery-navigation/scroll": {
-      "allocMed": 408,
-      "allocTotal": 48768,
-      "drawMed": 0.389,
-      "drawP95": 0.553,
-      "drawTotal": 37.35,
+      "allocMed": 312,
+      "allocTotal": 27048,
+      "drawMed": 0.377,
+      "drawP95": 0.493,
+      "drawTotal": 30.238,
       "frames": 87,
       "rasterMed": 0,
-      "rendPerFrame": 5.2299
+      "rendPerFrame": 3.0805
     },
     "gallery-navigation/type": {
       "allocMed": 0,
@@ -463,10 +463,10 @@
     },
     "gallery-overlays/click": {
       "allocMed": 0,
-      "allocTotal": 1233336,
-      "drawMed": 0.132,
-      "drawP95": 3.078,
-      "drawTotal": 61.949,
+      "allocTotal": 692112,
+      "drawMed": 0.135,
+      "drawP95": 0.186,
+      "drawTotal": 13.481,
       "frames": 102,
       "rasterMed": 0,
       "rendPerFrame": 2.1569
@@ -519,13 +519,13 @@
     },
     "gallery-overlays/scroll": {
       "allocMed": 0,
-      "allocTotal": 1440,
-      "drawMed": 0.04,
-      "drawP95": 0.212,
-      "drawTotal": 5.681,
+      "allocTotal": 1152,
+      "drawMed": 0.042,
+      "drawP95": 0.186,
+      "drawTotal": 6.451,
       "frames": 81,
       "rasterMed": 0,
-      "rendPerFrame": 1.7407
+      "rendPerFrame": 1.358
     },
     "gallery-overlays/type": {
       "allocMed": 0,
@@ -539,10 +539,10 @@
     },
     "shadcn-dashboard-01/click": {
       "allocMed": 0,
-      "allocTotal": 6594256,
-      "drawMed": 0.084,
-      "drawP95": 1.108,
-      "drawTotal": 54.663,
+      "allocTotal": 2405520,
+      "drawMed": 0.085,
+      "drawP95": 1.093,
+      "drawTotal": 35.843,
       "frames": 219,
       "rasterMed": 0,
       "rendPerFrame": 3.2237
@@ -584,24 +584,24 @@
       "rendPerFrame": 0
     },
     "shadcn-dashboard-01/resize": {
-      "allocMed": 3280,
-      "allocTotal": 64075320,
-      "drawMed": 1.393,
-      "drawP95": 6.235,
-      "drawTotal": 278.317,
+      "allocMed": 304,
+      "allocTotal": 29925224,
+      "drawMed": 0.436,
+      "drawP95": 2.36,
+      "drawTotal": 97.215,
       "frames": 112,
       "rasterMed": 0,
       "rendPerFrame": 6.8125
     },
     "shadcn-dashboard-01/scroll": {
       "allocMed": 1096,
-      "allocTotal": 97584,
-      "drawMed": 1.264,
-      "drawP95": 1.411,
-      "drawTotal": 79.32,
+      "allocTotal": 104880,
+      "drawMed": 1.049,
+      "drawP95": 1.242,
+      "drawTotal": 65.017,
       "frames": 74,
       "rasterMed": 0,
-      "rendPerFrame": 43.7973
+      "rendPerFrame": 24.7027
     },
     "shadcn-dashboard-01/type": {
       "allocMed": 0,
@@ -615,13 +615,13 @@
     },
     "shadcn-home/click": {
       "allocMed": 0,
-      "allocTotal": 9820208,
+      "allocTotal": 2686568,
       "drawMed": 0.008,
-      "drawP95": 1.358,
-      "drawTotal": 191.56,
+      "drawP95": 1.406,
+      "drawTotal": 57.94,
       "frames": 209,
       "rasterMed": 0,
-      "rendPerFrame": 8.1962
+      "rendPerFrame": 7.8756
     },
     "shadcn-home/cold": {
       "coldTotal": 276.308,
@@ -660,24 +660,24 @@
       "rendPerFrame": 0
     },
     "shadcn-home/resize": {
-      "allocMed": 661944,
-      "allocTotal": 231900320,
-      "drawMed": 5.383,
-      "drawP95": 13.05,
-      "drawTotal": 709.142,
+      "allocMed": 1872,
+      "allocTotal": 43550800,
+      "drawMed": 1.811,
+      "drawP95": 4.863,
+      "drawTotal": 279.691,
       "frames": 112,
       "rasterMed": 0,
       "rendPerFrame": 52.5
     },
     "shadcn-home/scroll": {
       "allocMed": 56,
-      "allocTotal": 4592,
-      "drawMed": 1.037,
-      "drawP95": 1.175,
-      "drawTotal": 72.257,
+      "allocTotal": 4536,
+      "drawMed": 0.634,
+      "drawP95": 0.855,
+      "drawTotal": 49.672,
       "frames": 82,
       "rasterMed": 0,
-      "rendPerFrame": 25.6463
+      "rendPerFrame": 5.9268
     },
     "shadcn-home/type": {
       "allocMed": 0,
@@ -812,14 +812,14 @@
       "rendPerFrame": 0
     },
     "shadcn-login-04/resize": {
-      "allocMed": 0,
-      "allocTotal": 13992,
+      "allocMed": 72,
+      "allocTotal": 7296,
       "drawMed": 0.135,
-      "drawP95": 0.169,
-      "drawTotal": 13.635,
+      "drawP95": 0.192,
+      "drawTotal": 14.64,
       "frames": 112,
       "rasterMed": 0,
-      "rendPerFrame": 4.9107
+      "rendPerFrame": 4.3036
     },
     "shadcn-login-04/scroll": {
       "allocMed": 0,
@@ -919,13 +919,13 @@
     },
     "shadcn-sidebar-07/click": {
       "allocMed": 0,
-      "allocTotal": 241088,
+      "allocTotal": 53824,
       "drawMed": 0.085,
-      "drawP95": 0.16,
-      "drawTotal": 28.587,
+      "drawP95": 0.171,
+      "drawTotal": 14.335,
       "frames": 184,
       "rasterMed": 0,
-      "rendPerFrame": 0.8478
+      "rendPerFrame": 0.7772
     },
     "shadcn-sidebar-07/cold": {
       "coldTotal": 146.826,
@@ -1116,14 +1116,14 @@
       "rendPerFrame": 0
     },
     "shadcn-signup-04/resize": {
-      "allocMed": 0,
-      "allocTotal": 13992,
-      "drawMed": 0.162,
-      "drawP95": 0.196,
-      "drawTotal": 16.338,
+      "allocMed": 72,
+      "allocTotal": 7296,
+      "drawMed": 0.172,
+      "drawP95": 0.251,
+      "drawTotal": 18.403,
       "frames": 112,
       "rasterMed": 0,
-      "rendPerFrame": 6.5357
+      "rendPerFrame": 5.625
     },
     "shadcn-signup-04/scroll": {
       "allocMed": 0,
@@ -1202,14 +1202,14 @@
       "rendPerFrame": 3.7821
     },
     "stress/scroll": {
-      "allocMed": 808,
-      "allocTotal": 918064,
-      "drawMed": 3.766,
-      "drawP95": 4.492,
-      "drawTotal": 309.014,
+      "allocMed": 0,
+      "allocTotal": 0,
+      "drawMed": 2.34,
+      "drawP95": 3.17,
+      "drawTotal": 197.742,
       "frames": 87,
       "rasterMed": 0,
-      "rendPerFrame": 3.4138
+      "rendPerFrame": 1.5977
     },
     "stress/type": {
       "allocMed": 0,

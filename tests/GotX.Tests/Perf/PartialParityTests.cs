@@ -10,7 +10,7 @@ using ShadcnShots;
 /// </summary>
 static class PartialParityTests
 {
-    sealed class Rig
+    internal sealed class Rig
     {
         public readonly App App;
         public readonly Window Window;
@@ -18,11 +18,11 @@ static class PartialParityTests
         public readonly List<string> Events = new();
         public readonly Size Size;
 
-        public Rig(Func<App, View> root, Size size, bool partial)
+        public Rig(Func<App, View> root, Size size, bool partial, bool cache = true)
         {
             Size = size;
             App = new App { Clock = () => Now };
-            Window = new Window(App, TestFonts.Shared) { Clock = () => Now, PartialFrames = partial, Trace = e => { if (e.Kind is TraceKind.ViewRender or TraceKind.ViewDirty or TraceKind.Frame) Events.Add(e.ToString()); } };
+            Window = new Window(App, TestFonts.Shared) { Clock = () => Now, PartialFrames = partial, CacheEnabled = cache, Trace = e => { if (e.Kind is TraceKind.ViewRender or TraceKind.ViewDirty or TraceKind.Frame) Events.Add(e.ToString()); } };
             Window.Root = root(App);
             Step(); Step();
         }
@@ -48,7 +48,7 @@ static class PartialParityTests
         public void Frames(int n) { for (int i = 0; i < n; i++) Step(); }
     }
 
-    sealed class PageHost(Func<App, View> page) : View
+    internal sealed class PageHost(Func<App, View> page) : View
     {
         View _page = null!;
         protected override void OnCreated() => _page = page(App);
@@ -56,7 +56,7 @@ static class PartialParityTests
             w.Div().Class("size-full overflow-y-auto bg-background text-foreground").Key("page").Child(w.View(_page));
     }
 
-    static readonly (string Name, Func<App, View> Root, Size Size)[] Targets =
+    internal static readonly (string Name, Func<App, View> Root, Size Size)[] Targets =
     [
         ("forms", app => app.New(new PageHost(a => a.New(new FormsPage()))), new Size(1000, 760)),
         ("overlays", app => app.New(new PageHost(a => a.New(new OverlaysPage()))), new Size(1000, 760)),
@@ -69,7 +69,7 @@ static class PartialParityTests
     ];
 
     /// <summary>Lỗi đầu tiên (mô tả) khi so hai cửa sổ, hoặc null nếu khớp.</summary>
-    static string? Diff(Rig a, Rig b)
+    internal static string? Diff(Rig a, Rig b)
     {
         var sa = a.Window.LastScene; var sb = b.Window.LastScene;
         var pa = sa.Primitives; var pb = sb.Primitives;

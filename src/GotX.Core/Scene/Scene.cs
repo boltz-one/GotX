@@ -120,14 +120,14 @@ public sealed class Scene
     }
 
     /// <summary>Tịnh tiến các primitive [start, end) (device px) – dùng khi phát lại view bị dời chỗ.</summary>
-    public void TranslateRange(int start, int end, float dx, float dy, Bounds outerClip)
+    public void TranslateRange(int start, int end, float dx, float dy, Bounds outerClip, Bounds newOuterClip)
     {
         for (int i = start; i < end; i++)
         {
             ref var p = ref _items[i];
             p.Bounds = p.Bounds.Offset(dx, dy);
             if (p.HasExclusion) p.Source = p.Source.Offset(dx, dy);
-            if (p.Clip != outerClip) p.Clip = p.Clip.Offset(dx, dy).Intersect(outerClip);
+            p.Clip = p.Clip == outerClip ? newOuterClip : p.Clip.Offset(dx, dy).Intersect(newOuterClip);
         }
     }
 

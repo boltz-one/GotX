@@ -11,8 +11,27 @@ public sealed partial class DashboardAreaChart : View
 {
     public const string PlotKey = "chart", PlotAnchor = "dashboard-chart-plot";
 
+    // Khung đặt tuyệt đối của phần tử nền (lưới, nhãn, cột chạm): đặt thẳng vào Style thay vì chuỗi class, vì mỗi kích thước
+    // mới sinh ~100 chuỗi class chưa từng gặp (biên dịch Tailwind ≈ 60 % chi phí dựng hình khi kéo giãn cửa sổ).
+    /// <summary>Khung đặt tuyệt đối đã quy ra <see cref="Length"/> (làm tròn 3 chữ số như khi đi qua class <c>left-[…px]</c>) một lần lúc dựng hình, để Render lại không định dạng chuỗi.</summary>
+    readonly struct Box
+    {
+        public readonly Length Left, Top, W, H;
+        public readonly bool HasW, HasH;
+
+        public Box(float left, float top, float w, float h)
+        {
+            Left = Px(left); Top = Px(top);
+            HasW = !float.IsNaN(w); HasH = !float.IsNaN(h);
+            W = HasW ? Px(w) : default; H = HasH ? Px(h) : default;
+        }
+    }
+
     sealed record Shape(DashboardChartBands.Strip[] Mobile, DashboardChartBands.Strip[] Desktop, VectorPath MobileStroke,
-        VectorPath DesktopStroke, string[] Grid, (string Text, string Class)[] Ticks, DashboardChartGeometry Geometry, string[] Columns);
+        VectorPath DesktopStroke, Box[] Grid, (string Text, Box Box)[] Ticks, DashboardChartGeometry Geometry, Box[] Columns, Length Width);
+
+    const string GridClass = "absolute h-px bg-border/50", TickClass = "absolute w-[80px] text-center leading-4 text-muted-foreground";
+    const int MaxShapes = 64;
 
     readonly MeasureMark _mark = new();
     readonly Dictionary<(string, Size), Shape> _shapes = [];
@@ -56,15 +75,19 @@ public sealed partial class DashboardAreaChart : View
     {
         _window = w;
         _mark.Request();
-        if (!_shapes.TryGetValue((_range, _size), out var shape)) _shapes[(_range, _size)] = shape = Build(w);
+        if (!_shapes.TryGetValue((_range, _size), out var shape))
+        {
+            if (_shapes.Count >= MaxShapes) _shapes.Clear(); // kéo giãn sinh một kích thước mới mỗi frame: không để bảng nở mãi
+            _shapes[(_range, _size)] = shape = Build(w);
+        }
         _shape = shape;
         var root = w.Div().Key(PlotKey).Anchor(PlotAnchor).Class("relative h-[250px] w-full text-xs");
-        foreach (string grid in shape.Grid) root.Child(w.Div().Class(grid));
-        foreach (var s in shape.Mobile) root.Child(w.Path(s.Path).Class(s.Class));
+        foreach (var box in shape.Grid) root.Child(At(w.Div().Class(GridClass), box));
+        foreach (var s in shape.Mobile) root.Child(Strip(w, s, shape.Width));
         root.Child(w.Path(shape.MobileStroke).Class("absolute inset-0 object-fill text-primary"));
-        foreach (var s in shape.Desktop) root.Child(w.Path(s.Path).Class(s.Class));
+        foreach (var s in shape.Desktop) root.Child(Strip(w, s, shape.Width));
         root.Child(w.Path(shape.DesktopStroke).Class("absolute inset-0 object-fill text-primary"));
-        foreach (var (text, cls) in shape.Ticks) root.Child(w.Div().Class(cls).Child(text));
+        foreach (var (text, box) in shape.Ticks) root.Child(At(w.Div().Class(TickClass), box).Child(text));
         Hover(w, root, shape);
         return root;
     }
@@ -75,19 +98,45 @@ public sealed partial class DashboardAreaChart : View
         var style = TextStyle.Default with { FontSize = 12, LineHeight = 16 };
         var g = DashboardChartGeometry.Build(_size, DashboardChartData.StartIndex(_range), s => w.Text.Measure(s, style));
         float W = _size.Width, H = _size.Height;
-        var grid = new string[g.GridY.Length];
-        for (int i = 0; i < g.GridY.Length; i++)
-            grid[i] = "absolute h-px bg-border/50 " + Px("left", g.Left) + " " + Px("w", g.Width) + " " + Px("top", g.GridY[i] - 0.5f);
+        var grid = new Box[g.GridY.Length];
+        for (int i = 0; i < g.GridY.Length; i++) grid[i] = new Box(g.Left, g.GridY[i] - 0.5f, g.Width, float.NaN);
         float y = g.Top + g.Height + DashboardChartGeometry.TickY;
-        var ticks = g.Ticks.Select(t => (DashboardChartData.Labels[t.Index],
-            "absolute w-[80px] text-center leading-4 text-muted-foreground " + Px("left", t.X - 40) + " " + Px("top", y))).ToArray();
+        var ticks = g.Ticks.Select(t => (DashboardChartData.Labels[t.Index], new Box(t.X - 40, y, float.NaN, float.NaN))).ToArray();
         return new Shape(
             DashboardChartBands.Build(g.MobileArea, g.MobileBox, 0.8f, W),
             DashboardChartBands.Build(g.DesktopArea, g.DesktopBox, 1f, W),
-            VectorPath.Polyline(g.MobileLine, W, H, 1), VectorPath.Polyline(g.TotalLine, W, H, 1), grid, ticks, g, HitColumns(g));
+            VectorPath.Polyline(g.MobileLine, W, H, 1), VectorPath.Polyline(g.TotalLine, W, H, 1), grid, ticks, g, HitColumns(g), Px(W));
     }
 
-    static string Px(string prefix, float v) =>
+    /// <summary>Đặt tuyệt đối theo <see cref="Box"/> (không có W / H thì không đặt).</summary>
+    static Div At(Div d, in Box b)
+    {
+        ref var s = ref d.Style;
+        s.Position = Position.Absolute;
+        s.Inset.Left = b.Left;
+        s.Inset.Top = b.Top;
+        if (b.HasW) s.Width = b.W;
+        if (b.HasH) s.Height = b.H;
+        return d;
+    }
+
+    static Length Px(float v)
+    {
+        float q = float.Parse(MathF.Abs(v).ToString("0.###", CultureInfo.InvariantCulture), CultureInfo.InvariantCulture);
+        return Length.Px(v < 0 ? -q : q);
+    }
+
+    static Div Strip(Window w, DashboardChartBands.Strip s, Length width)
+    {
+        var d = w.Path(s.Path).Class(s.Class);
+        ref var st = ref d.Style;
+        st.Inset.Top = Length.Px(s.Y);
+        st.Height = Length.Px(DashboardChartBands.Band);
+        st.Width = width;
+        return d;
+    }
+
+    static string PxClass(string prefix, float v) =>
         (v < 0 ? "-" : "") + prefix + "-[" + MathF.Abs(v).ToString("0.###", CultureInfo.InvariantCulture) + "px]";
 
     /// <summary>Mốc đo chạy ngay sau frame (thay AfterFrame nội bộ của GotX.Components): Notify xếp một lượt Observe.</summary>

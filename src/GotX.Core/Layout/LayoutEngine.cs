@@ -17,6 +17,7 @@ internal sealed partial class LayoutEngine
     readonly Window _w;
     readonly List<TextLine> _lines = new();
     float _rem;
+    static readonly bool s_noWrapRow = Environment.GetEnvironmentVariable("GOTX_NO_WRAPROW") is not null; // đọc biến môi trường mỗi lần đo hàng wrap là một syscall trên đường nóng
 
     public LayoutEngine(ElementTree tree, TextSystem text, Window window) { _t = tree; _text = text; _w = window; }
 
@@ -132,7 +133,7 @@ internal sealed partial class LayoutEngine
         float gap = flex ? Spec(row ? s.ColumnGap : s.RowGap, row ? innerW : innerH) ?? 0 : 0;
         bool wrap = flex && row && s.FlexWrap && !float.IsNaN(innerW);
         float crossGap = wrap ? Spec(s.RowGap, innerH) ?? 0 : 0;
-        if (wrap && Environment.GetEnvironmentVariable("GOTX_NO_WRAPROW") is null) return MeasureWrapRow(id, ts, innerW, innerH, gap, crossGap);
+        if (wrap && !s_noWrapRow) return MeasureWrapRow(id, ts, innerW, innerH, gap, crossGap);
         float main = 0, cross = 0, lineMain = 0, lineCross = 0;
         int inLine = 0, lines = 0;
         float maxAsc = 0, maxDesc = 0; // align baseline: phần trên / dưới đường cơ sở lớn nhất

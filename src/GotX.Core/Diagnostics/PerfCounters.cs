@@ -11,6 +11,7 @@ public static class PerfCounters
     public static long WrapHit, WrapMiss, WrapTicks;
     public static long GlyphRaster, GlyphRasterTicks, GlyphBytes;
     public static long ClassMiss, ClassMissTicks;
+    public static long CombineBuild; // số ClassList ghép mới (Tailwind.Combine trượt cả hai thế hệ cache)
     public static long Measure, MeasureMemoHit;
     public static long AtlasUpload, AtlasUploadBytes, AtlasUploadTicks;
 

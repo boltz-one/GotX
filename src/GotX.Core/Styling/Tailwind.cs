@@ -50,7 +50,8 @@ public static partial class Tailwind
         return parsed;
     }
 
-    static readonly ConcurrentDictionary<(ClassList, ClassList), ClassList> s_combined = new();
+    // Cùng mẫu hai thế hệ như s_cache: xoá hết ở 4096 làm cả tập cặp class đang dùng (hover: của mọi nút...) ghép lại cùng một frame.
+    static ConcurrentDictionary<(ClassList, ClassList), ClassList> s_combined = new(), s_combinedOld = new();
 
     /// <summary>
     /// Ghép hai danh sách class đã biên dịch (thứ tự áp dụng: <paramref name="first"/> rồi <paramref name="second"/>).
@@ -59,7 +60,9 @@ public static partial class Tailwind
     internal static ClassList Combine(ClassList first, ClassList second)
     {
         if (s_combined.TryGetValue((first, second), out var hit)) return hit;
-        if (s_combined.Count >= MaxCachedClassLists) s_combined.Clear();
+        if (s_combined.Count >= MaxCachedClassLists) { s_combinedOld = s_combined; s_combined = new(); }
+        if (s_combinedOld.TryGetValue((first, second), out var older)) { s_combined[(first, second)] = older; return older; }
+        PerfCounters.CombineBuild++;
         return s_combined.GetOrAdd((first, second), static pair =>
             new ClassList([.. pair.Item1.Ops, .. pair.Item2.Ops], pair.Item1.IsGroup || pair.Item2.IsGroup, [.. pair.Item1.Unknown, .. pair.Item2.Unknown]));
     }

@@ -58,6 +58,9 @@ ShadcnFidelityTests.Register(suite);
 // 5. Hiệu năng: nhật ký PerfLog, các cache đường nóng, đường nhanh của renderer CPU, ngân sách trên trang lớn (xem docs/performance.md).
 PerfLogTests.Register(suite);
 PerfCacheTests.Register(suite);
+ClassCombineCacheTests.Register(suite);
+BoundaryPropagationTests.Register(suite);
+ReplayParityTests.Register(suite);
 PerfRasterTests.Register(suite);
 PerfBudgetTests.Register(suite);
 ZeroAllocTests.Register(suite);

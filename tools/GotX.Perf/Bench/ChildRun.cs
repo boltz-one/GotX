@@ -35,6 +35,8 @@ public static class ChildRun
 
         log.Startup("calibrate", Calibrate());
         PartialWarmup.Run(session.Window.Text);
+        var wanted = Arg(args, "--scenarios")?.Split(',') ?? Scenarios.Names;
+        if (wanted.Contains("click")) WarmClick(target, fonts);
 
         // Warm-up (not measured): settle, then enough idle frames for the JIT and every cache to reach steady state.
         session.Mark("warmup");
@@ -53,7 +55,6 @@ public static class ChildRun
         // đó là chi phí một lần mỗi tiến trình (cold lo phần khởi động), không phải chi phí ổn định của kịch bản "dark".
         session.Window.DarkMode = true; session.Steps(6); session.Window.DarkMode = false; session.Steps(6);
         session.Settle();
-        var wanted = Arg(args, "--scenarios")?.Split(',') ?? Scenarios.Names;
         using var alloc = args.Contains("--alloc-types") ? new AllocListener() : null;
         alloc?.Drain();
         foreach (string scenario in wanted.Where(w => w is "typelong" or "resizelong").Concat(Scenarios.Names.Where(n => wanted.Contains(n)))) // typelong: chỉ khi được chọn
@@ -63,6 +64,21 @@ public static class ChildRun
         }
         log.Flush();
         return 0;
+    }
+
+    /// <summary>
+    /// Mở mọi overlay / menu của trang một lượt trên một cửa sổ bỏ đi (log riêng, không raster): lần mở đầu tiên của mỗi loại overlay trả
+    /// chi phí một lần của tiến trình (JIT với TieredCompilation=0, biên dịch class Tailwind, raster glyph: 4–20 ms cho một frame, lặp lại thì &lt; 1 ms),
+    /// không phải chi phí ổn định mà kịch bản "click" muốn đo. Cold vẫn đo phần khởi động. Cache dùng chung giữa các cửa sổ; trạng thái của cửa sổ đo thì không bị đụng tới.
+    /// </summary>
+    static void WarmClick(Target target, GotX.Text.TextSystem fonts)
+    {
+        string path = Path.Combine(Path.GetTempPath(), "gotx-warm-click.jsonl");
+        using var scratch = new PerfLog(path, PerfLogLevel.Slow);
+        var warm = new PerfSession(fonts, target.Root, scratch, target.Size, raster: false);
+        warm.Settle();
+        Scenarios.Run(warm, "click");
+        scratch.Flush();
     }
 
     /// <summary>

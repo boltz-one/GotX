@@ -37,9 +37,12 @@ public sealed partial class Window
     /// <summary>Lý do khung một phần gần nhất phải lùi về khung đầy đủ (chẩn đoán, test).</summary>
     public string? PartialFallbackReason { get; private set; }
     bool _fellBack;
-    int _preView, _preChild = -1; // kết quả Render của view vừa thử vẽ một phần mà thất bại (tái dùng ở khung đầy đủ)
+    // Kết quả Render (node con của view) của các view vừa thử vẽ một phần mà thất bại: tái dùng khi view tổ tiên vẽ lại hoặc ở khung đầy đủ, không Render hai lần.
+    readonly Dictionary<int, int> _pre = new();
     bool Fail(string why) { PartialFallbackReason = why; if (s_debug) Console.Error.WriteLine("partial-fallback: " + why); return false; }
     static readonly bool s_debug = Environment.GetEnvironmentVariable("GOTX_PARTIAL_DEBUG") == "1";
+
+    bool Boundary(string why) { _boundaryFail = true; return Fail(why); }
 
     int ParentOf(int view) => _cache.TryGetValue(view, out var c) ? c.ParentView : -1;
 
@@ -56,17 +59,55 @@ public sealed partial class Window
         {
             if (!_cache.ContainsKey(v) || !_snaps.TryGetValue(v, out var snap) || App.Find(v) is not global::GotX.View) return Fail("no-cache");
             if (snap.Style.ScrollX || snap.Style.ScrollY) return Fail("scroller");
-            // View phủ phần lớn scene: dựng riêng + ghép tốn hơn một lần phát lại cả frame (sao chép hai lần) mà không bớt việc gì.
-            var span = _cache[v];
-            if (_scene.Count > 512 && (long)(span.PrimEnd - span.PrimStart) * 10 > (long)_scene.Count * 6) return Fail("large-view");
+            if (IsLarge(v)) return Fail("large-view");
             bool top = true;
             for (int p = ParentOf(v), guard = 0; p > 0 && guard < 512; p = ParentOf(p), guard++)
                 if (_self.Contains(p)) { top = false; break; }
             if (top) _tops.Add(v);
         }
+        _absorbed.Clear();
         foreach (int v in _tops)
-            if (!RepaintView(v)) return false;
+        {
+            if (UnderAbsorbed(v)) continue; // đã nằm trong đoạn của tổ tiên vừa vẽ lại (tổ tiên Render lại mọi view bẩn bên dưới)
+            int target = v;
+            // Ranh giới layout hỏng (kích thước / min-content / vùng cắt đổi): thử view cha gần nhất đủ điều kiện thay vì dựng cả frame.
+            while (!RepaintView(target))
+            {
+                if (!_boundaryFail || (target = AbsorbingAncestor(target)) < 0) return false;
+            }
+            if (target != v) _absorbed.Add(target);
+        }
         return true;
+    }
+
+    readonly HashSet<int> _absorbed = new();   // tổ tiên đã vẽ lại thay cho view bẩn không giữ được ranh giới
+    bool _boundaryFail;                        // BuildSegment hỏng vì ranh giới (cha / anh em có thể bị ảnh hưởng), không phải vì cache
+
+    /// <summary>View phủ phần lớn scene: dựng riêng + ghép tốn hơn một lần phát lại cả frame (sao chép hai lần) mà không bớt việc gì.</summary>
+    bool IsLarge(int v)
+    {
+        var span = _cache[v];
+        return _scene.Count > 512 && (long)(span.PrimEnd - span.PrimStart) * 10 > (long)_scene.Count * 6;
+    }
+
+    bool UnderAbsorbed(int v)
+    {
+        if (_absorbed.Count == 0) return false;
+        for (int p = ParentOf(v), guard = 0; p > 0 && guard < 512; p = ParentOf(p), guard++)
+            if (_absorbed.Contains(p)) return true;
+        return false;
+    }
+
+    /// <summary>View tổ tiên gần nhất vẽ lại được từng phần (có cache, không phải vùng cuộn, không phủ quá 60 % scene); -1 = phải dựng cả frame.</summary>
+    int AbsorbingAncestor(int view)
+    {
+        for (int p = ParentOf(view), guard = 0; p > 0 && guard < 512; p = ParentOf(p), guard++)
+        {
+            if (!_cache.ContainsKey(p) || !_snaps.TryGetValue(p, out var snap) || App.Find(p) is not global::GotX.View) continue;
+            if (snap.Style.ScrollX || snap.Style.ScrollY || IsLarge(p)) continue;
+            return p;
+        }
+        return -1;
     }
 
     bool RepaintView(int vid)
@@ -89,39 +130,40 @@ public sealed partial class Window
             (_prevScene, _prevHitboxes, _prevHovers, _prevViewOrder, _prevCache) = (prevScene, prevHit, prevHov, prevOrd, prevCache);
         }
         if (!ok || !MergeSegment(vid, old, sc)) return false;
-        _preChild = -1;
+        _pre.Clear();
         return true;
     }
 
     bool BuildSegment(int vid, in ViewCache old, in ViewSnap snap, global::GotX.View view, Scene live)
     {
         long tStart = System.Diagnostics.Stopwatch.GetTimestamp();
-        _tree.Reset();
+        _boundaryFail = false;
+        if (_pre.Count == 0) _tree.Reset(); // sau lần thử hỏng, giữ cây để tổ tiên dùng lại Render của view con
         int id = _tree.NewView(view).Id;
         {
             ref var n = ref _tree[id];
             n.Style = snap.Style; n.Bounds = old.Bounds; n.InheritedText = old.Text;
         }
         RenderView(id);
-        _preView = vid; _preChild = _tree[id].FirstChild; // lùi về khung đầy đủ thì tái dùng kết quả Render này
+        _pre[vid] = _tree[id].FirstChild; // lùi (về tổ tiên hoặc khung đầy đủ) thì tái dùng kết quả Render này
         // Ranh giới layout: cha đã đo view với các cặp (rộng, cao) trong bộ nhớ đo; kích thước mới phải y hệt thì cha không phải layout lại.
         var memo = old.Measures;
         for (int i = 0; i < memo.Count; i++)
         {
             memo.At(i, out float w, out float h, out var size);
             var now = _layout.MeasureNode(id, old.Text, w, h, RemSize);
-            if (now.Width != size.Width || now.Height != size.Height) return Fail("size");
+            if (now.Width != size.Width || now.Height != size.Height) return Boundary("size");
         }
-        if (!float.IsNaN(old.MinContent) && _layout.MinContentOf(id, old.Text, RemSize) != old.MinContent) return Fail("min-content");
+        if (!float.IsNaN(old.MinContent) && _layout.MinContentOf(id, old.Text, RemSize) != old.MinContent) return Boundary("min-content");
         _layout.ArrangeChildren(id);
         long tPaint = System.Diagnostics.Stopwatch.GetTimestamp();
         _layoutTicks += tPaint - tStart;
 
         // Ngữ cảnh lúc vào view. Chỉ số hitbox bao ngoài dùng 0 làm "ở ngoài đoạn" (được ánh xạ lại khi ghép).
         for (int k = old.OrderStart; k < old.OrderEnd; k++) _animating.Remove(_prevViewOrder[k]);
-        _viewStack.Clear(); _keyCounters.Clear(); _innerClip.Clear();
+        _viewStack.Clear(); _keyCounters.Clear(); _clipAcc.Clear();
         if (old.ParentView > 0) _viewStack.Add(old.ParentView);
-        _innerClip.Add(false);
+        _clipAcc.Add(default);
         _keyScope = _scrollScope = 0;
         _groupHover = old.GroupHover;
         _blockHover = old.BlockHover;
@@ -132,9 +174,9 @@ public sealed partial class Window
 
         var now2 = _cache[vid];
         int outerShapes = old.OuterShape != 0 ? 1 : 0;
-        if (now2.InnerClip != old.InnerClip) return Fail("inner-clip");
-        if (_scene.ShapeCount - outerShapes != old.ShapeEnd - old.ShapeStart) return Fail("shapes");
-        return _scene.GradientCount == old.GradEnd - old.GradStart || Fail("gradients");
+        if (!now2.Clips.Equals(old.Clips)) return Boundary("inner-clip");
+        if (_scene.ShapeCount - outerShapes != old.ShapeEnd - old.ShapeStart) return Boundary("shapes");
+        return _scene.GradientCount == old.GradEnd - old.GradStart || Boundary("gradients");
     }
 
     /// <summary>Gỡ kết quả đo / đặt chỗ cũ khỏi cây con đã Render ở lần thử một phần: chỉ giữ lại Render() (bộ nhớ đo, bounds, cờ phát lại tính lại).</summary>
